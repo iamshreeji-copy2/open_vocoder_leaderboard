@@ -70,7 +70,7 @@ Then open `http://localhost:8000` in your web browser.
 | 📦 **Models** | Complete model registry with code links, checkpoint sources, and per-corpus tables |
 | 🧪 **Methodology** | Benchmark protocol, inference parameters, and metric definitions |
 | ➕ **Submit Model** | Procedure and Python adapter code (`BaseVocoderAdapter`) to add new vocoders |
-| 📜 **Changelog & Citation** | Version history and 1-click copyable BibTeX citation |
+| 📜 **Changelog** | Platform release history and version notes |
 
 ---
 

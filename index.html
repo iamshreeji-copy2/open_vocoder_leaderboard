@@ -134,7 +134,7 @@
         <button class="nav-tab-btn" data-tab="models" onclick="switchTab('models')">📦 Models</button>
         <button class="nav-tab-btn" data-tab="methodology" onclick="switchTab('methodology')">🧪 Methodology</button>
         <button class="nav-tab-btn" data-tab="submit" onclick="switchTab('submit')">➕ Submit Model</button>
-        <button class="nav-tab-btn" data-tab="changelog" onclick="switchTab('changelog')">📜 Changelog &amp; Citation</button>
+        <button class="nav-tab-btn" data-tab="changelog" onclick="switchTab('changelog')">📜 Changelog</button>
       </div>
     </nav>
 
@@ -917,7 +917,6 @@
                 <tr>
                   <th class="p-3">Corpus</th>
                   <th class="p-3">Acoustic Condition</th>
-                  <th class="p-3">Utterances</th>
                   <th class="p-3">Characteristics</th>
                 </tr>
               </thead>
@@ -925,25 +924,21 @@
                 <tr>
                   <td class="p-3 font-bold text-indigo-400">LJSpeech</td>
                   <td class="p-3">Clean studio recording</td>
-                  <td class="p-3 font-mono">2,000</td>
                   <td class="p-3 text-slate-400">Single female speaker, professional recording booth, near-zero reverberation.</td>
                 </tr>
                 <tr>
                   <td class="p-3 font-bold text-cyan-400">LibriTTS</td>
                   <td class="p-3">Audiobook narrative</td>
-                  <td class="p-3 font-mono">2,000</td>
                   <td class="p-3 text-slate-400">Multi-speaker (test-clean + test-other), expressive reading variations.</td>
                 </tr>
                 <tr>
                   <td class="p-3 font-bold text-amber-400">VCTK</td>
                   <td class="p-3">Regional accented speech</td>
-                  <td class="p-3 font-mono">2,000</td>
                   <td class="p-3 text-slate-400">109 speakers with British, Scottish, Irish, and Commonwealth accents.</td>
                 </tr>
                 <tr>
                   <td class="p-3 font-bold text-rose-400">Free_ST</td>
                   <td class="p-3">Mobile microphone noisy</td>
-                  <td class="p-3 font-mono">1,980</td>
                   <td class="p-3 text-slate-400">Real-world acoustic environments, mobile devices, background reverberation.</td>
                 </tr>
               </tbody>
@@ -967,18 +962,6 @@
               <tbody id="metric-defs-table-body"></tbody>
             </table>
           </div>
-        </div>
-
-        <!-- What PRISM-V does NOT do -->
-        <div class="bg-rose-950/20 border border-rose-900/40 rounded-xl p-5 text-xs text-rose-200">
-          <h4 class="font-bold text-sm text-rose-300 mb-2">What PRISM-V does NOT do:</h4>
-          <ul class="list-disc list-inside space-y-1">
-            <li>❌ Re-train or fine-tune any model on evaluation data</li>
-            <li>❌ Use unofficial or unverified community checkpoints</li>
-            <li>❌ Silently discard failed synthesis utterances (all failures count against scores)</li>
-            <li>❌ Mix 22.05kHz model outputs into the 24kHz primary benchmark without explicit notation</li>
-            <li>❌ Conflate RTF and xRT in composite scoring (they share identical information)</li>
-          </ul>
         </div>
       </div>
     </section>
@@ -1039,31 +1022,15 @@ class MyVocoderAdapter(BaseVocoderAdapter):
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    <!-- TAB 13: CHANGELOG & CITATION                                            -->
+    <!-- TAB 13: CHANGELOG                                                       -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <section id="tab-panel-changelog" class="tab-panel hidden space-y-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-8">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
         <div>
-          <h2 class="text-2xl font-bold text-slate-100 mb-2">📜 Changelog &amp; Citation</h2>
+          <h2 class="text-2xl font-bold text-slate-100 mb-2">📜 Changelog</h2>
           <p class="text-sm text-slate-400">
-            BibTeX citation, release history, and platform updates.
+            Platform release history, version notes, and updates.
           </p>
-        </div>
-
-        <!-- Citation Block -->
-        <div>
-          <h3 class="font-bold text-sm text-slate-200 mb-2">BibTeX Citation</h3>
-          <div class="bibtex-box">
-            <button class="copy-btn" onclick="window.copyBibTeX('bibtex-code-block')">📋 Copy</button>
-            <pre><code id="bibtex-code-block">@misc{purohit2026prismv,
-  author       = {Ravindrakumar M. Purohit and Hemant A. Patil},
-  title        = {{PRISM-V}: Multidimensional Evaluation of Pretrained
-                  Neural Vocoders for Speech Synthesis},
-  year         = {2026},
-  howpublished = {GitHub Pages / Hugging Face Space},
-  note         = {Open neural vocoder evaluation leaderboard}
-}</code></pre>
-          </div>
         </div>
 
         <!-- Version History Table -->
