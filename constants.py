@@ -8,7 +8,7 @@ PRISM_NAME    = "PRISM-V"
 PRISM_FULL    = "PRISM-V: Open Evaluation of Pretrained Neural Vocoders"
 PRISM_TAGLINE = "Quality · Robustness · Generalization · Efficiency"
 PRISM_DESC    = (
-    "The 🤗 PRISM-V Leaderboard evaluates open-source and pretrained neural vocoders on English "
+    "The 🤗 PRISM-V Leaderboard evaluates open-source and pretrained neural vocoders on English speech "
     "across diverse acoustic conditions, generative architectures, and edge deployment profiles."
 )
 PRISM_VERSION = "v1.0.1"
