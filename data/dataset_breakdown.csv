@@ -1,0 +1,61 @@
+model_id,model_name,dataset,pesq,stoi,lsd_db,mcd_db
+bigvgan_v2_24khz_100band_256x,BigVGAN-v2 (112M),LJSpeech,4.407,0.996,6.56,26.58
+bigvgan_base_24khz_100band,BigVGAN-Base (14M),LJSpeech,4.004,0.988,7.08,42.21
+vocos_mel_24khz,Vocos,LJSpeech,3.85,0.984,7.04,43.43
+comvo_large,ComVo-Large,LJSpeech,4.106,0.992,6.83,34.38
+comvo_base,ComVo-Base,LJSpeech,3.977,0.987,7.01,38.79
+periodwave_turbo,PeriodWave-Turbo (4-step),LJSpeech,4.43,0.996,7.09,40.61
+periodwave_24k,PeriodWave (30-step),LJSpeech,4.255,0.989,9.97,106.28
+flow2gan,Flow2GAN (4-step),LJSpeech,4.484,0.998,6.48,35.29
+bridgevoc,BridgeVoC,LJSpeech,4.428,0.996,6.62,45.99
+rfwave_libritts_24k,RFWave,LJSpeech,4.183,0.988,8.48,110.45
+wavefm,WaveFM (1-step),LJSpeech,3.744,0.977,7.16,52.88
+rndvoc,RNDVoC,LJSpeech,4.262,0.992,6.56,40.24
+freev,FreeV,LJSpeech,3.696,0.975,6.82,65.2
+hifigan_universal_v1,HiFi-GAN (Universal V1),LJSpeech,3.221,0.968,7.82,80.36
+griffin_lim,Griffin-Lim STFT,LJSpeech,4.15,0.999,2.94,15.87
+bigvgan_v2_24khz_100band_256x,BigVGAN-v2 (112M),LibriTTS,4.35,0.997,6.48,27.91
+bigvgan_base_24khz_100band,BigVGAN-Base (14M),LibriTTS,3.925,0.987,6.9,42.48
+vocos_mel_24khz,Vocos,LibriTTS,3.791,0.982,6.96,42.18
+comvo_large,ComVo-Large,LibriTTS,4.089,0.99,6.79,36.09
+comvo_base,ComVo-Base,LibriTTS,3.774,0.98,7.14,57.89
+periodwave_turbo,PeriodWave-Turbo (4-step),LibriTTS,4.338,0.995,6.79,40.06
+periodwave_24k,PeriodWave (30-step),LibriTTS,4.159,0.988,9.81,122.97
+flow2gan,Flow2GAN (4-step),LibriTTS,4.466,0.998,6.36,34.34
+bridgevoc,BridgeVoC,LibriTTS,4.397,0.994,6.5,43.12
+rfwave_libritts_24k,RFWave,LibriTTS,3.954,0.985,8.64,143.77
+wavefm,WaveFM (1-step),LibriTTS,3.679,0.975,7.04,55.47
+rndvoc,RNDVoC,LibriTTS,4.156,0.991,6.52,46.6
+freev,FreeV,LibriTTS,3.282,0.96,6.86,76.75
+hifigan_universal_v1,HiFi-GAN (Universal V1),LibriTTS,3.11,0.965,7.56,74.25
+griffin_lim,Griffin-Lim STFT,LibriTTS,3.793,0.998,3.2,21.9
+bigvgan_v2_24khz_100band_256x,BigVGAN-v2 (112M),VCTK,4.373,0.98,6.61,21.47
+bigvgan_base_24khz_100band,BigVGAN-Base (14M),VCTK,3.853,0.956,7.03,32.37
+vocos_mel_24khz,Vocos,VCTK,3.618,0.945,7.05,33.26
+comvo_large,ComVo-Large,VCTK,4.02,0.967,6.93,29.81
+comvo_base,ComVo-Base,VCTK,3.819,0.953,7.09,40.45
+periodwave_turbo,PeriodWave-Turbo (4-step),VCTK,4.328,0.966,6.99,30.45
+periodwave_24k,PeriodWave (30-step),VCTK,4.193,0.899,10.83,97.39
+flow2gan,Flow2GAN (4-step),VCTK,4.459,0.983,6.55,19.1
+bridgevoc,BridgeVoC,VCTK,4.368,0.975,6.61,31.96
+rfwave_libritts_24k,RFWave,VCTK,3.746,0.823,9.29,116.1
+wavefm,WaveFM (1-step),VCTK,3.637,0.926,7.96,41.15
+rndvoc,RNDVoC,VCTK,4.11,0.964,6.51,30.97
+freev,FreeV,VCTK,2.585,0.898,7.16,65.83
+hifigan_universal_v1,HiFi-GAN (Universal V1),VCTK,2.893,0.903,7.62,64.67
+griffin_lim,Griffin-Lim STFT,VCTK,3.94,0.987,3.0,16.44
+bigvgan_v2_24khz_100band_256x,BigVGAN-v2 (112M),Free_ST,4.395,0.996,6.54,25.55
+bigvgan_base_24khz_100band,BigVGAN-Base (14M),Free_ST,3.641,0.982,6.94,40.84
+vocos_mel_24khz,Vocos,Free_ST,3.597,0.973,6.93,34.54
+comvo_large,ComVo-Large,Free_ST,3.906,0.986,6.82,25.84
+comvo_base,ComVo-Base,Free_ST,3.693,0.98,6.94,32.59
+periodwave_turbo,PeriodWave-Turbo (4-step),Free_ST,4.379,0.995,6.85,44.67
+periodwave_24k,PeriodWave (30-step),Free_ST,3.983,0.981,12.32,178.46
+flow2gan,Flow2GAN (4-step),Free_ST,4.466,0.997,6.45,28.7
+bridgevoc,BridgeVoC,Free_ST,4.315,0.995,6.56,34.88
+rfwave_libritts_24k,RFWave,Free_ST,3.373,0.963,8.77,212.31
+wavefm,WaveFM (1-step),Free_ST,3.629,0.976,6.88,44.52
+rndvoc,RNDVoC,Free_ST,4.223,0.992,6.58,35.47
+freev,FreeV,Free_ST,3.032,0.957,7.09,64.54
+hifigan_universal_v1,HiFi-GAN (Universal V1),Free_ST,2.851,0.952,7.79,65.85
+griffin_lim,Griffin-Lim STFT,Free_ST,4.173,0.996,2.92,16.52

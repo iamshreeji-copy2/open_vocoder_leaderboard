@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRISM-V · Open Neural Vocoder Evaluation</title>
+  <meta name="description" content="PRISM-V: Open Evaluation of Pretrained Neural Vocoders on English across diverse acoustic conditions, generative architectures, and edge deployment profiles." />
+  <link rel="icon" type="image/png" href="assets/logo_web.png" />
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: ['class', '[data-theme="dark"]'],
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#EEF2FF',
+              100: '#E0E7FF',
+              200: '#C7D2FE',
+              300: '#A5B4FC',
+              400: '#818CF8',
+              500: '#6366F1',
+              600: '#4F46E5',
+              700: '#4338CA',
+              800: '#3730A3',
+              900: '#312E81',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'IBM Plex Mono', 'Menlo', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Plotly.js CDN -->
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+  <!-- Custom PRISM-V Styles -->
+  <link rel="stylesheet" href="assets/custom.css" />
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- ── Accessibility & Theme Control Toolbar (Fixed Top-Right) ──────────── -->
+  <div id="prism-accessibility-toolbar" role="toolbar" aria-label="Accessibility and Display Controls">
+    <span class="toolbar-label" title="Accessibility Font Size (5 Levels)">🔤</span>
+    <button id="font-dec-btn" class="font-step-btn" onclick="window.stepPrismFont && window.stepPrismFont(-1)" title="Decrease font size (A−)" aria-label="Decrease font size">A−</button>
+    <div class="font-scale-dots" role="radiogroup" aria-label="Font scale 1 to 5">
+      <button class="font-dot" data-level="1" onclick="window.setPrismFontLevel && window.setPrismFontLevel(1)" title="Scale 1/5: Smallest (82%)">1</button>
+      <button class="font-dot" data-level="2" onclick="window.setPrismFontLevel && window.setPrismFontLevel(2)" title="Scale 2/5: Small (91%)">2</button>
+      <button class="font-dot active" data-level="3" onclick="window.setPrismFontLevel && window.setPrismFontLevel(3)" title="Scale 3/5: Default (100%)">3</button>
+      <button class="font-dot" data-level="4" onclick="window.setPrismFontLevel && window.setPrismFontLevel(4)" title="Scale 4/5: Large (112%)">4</button>
+      <button class="font-dot" data-level="5" onclick="window.setPrismFontLevel && window.setPrismFontLevel(5)" title="Scale 5/5: Largest (125%)">5</button>
+    </div>
+    <button id="font-inc-btn" class="font-step-btn" onclick="window.stepPrismFont && window.stepPrismFont(1)" title="Increase font size (A+)" aria-label="Increase font size">A+</button>
+    <div class="toolbar-divider" aria-hidden="true"></div>
+    <button id="theme-toggle-btn" onclick="window.togglePrismTheme && window.togglePrismTheme()" title="Toggle Dark / Light Mode" aria-label="Toggle Dark / Light Mode">
+      <span id="theme-icon">☀️</span>
+    </button>
+  </div>
+
+  <!-- ── Main Application Container ────────────────────────────────────────── -->
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ── Hero Banner ─────────────────────────────────────────────────────── -->
+    <header class="bg-gradient-to-b from-slate-900 to-slate-900/60 dark:from-slate-900/90 dark:to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 mb-6 text-center shadow-lg relative overflow-hidden">
+      <!-- Glow background accent -->
+      <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-indigo-600/15 blur-3xl rounded-full pointer-events-none"></div>
+
+      <!-- Center Logo -->
+      <div class="flex justify-center mb-5">
+        <div class="bg-white p-2.5 rounded-2xl border border-slate-700 shadow-md inline-block">
+          <img src="assets/logo_web.png" alt="PRISM-V Benchmark Logo" class="max-w-[280px] sm:max-w-[320px] h-auto object-contain" />
+        </div>
+      </div>
+
+      <!-- Benchmark Title -->
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight mb-3">
+        <span class="prism-rainbow-text prism-glow">
+          <span class="prism-p">P</span><span class="prism-r">R</span><span class="prism-i">I</span><span class="prism-s">S</span><span class="prism-m">M</span><span class="prism-suffix">-V</span>
+        </span>
+        <span class="text-2xl sm:text-3xl ml-1">🤗</span>
+      </h1>
+
+      <!-- 5 Dimensions Bar -->
+      <div class="prism-dimension-bar">
+        <span class="prism-dim-pill prism-dim-p" title="Perceptual quality (UTMOS + NISQA)"><b>P</b> · Perceptual</span>
+        <span class="prism-dim-pill prism-dim-r" title="Reconstruction fidelity (PESQ + MCD + LSD)"><b>R</b> · Reconstruction</span>
+        <span class="prism-dim-pill prism-dim-i" title="Intelligibility preservation (STOI + ΔWER)"><b>I</b> · Intelligibility</span>
+        <span class="prism-dim-pill prism-dim-s" title="Speaker preservation (Embedding cosine similarity)"><b>S</b> · Speaker</span>
+        <span class="prism-dim-pill prism-dim-m" title="Model efficiency (RTF + VRAM + Params)"><b>M</b> · Model Efficiency</span>
+      </div>
+
+      <p class="text-sm sm:text-base font-semibold text-slate-300 dark:text-slate-300 mb-2">
+        Open Evaluation of Pretrained Neural Vocoders · Ranked by
+        <span class="prism-rainbow-text font-bold"><span class="prism-p">P</span><span class="prism-r">R</span><span class="prism-i">I</span><span class="prism-s">S</span><span class="prism-m">M</span>-V Score</span> (Default)
+      </p>
+
+      <p class="max-w-3xl mx-auto text-xs sm:text-sm text-slate-400 leading-relaxed mb-5">
+        The 🤗 PRISM-V Leaderboard evaluates open-source and pretrained neural vocoders on English across diverse acoustic conditions, generative architectures, and edge deployment profiles.
+      </p>
+
+      <!-- KPI Summary Badges -->
+      <div class="flex flex-wrap justify-center items-center gap-2">
+        <span class="banner-badge">🏆 15 Pretrained Models</span>
+        <span class="banner-badge">📂 4 Evaluated Corpora</span>
+        <span class="banner-badge">⚡ Edge Profiling</span>
+        <span class="banner-badge">🔬 MFA Phoneme-Resolved QC</span>
+        <span class="banner-badge">📋 Benchmark v1.0.1</span>
+      </div>
+    </header>
+
+    <!-- ── Sticky Navigation Bar ───────────────────────────────────────────── -->
+    <nav class="sticky top-2 z-40 bg-slate-900/80 dark:bg-slate-950/80 backdrop-blur-md border border-slate-800/80 rounded-2xl p-1.5 mb-8 shadow-md">
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth" role="tablist">
+        <button class="nav-tab-btn active" data-tab="overview" onclick="switchTab('overview')">🌟 Overview</button>
+        <button class="nav-tab-btn" data-tab="leaderboard" onclick="switchTab('leaderboard')">🏆 Leaderboard</button>
+        <button class="nav-tab-btn" data-tab="compare" onclick="switchTab('compare')">⚖️ Compare</button>
+        <button class="nav-tab-btn" data-tab="audio-explorer" onclick="switchTab('audio-explorer')">🎧 Audio Explorer</button>
+        <button class="nav-tab-btn" data-tab="robustness" onclick="switchTab('robustness')">📊 Quality &amp; Robustness</button>
+        <button class="nav-tab-btn" data-tab="efficiency" onclick="switchTab('efficiency')">⚡ Efficiency</button>
+        <button class="nav-tab-btn" data-tab="architectures" onclick="switchTab('architectures')">🧠 Architectures</button>
+        <button class="nav-tab-btn" data-tab="diagnostics" onclick="switchTab('diagnostics')">🔬 Diagnostics</button>
+        <button class="nav-tab-btn" data-tab="pareto" onclick="switchTab('pareto')">📈 Pareto Frontier</button>
+        <button class="nav-tab-btn" data-tab="models" onclick="switchTab('models')">📦 Models</button>
+        <button class="nav-tab-btn" data-tab="methodology" onclick="switchTab('methodology')">🧪 Methodology</button>
+        <button class="nav-tab-btn" data-tab="submit" onclick="switchTab('submit')">➕ Submit Model</button>
+        <button class="nav-tab-btn" data-tab="changelog" onclick="switchTab('changelog')">📜 Changelog &amp; Citation</button>
+      </div>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 1: OVERVIEW                                                         -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-overview" class="tab-panel space-y-8">
+      <!-- Executive Summary -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+        <div class="max-w-3xl">
+          <h2 class="text-2xl font-bold mb-3 text-slate-100">Executive Overview &amp; Benchmark Motivation</h2>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-4">
+            Traditional neural vocoder evaluations predominantly report PESQ and MCD exclusively on clean, single-speaker studio recordings (e.g., LJSpeech). In production speech synthesis and voice conversion, however, practitioners deploy models on diverse voices, accented speech, and real-world noisy audio across hardware constrained to sub-realtime latencies.
+          </p>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            <strong>PRISM-V</strong> establishes a comprehensive, zero-shot, training-free benchmark evaluating 15 pretrained vocoder architectures across four English acoustic corpora and five core dimensions: <strong>P</strong>erceptual quality, <strong>R</strong>econstruction fidelity, <strong>I</strong>ntelligibility preservation, <strong>S</strong>peaker identity, and <strong>M</strong>odel edge efficiency.
+          </p>
+        </div>
+
+        <!-- KPI Cards Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
+          <div class="kpi-card">
+            <div class="text-xs uppercase text-slate-400 font-bold mb-1">Pretrained Models</div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-indigo-400 font-mono">15</div>
+            <div class="text-[11px] text-slate-500 mt-1">GAN, Flow, SDE, Fourier</div>
+          </div>
+          <div class="kpi-card">
+            <div class="text-xs uppercase text-slate-400 font-bold mb-1">Acoustic Corpora</div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-cyan-400 font-mono">4</div>
+            <div class="text-[11px] text-slate-500 mt-1">Studio, Multi, Accent, Noisy</div>
+          </div>
+          <div class="kpi-card">
+            <div class="text-xs uppercase text-slate-400 font-bold mb-1">PRISM Dimensions</div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">5</div>
+            <div class="text-[11px] text-slate-500 mt-1">Holistic deployment scoring</div>
+          </div>
+          <div class="kpi-card">
+            <div class="text-xs uppercase text-slate-400 font-bold mb-1">Max Throughput</div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono">370×</div>
+            <div class="text-[11px] text-slate-500 mt-1">RT on Edge profiling</div>
+          </div>
+          <div class="kpi-card">
+            <div class="text-xs uppercase text-slate-400 font-bold mb-1">Reproducibility</div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-rose-400 font-mono">100%</div>
+            <div class="text-[11px] text-slate-500 mt-1">Open data &amp; checkpoints</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Findings Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <div class="text-2xl mb-2">🎯</div>
+          <h3 class="text-base font-bold text-slate-100 mb-2">Studio PESQ Mismatch</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Models scoring &gt;4.4 PESQ on clean LJSpeech (e.g. BigVGAN-v2, PeriodWave) show variable degradation on mobile microphone noise (Free_ST) and accented speech (VCTK). Cross-corpus evaluation is required for true generalization.
+          </p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <div class="text-2xl mb-2">⚡</div>
+          <h3 class="text-base font-bold text-slate-100 mb-2">The Flow-Matching Frontier</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Modern flow matching models (Flow2GAN, WaveFM) and Brownian Bridge SDEs (BridgeVoC) compress diffusion generation into 1 to 4 steps, matching 30-step diffusion fidelity at 12–35× real-time throughput.
+          </p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <div class="text-2xl mb-2">📱</div>
+          <h3 class="text-base font-bold text-slate-100 mb-2">Edge Deployment Realities</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Fourier / iSTFT ConvNeXt models (Vocos) and pseudo-inverse GANs (FreeV) achieve &gt;300× throughput with under 400 MB peak VRAM, unlocking viable on-device streaming neural synthesis on edge hardware.
+          </p>
+        </div>
+      </div>
+
+      <!-- Paradigm Overview Chart & Quick Navigation -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <div id="overview-arch-bar" class="w-full"></div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <h3 class="text-lg font-bold text-slate-100 mb-2">Explore the Benchmark</h3>
+            <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+              Navigate directly to interactive components to inspect empirical metrics, listen to audio samples, or configure custom model rankings.
+            </p>
+            <div class="space-y-2.5">
+              <button onclick="switchTab('leaderboard')" class="w-full text-left p-3 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 hover:border-indigo-500 transition text-xs font-semibold flex items-center justify-between">
+                <span>🏆 Full Leaderboard Table</span>
+                <span class="text-slate-400">→</span>
+              </button>
+              <button onclick="switchTab('compare')" class="w-full text-left p-3 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 hover:border-indigo-500 transition text-xs font-semibold flex items-center justify-between">
+                <span>⚖️ Side-by-Side Model Comparison</span>
+                <span class="text-slate-400">→</span>
+              </button>
+              <button onclick="switchTab('audio-explorer')" class="w-full text-left p-3 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 hover:border-indigo-500 transition text-xs font-semibold flex items-center justify-between">
+                <span>🎧 Interactive Audio Explorer</span>
+                <span class="text-slate-400">→</span>
+              </button>
+              <button onclick="switchTab('pareto')" class="w-full text-left p-3 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 hover:border-indigo-500 transition text-xs font-semibold flex items-center justify-between">
+                <span>📈 Pareto Quality vs. Latency</span>
+                <span class="text-slate-400">→</span>
+              </button>
+            </div>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-500">
+            ICASSP 2027 Benchmark Release · Open Neural Vocoder Analysis
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 2: LEADERBOARD                                                      -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-leaderboard" class="tab-panel hidden space-y-6">
+
+      <!-- Global Filter Controls Panel -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+        <!-- Search row -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div class="relative flex-1">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">🔍</span>
+            <input type="text" id="lb-search-input" placeholder="Search by model name or architecture (comma-separated, e.g. bigvgan, vocos, comvo)..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs sm:text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition" />
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="lb-export-csv-btn" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs font-semibold text-slate-200 hover:text-white transition flex items-center gap-1.5" title="Export current filtered table to CSV">
+              📥 CSV
+            </button>
+            <button id="lb-export-json-btn" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs font-semibold text-slate-200 hover:text-white transition flex items-center gap-1.5" title="Export current filtered table to JSON">
+              📋 JSON
+            </button>
+          </div>
+        </div>
+
+        <!-- Row 1: Active Corpora & Architecture Taxonomy -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-2 border-t border-slate-800">
+          <div class="lg:col-span-5 space-y-1.5">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">
+              📂 Active Corpora (Dynamically Recomputes Avg PESQ)
+            </label>
+            <div class="flex flex-wrap items-center gap-2">
+              <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-semibold cursor-pointer select-none">
+                <input type="checkbox" value="LJSpeech" class="lb-corpus-chk text-indigo-600 rounded" checked />
+                <span>LJSpeech</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-semibold cursor-pointer select-none">
+                <input type="checkbox" value="LibriTTS" class="lb-corpus-chk text-indigo-600 rounded" checked />
+                <span>LibriTTS</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-semibold cursor-pointer select-none">
+                <input type="checkbox" value="VCTK" class="lb-corpus-chk text-indigo-600 rounded" checked />
+                <span>VCTK</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-semibold cursor-pointer select-none">
+                <input type="checkbox" value="Free_ST" class="lb-corpus-chk text-indigo-600 rounded" checked />
+                <span>Free_ST</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7 space-y-1.5">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">
+              🏛️ Architecture Taxonomy Filter
+            </label>
+            <div class="flex flex-wrap items-center gap-2">
+              <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-semibold cursor-pointer select-none">
+                <input type="checkbox" value="GAN-based" class="lb-arch-chk text-indigo-600 rounded" checked />
+                <span>GAN-based</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-semibold cursor-pointer select-none">
+                <input type="checkbox" value="Fourier / Transformer-based" class="lb-arch-chk text-indigo-600 rounded" checked />
+                <span>Fourier / Transformer</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-semibold cursor-pointer select-none">
+                <input type="checkbox" value="Flow-based" class="lb-arch-chk text-indigo-600 rounded" checked />
+                <span>Flow-based</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-semibold cursor-pointer select-none">
+                <input type="checkbox" value="Diffusion-based" class="lb-arch-chk text-indigo-600 rounded" checked />
+                <span>Diffusion-based</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-semibold cursor-pointer select-none">
+                <input type="checkbox" value="Algorithmic DSP" class="lb-arch-chk text-indigo-600 rounded" checked />
+                <span>Algorithmic DSP</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Provenance Dropdowns & Edge Toggle -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-2 border-t border-slate-800 text-xs">
+          <div>
+            <label class="block text-slate-400 font-bold mb-1">🎯 Track</label>
+            <select id="lb-track-select" class="w-full p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-200">
+              <option value="All Tracks">All Tracks</option>
+              <option value="24kHz Primary Benchmark">24kHz Primary Benchmark</option>
+              <option value="22.05kHz Legacy Track">22.05kHz Legacy Track</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-400 font-bold mb-1">📋 Version</label>
+            <select class="w-full p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-200" disabled>
+              <option>Latest (v1.0.1)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-400 font-bold mb-1">💻 Code Availability</label>
+            <select id="lb-code-select" class="w-full p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-200">
+              <option value="All Code">All Code</option>
+              <option value="Open-Source Code Only">Open-Source Code Only</option>
+              <option value="Closed-Source Only">Closed-Source Only</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-400 font-bold mb-1">📦 Checkpoints</label>
+            <select id="lb-ckpt-select" class="w-full p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-200">
+              <option value="All Checkpoints">All Checkpoints</option>
+              <option value="Open Checkpoints Only">Open Checkpoints Only</option>
+              <option value="Proprietary Only">Proprietary Only</option>
+            </select>
+          </div>
+          <div class="col-span-2 flex items-end gap-2">
+            <input type="checkbox" id="lb-edge-chk" class="hidden" />
+            <button id="lb-edge-btn" class="flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-200 hover:border-indigo-500 transition">
+              ⚡ Filter Edge
+            </button>
+            <button id="toggle-custom-weights-btn" class="flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-200 hover:border-indigo-500 transition">
+              ⚖️ Custom Weights
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Weighting Drawer -->
+        <div id="custom-weights-drawer" class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-300">⚖️ Interactive Custom Composite Scoring Weights</span>
+            <span class="text-slate-500">Weights normalize automatically to 100%</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+            <div>
+              <div class="flex justify-between mb-1"><span>Quality (PESQ):</span><span id="weight-pesq-val" class="font-mono font-bold text-indigo-400">35%</span></div>
+              <input type="range" id="weight-pesq" min="0" max="100" value="35" class="w-full accent-indigo-500" />
+            </div>
+            <div>
+              <div class="flex justify-between mb-1"><span>Intelligibility (STOI):</span><span id="weight-stoi-val" class="font-mono font-bold text-cyan-400">20%</span></div>
+              <input type="range" id="weight-stoi" min="0" max="100" value="20" class="w-full accent-cyan-500" />
+            </div>
+            <div>
+              <div class="flex justify-between mb-1"><span>Perceptual (UTMOS):</span><span id="weight-utmos-val" class="font-mono font-bold text-purple-400">25%</span></div>
+              <input type="range" id="weight-utmos" min="0" max="100" value="25" class="w-full accent-purple-500" />
+            </div>
+            <div>
+              <div class="flex justify-between mb-1"><span>Speed (xRT):</span><span id="weight-speed-val" class="font-mono font-bold text-amber-400">20%</span></div>
+              <input type="range" id="weight-speed" min="0" max="100" value="20" class="w-full accent-amber-500" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Collapsible Column Customizer -->
+        <details class="group bg-slate-950/60 border border-slate-800/80 rounded-xl p-3 text-xs">
+          <summary class="font-bold text-slate-300 cursor-pointer flex items-center justify-between select-none">
+            <span>🔧 Customize Visible Columns &amp; Metrics (18 Metrics Available · Click to Expand)</span>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 pt-4 mt-3 border-t border-slate-800/80">
+            <div>
+              <div class="font-bold text-indigo-400 mb-2">📐 Objective</div>
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="pesq" class="lb-col-vis-chk" checked /> PESQ ↑</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="stoi" class="lb-col-vis-chk" checked /> STOI ↑</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="mcd_db" class="lb-col-vis-chk" /> MCD ↓</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="lsd_db" class="lb-col-vis-chk" /> LSD ↓</label>
+              </div>
+            </div>
+            <div>
+              <div class="font-bold text-purple-400 mb-2">👂 Perceptual</div>
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="utmos" class="lb-col-vis-chk" checked /> UTMOS ↑</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="nisqa" class="lb-col-vis-chk" /> NISQA ↑</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="delta_wer_pct" class="lb-col-vis-chk" checked /> ΔWER ↓</label>
+              </div>
+            </div>
+            <div>
+              <div class="font-bold text-amber-400 mb-2">⚡ Performance</div>
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="rtf" class="lb-col-vis-chk" checked /> RTF ↓</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="speedup_x" class="lb-col-vis-chk" checked /> xRT ↑</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="peak_vram_mb" class="lb-col-vis-chk" checked /> Peak VRAM ↓</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="params_m" class="lb-col-vis-chk" /> Params</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="edge_feasible" class="lb-col-vis-chk" /> Edge ⚡</label>
+              </div>
+            </div>
+            <div>
+              <div class="font-bold text-emerald-400 mb-2">🛡️ Robustness</div>
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="LJSpeech" class="lb-col-vis-chk" checked /> LJSpeech</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="LibriTTS" class="lb-col-vis-chk" checked /> LibriTTS</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="VCTK" class="lb-col-vis-chk" checked /> VCTK</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="Free_ST" class="lb-col-vis-chk" checked /> Free_ST</label>
+              </div>
+            </div>
+            <div>
+              <div class="font-bold text-slate-400 mb-2">ℹ️ Metadata</div>
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="code" class="lb-col-vis-chk" checked /> Code OS</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="checkpoint" class="lb-col-vis-chk" checked /> Checkpoint</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="is_pareto" class="lb-col-vis-chk" checked /> Pareto ⭐</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="license" class="lb-col-vis-chk" /> License</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="architecture_family" class="lb-col-vis-chk" /> Architecture</label>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Column Category Legend Bar -->
+      <div class="flex flex-wrap items-center justify-center gap-2 text-xs">
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-bold">
+          🏆 Rank &amp; PRISM-V (1–100)
+        </div>
+        <div class="col-legend-item col-legend-obj">📐 Objective Metrics (Blue)</div>
+        <div class="col-legend-item col-legend-subj">👂 Perceptual / Subjective (Violet)</div>
+        <div class="col-legend-item col-legend-perf">⚡ Efficiency &amp; Edge (Amber)</div>
+        <div class="col-legend-item col-legend-rob">🛡️ Robustness / Per-Corpus (Green)</div>
+        <div class="px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold">
+          ✅ Code Open-Source
+        </div>
+        <div class="px-2.5 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-semibold">
+          ⭐ Pareto Optimal
+        </div>
+      </div>
+
+      <!-- Interactive Leaderboard Table -->
+      <div class="prism-table-container">
+        <div class="flex items-center justify-between p-3 border-b border-slate-800 bg-slate-900 text-xs">
+          <div class="font-bold text-slate-300">
+            📊 Benchmarked Checkpoints <span id="lb-model-count" class="ml-2 font-mono font-normal text-slate-400"></span>
+          </div>
+          <div class="text-slate-500 text-[11px]">
+            Click any column header to sort ↑↓
+          </div>
+        </div>
+        <table class="prism-table" id="prism-lb-table">
+          <thead id="lb-table-head"></thead>
+          <tbody id="lb-table-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Table Footnote / Legend Banner -->
+      <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400 p-3 bg-slate-900/50 border border-slate-800/80 rounded-xl">
+        <div class="flex items-center gap-1.5">
+          <span class="tbl-btn tbl-btn-gh text-[10px]">💻 Code ✅</span>
+          <span>Training &amp; inference code publicly available</span>
+        </div>
+        <span class="text-slate-600">|</span>
+        <div class="flex items-center gap-1.5">
+          <span class="tbl-btn tbl-btn-ckpt text-[10px]">📦 Checkpoint ✅</span>
+          <span>Pretrained weights freely downloadable</span>
+        </div>
+        <span class="text-slate-600">|</span>
+        <div class="flex items-center gap-1.5">
+          <span class="text-indigo-400 font-bold">⭐ Pareto</span>
+          <span>Non-dominated Pareto frontier on quality &amp; speed</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 3: COMPARE                                                          -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-compare" class="tab-panel hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-xl font-bold text-slate-100 mb-2">⚖️ Side-by-Side Model Comparison</h2>
+        <p class="text-xs text-slate-400 mb-4">
+          Select 2 to 4 models to directly inspect differences across quality, intelligibility, speed, and GPU memory footprint.
+        </p>
+        <div class="mb-6">
+          <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Select Models to Compare (Max 4):</label>
+          <div id="compare-models-select-container" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-7">
+            <div class="overflow-x-auto border border-slate-800 rounded-xl">
+              <table id="compare-matrix-table" class="w-full text-left"></table>
+            </div>
+          </div>
+          <div class="lg:col-span-5 bg-slate-950 border border-slate-800 rounded-xl p-4 flex items-center justify-center">
+            <div id="compare-radar" class="w-full"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 4: AUDIO EXPLORER                                                   -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-audio-explorer" class="tab-panel hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-100">🎧 Side-by-Side Audio Listening &amp; QC</h2>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Listen to genuine model reconstructions across diverse acoustic corpora and compare directly against ground truth reference.
+            </p>
+          </div>
+          <button id="audio-sync-play-btn" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-200 hover:border-indigo-500 transition">
+            🔄 Enable Sync Play
+          </button>
+        </div>
+
+        <!-- Condition selector -->
+        <div class="mb-6">
+          <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">📁 Utterance / Acoustic Condition</label>
+          <select id="audio-condition-select" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs sm:text-sm text-slate-100 font-semibold"></select>
+        </div>
+
+        <!-- Ground truth reference card -->
+        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 mb-6">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+              <span>🟢</span> Ground Truth Reference Audio
+            </span>
+            <span class="text-[11px] text-slate-500">Uncompressed 24kHz Reference</span>
+          </div>
+          <div class="audio-player-custom">
+            <canvas id="ref-waveform" class="audio-waveform-canvas"></canvas>
+            <audio id="audio-ref-player" controls class="w-full mt-1"></audio>
+          </div>
+        </div>
+
+        <!-- Head-to-Head Comparison Banner -->
+        <div id="audio-head-to-head-banner"></div>
+
+        <!-- Models A and B Columns -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <!-- Model A Column -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-indigo-400 mb-1.5">Model A Candidate</label>
+              <select id="audio-model-a-select" class="w-full p-2 rounded-xl bg-slate-800 border border-slate-700 text-xs sm:text-sm text-slate-100 font-bold"></select>
+            </div>
+            <div id="audio-a-card"></div>
+            <div class="audio-player-custom">
+              <canvas id="audio-a-waveform" class="audio-waveform-canvas"></canvas>
+              <audio id="audio-a-player" controls class="w-full mt-1"></audio>
+            </div>
+          </div>
+
+          <!-- Model B Column -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-cyan-400 mb-1.5">Model B Candidate</label>
+              <select id="audio-model-b-select" class="w-full p-2 rounded-xl bg-slate-800 border border-slate-700 text-xs sm:text-sm text-slate-100 font-bold"></select>
+            </div>
+            <div id="audio-b-card"></div>
+            <div class="audio-player-custom">
+              <canvas id="audio-b-waveform" class="audio-waveform-canvas"></canvas>
+              <audio id="audio-b-player" controls class="w-full mt-1"></audio>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 5: QUALITY & ROBUSTNESS                                             -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-robustness" class="tab-panel hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-xl font-bold text-slate-100 mb-1">📊 Cross-Corpus Robustness &amp; Generalization Analysis</h2>
+        <p class="text-xs text-slate-400 mb-4">
+          Evaluates degradation across clean studio (LJSpeech), multi-speaker narrative (LibriTTS), regional accents (VCTK), and mobile noisy recordings (Free_ST).
+        </p>
+
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4 p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs">
+          <div class="flex items-center gap-3">
+            <span class="font-bold text-slate-300">Metric:</span>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="rob_m" value="pesq" class="rob-metric-radio" checked /> PESQ ↑</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="rob_m" value="stoi" class="rob-metric-radio" /> STOI ↑</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="rob_m" value="lsd_db" class="rob-metric-radio" /> LSD ↓</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="rob_m" value="mcd_db" class="rob-metric-radio" /> MCD ↓</label>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="font-bold text-slate-300">View:</span>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="rob_v" value="Heatmap" class="rob-view-radio" checked /> Heatmap</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="rob_v" value="Bar" class="rob-view-radio" /> Grouped Bar</label>
+          </div>
+        </div>
+
+        <div id="robustness-plot" class="w-full"></div>
+
+        <h3 class="text-sm font-bold text-slate-100 mt-8 mb-3">Cross-Corpus Numerical Breakdown Table</h3>
+        <div class="overflow-x-auto border border-slate-800 rounded-xl max-h-96">
+          <table class="prism-table w-full">
+            <thead class="bg-slate-800 sticky top-0">
+              <tr>
+                <th class="p-3">Model</th>
+                <th class="p-3">Corpus</th>
+                <th class="p-3">PESQ ↑</th>
+                <th class="p-3">STOI ↑</th>
+                <th class="p-3">LSD (dB) ↓</th>
+                <th class="p-3">MCD (dB) ↓</th>
+              </tr>
+            </thead>
+            <tbody id="robustness-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 6: EFFICIENCY                                                       -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-efficiency" class="tab-panel hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-xl font-bold text-slate-100 mb-1">⚡ Throughput, Latency &amp; GPU Memory Footprint</h2>
+        <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+          All efficiency metrics measured under an <strong>Edge Profiling</strong> protocol using generator-only batch-size 1 FP32 inference with synchronous CUDA timing.
+        </p>
+
+        <div id="efficiency-bar-chart" class="w-full"></div>
+
+        <h3 class="text-sm font-bold text-slate-100 mt-8 mb-3">Full Computational Profile Table</h3>
+        <div class="overflow-x-auto border border-slate-800 rounded-xl">
+          <table class="prism-table w-full">
+            <thead class="bg-slate-800">
+              <tr>
+                <th class="p-3">Model</th>
+                <th class="p-3">Architecture</th>
+                <th class="p-3">RTF ↓</th>
+                <th class="p-3">xRT ↑</th>
+                <th class="p-3">Peak VRAM ↓</th>
+                <th class="p-3">Params (M)</th>
+                <th class="p-3">Edge Ready</th>
+                <th class="p-3">Code OS</th>
+                <th class="p-3">Ckpt OS</th>
+              </tr>
+            </thead>
+            <tbody id="efficiency-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 7: ARCHITECTURES                                                    -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-architectures" class="tab-panel hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-xl font-bold text-slate-100 mb-1">🧠 Architecture-Aware Taxonomy &amp; Comparison</h2>
+        <p class="text-xs text-slate-400 mb-4">
+          Examine generative paradigms: GAN, Flow Matching, Fourier / Transformer, Diffusion SDE, and Algorithmic baselines.
+        </p>
+
+        <div class="overflow-x-auto border border-slate-800 rounded-xl mb-6">
+          <table class="prism-table w-full">
+            <thead class="bg-slate-800">
+              <tr>
+                <th class="p-3">Model</th>
+                <th class="p-3">Category</th>
+                <th class="p-3">Family</th>
+                <th class="p-3">Params</th>
+                <th class="p-3">Track</th>
+                <th class="p-3">Year</th>
+                <th class="p-3">License</th>
+                <th class="p-3">PESQ</th>
+                <th class="p-3">UTMOS</th>
+                <th class="p-3">RTF</th>
+                <th class="p-3">xRT</th>
+                <th class="p-3">VRAM</th>
+                <th class="p-3">Score</th>
+              </tr>
+            </thead>
+            <tbody id="arch-table-body"></tbody>
+          </table>
+        </div>
+
+        <div id="arch-pesq-bar" class="w-full"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 8: DIAGNOSTICS (MFA Phoneme QC)                                     -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-diagnostics" class="tab-panel hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-xl font-bold text-slate-100 mb-1">🔬 Montreal Forced Aligner Phoneme Diagnostics</h2>
+        <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+          Decomposes reconstruction error across standard ARPAbet phonetic classes: Vowels, Stops, Fricatives, Affricates, Nasals, Liquids, and Glides.
+        </p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+            <div id="diag-radar-chart" class="w-full"></div>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+            <div id="diag-bar-chart" class="w-full"></div>
+          </div>
+        </div>
+
+        <h3 class="text-sm font-bold text-slate-100 mt-8 mb-3">Full Phoneme Diagnostics Data Table</h3>
+        <div class="overflow-x-auto border border-slate-800 rounded-xl max-h-96">
+          <table class="prism-table w-full">
+            <thead class="bg-slate-800 sticky top-0">
+              <tr>
+                <th class="p-3">Model</th>
+                <th class="p-3">Phonetic Class</th>
+                <th class="p-3">LSD (dB) ↓</th>
+                <th class="p-3">F0 Error (¢)</th>
+                <th class="p-3">Boundary Error (dB)</th>
+              </tr>
+            </thead>
+            <tbody id="diag-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 9: PARETO FRONTIER                                                  -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-pareto" class="tab-panel hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-xl font-bold text-slate-100 mb-1">📈 Multi-Objective Quality vs. Efficiency Pareto Frontier</h2>
+        <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+          Models located on the dashed <strong>Pareto frontier ⭐</strong> are non-dominated checkpoints simultaneously optimizing acoustic fidelity and execution speed.
+        </p>
+
+        <div class="flex flex-wrap items-center gap-4 p-4 bg-slate-950 border border-slate-800 rounded-xl mb-6 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-400">X-axis (Cost):</span>
+            <select id="pareto-x-select" class="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-200">
+              <option value="rtf">RTF (latency)</option>
+              <option value="peak_vram_mb">Peak VRAM (MB)</option>
+              <option value="params_m">Params (M)</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-400">Y-axis (Metric):</span>
+            <select id="pareto-y-select" class="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-200">
+              <option value="overall_score">🏆 PRISM-V Score (1–100)</option>
+              <option value="pesq">PESQ</option>
+              <option value="utmos">UTMOS</option>
+              <option value="stoi">STOI</option>
+              <option value="delta_wer_pct">ΔWER %</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-4">
+            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="pareto-log-chk" checked /> Log X-axis</label>
+            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="pareto-pf-chk" checked /> Highlight Pareto Frontier</label>
+          </div>
+        </div>
+
+        <div id="pareto-scatter-chart" class="w-full"></div>
+
+        <!-- Deployment recommendations table -->
+        <h3 class="text-sm font-bold text-slate-100 mt-8 mb-3">Deployment Recommendations Guide</h3>
+        <div class="overflow-x-auto border border-slate-800 rounded-xl">
+          <table class="prism-table w-full">
+            <thead class="bg-slate-800">
+              <tr>
+                <th class="p-3">🖥️ Deployment Target</th>
+                <th class="p-3">✅ Recommended Checkpoints</th>
+                <th class="p-3">💡 Engineering Rationale</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="p-3 font-bold text-indigo-400">Edge / Mobile / Embedded</td>
+                <td class="p-3 font-semibold">Vocos, FreeV, ComVo-Base</td>
+                <td class="p-3 text-slate-300">RTF &lt; 0.015 (66×+ real-time), VRAM &lt; 650 MB. Fits smartphone GPU &amp; NPU envelopes.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-cyan-400">Mid-Range GPU Server</td>
+                <td class="p-3 font-semibold">Flow2GAN, ComVo-Large</td>
+                <td class="p-3 text-slate-300">SOTA fidelity (PESQ &gt; 4.4) with 12–19× real-time throughput. Ideal for interactive TTS streaming APIs.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-amber-400">High-End Cloud / Studio Offline</td>
+                <td class="p-3 font-semibold">BigVGAN-v2 (112M), PeriodWave</td>
+                <td class="p-3 text-slate-300">Uncompromised acoustic reconstruction quality, anti-aliased snake activations, fine spectral envelope detail.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 10: MODELS (Model Registry)                                         -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-models" class="tab-panel hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-xl font-bold text-slate-100 mb-1">📦 Model Registry, Provenance &amp; Checkpoint Cards</h2>
+        <p class="text-xs text-slate-400 mb-4">
+          Select a model to view full architectural details, official code links, checkpoint sources, and per-corpus breakdown.
+        </p>
+        <div class="mb-6 max-w-sm">
+          <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">Select Model:</label>
+          <select id="model-card-select" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs sm:text-sm text-slate-100 font-bold"></select>
+        </div>
+        <div id="model-card-details-container"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 11: METHODOLOGY                                                     -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-methodology" class="tab-panel hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-8">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-100 mb-2">🧪 Benchmark Protocol &amp; Metric Definitions</h2>
+          <p class="text-sm text-slate-400">
+            Comprehensive empirical benchmarking specification, dataset partitions, and hardware profiling details.
+          </p>
+        </div>
+
+        <!-- Figure 1 Taxonomy Diagram -->
+        <div class="text-center p-4 bg-slate-950 border border-slate-800 rounded-2xl">
+          <div class="bg-white p-3 rounded-xl inline-block max-w-xl mx-auto shadow-md border border-slate-700">
+            <img src="assets/logo_web.png" alt="PRISM-V Evaluation Taxonomy" class="w-full h-auto object-contain" />
+          </div>
+          <p class="text-xs text-slate-400 mt-3 max-w-2xl mx-auto">
+            <strong>Figure 1: <span class="prism-p">P</span><span class="prism-r">R</span><span class="prism-i">I</span><span class="prism-s">S</span><span class="prism-m">M</span>-V Evaluation Taxonomy</strong> — Refracting neural vocoder synthesis across the 5 core PRISM dimensions: <b>P</b>erceptual quality, <b>R</b>econstruction fidelity, <b>I</b>ntelligibility preservation, <b>S</b>peaker preservation, and <b>M</b>odel efficiency.
+          </p>
+        </div>
+
+        <!-- Design Principles -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-300">
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-2">
+            <h3 class="font-bold text-sm text-slate-100 uppercase tracking-wider">Design Principles</h3>
+            <p><strong>PRISM-V</strong> is a strictly training-free, zero-shot evaluation of publicly released pretrained checkpoints.</p>
+            <p>Models are evaluated exactly as practitioners deploy them: no fine-tuning, no cherry-picked test sets, and fixed deterministic seeds.</p>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-2">
+            <h3 class="font-bold text-sm text-slate-100 uppercase tracking-wider">Inference Protocol</h3>
+            <p>• <strong>Batch size:</strong> 1 (realistic streaming inference)</p>
+            <p>• <strong>Precision:</strong> FP32 with generator-only timing (excludes frontend mel extraction)</p>
+            <p>• <strong>Hardware Profiling:</strong> Warmup iterations + measured loops with CUDA synchronization fences</p>
+          </div>
+        </div>
+
+        <!-- Evaluation Corpora Table -->
+        <div>
+          <h3 class="font-bold text-base text-slate-100 mb-3">Evaluation Corpora</h3>
+          <div class="overflow-x-auto border border-slate-800 rounded-xl">
+            <table class="prism-table w-full text-xs">
+              <thead class="bg-slate-800">
+                <tr>
+                  <th class="p-3">Corpus</th>
+                  <th class="p-3">Acoustic Condition</th>
+                  <th class="p-3">Utterances</th>
+                  <th class="p-3">Characteristics</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="p-3 font-bold text-indigo-400">LJSpeech</td>
+                  <td class="p-3">Clean studio recording</td>
+                  <td class="p-3 font-mono">2,000</td>
+                  <td class="p-3 text-slate-400">Single female speaker, professional recording booth, near-zero reverberation.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-cyan-400">LibriTTS</td>
+                  <td class="p-3">Audiobook narrative</td>
+                  <td class="p-3 font-mono">2,000</td>
+                  <td class="p-3 text-slate-400">Multi-speaker (test-clean + test-other), expressive reading variations.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-amber-400">VCTK</td>
+                  <td class="p-3">Regional accented speech</td>
+                  <td class="p-3 font-mono">2,000</td>
+                  <td class="p-3 text-slate-400">109 speakers with British, Scottish, Irish, and Commonwealth accents.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-rose-400">Free_ST</td>
+                  <td class="p-3">Mobile microphone noisy</td>
+                  <td class="p-3 font-mono">1,980</td>
+                  <td class="p-3 text-slate-400">Real-world acoustic environments, mobile devices, background reverberation.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Metric Definitions Table -->
+        <div>
+          <h3 class="font-bold text-base text-slate-100 mb-3">📐 Metric Definitions &amp; Qualitative Interpretations</h3>
+          <div class="overflow-x-auto border border-slate-800 rounded-xl">
+            <table class="prism-table w-full text-xs">
+              <thead class="bg-slate-800">
+                <tr>
+                  <th class="p-3">Metric</th>
+                  <th class="p-3">Formal Designation</th>
+                  <th class="p-3">Direction</th>
+                  <th class="p-3">Technical Description &amp; Range</th>
+                </tr>
+              </thead>
+              <tbody id="metric-defs-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- What PRISM-V does NOT do -->
+        <div class="bg-rose-950/20 border border-rose-900/40 rounded-xl p-5 text-xs text-rose-200">
+          <h4 class="font-bold text-sm text-rose-300 mb-2">What PRISM-V does NOT do:</h4>
+          <ul class="list-disc list-inside space-y-1">
+            <li>❌ Re-train or fine-tune any model on evaluation data</li>
+            <li>❌ Use unofficial or unverified community checkpoints</li>
+            <li>❌ Silently discard failed synthesis utterances (all failures count against scores)</li>
+            <li>❌ Mix 22.05kHz model outputs into the 24kHz primary benchmark without explicit notation</li>
+            <li>❌ Conflate RTF and xRT in composite scoring (they share identical information)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 12: SUBMIT MODEL                                                    -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-submit" class="tab-panel hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-100 mb-2">➕ Submit / Request a Pretrained Vocoder</h2>
+          <p class="text-sm text-slate-400">
+            We actively welcome vocoder authors and speech researchers to submit new pretrained neural vocoders to PRISM-V.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+            <div class="font-bold text-indigo-400 mb-1">1. Public Checkpoint</div>
+            <p class="text-slate-400">Hugging Face Hub, Zenodo, or GitHub release accessible without authentication.</p>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+            <div class="font-bold text-cyan-400 mb-1">2. Open Inference Code</div>
+            <p class="text-slate-400">Open-source license (MIT, Apache-2.0, BSD, CC-BY) with clean pip/PyTorch installation.</p>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+            <div class="font-bold text-emerald-400 mb-1">3. Deterministic Mel Adapter</div>
+            <p class="text-slate-400">Compatible with the standard PRISM-V BaseVocoderAdapter interface.</p>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-bold text-sm text-slate-200 mb-2">PRISM-V Adapter Interface Example:</h3>
+          <div class="bibtex-box">
+<pre><code>from benchmark.adapters.base import BaseVocoderAdapter
+import torch
+
+class MyVocoderAdapter(BaseVocoderAdapter):
+    def load(self, device, precision):
+        self.model = load_my_model(self.checkpoint_path).to(device).eval()
+
+    def preprocess(self, waveform: torch.Tensor, sr: int) -> torch.Tensor:
+        return my_mel_extractor(waveform, sr)
+
+    @torch.no_grad()
+    def infer(self, condition: torch.Tensor, seed: int) -> torch.Tensor:
+        return self.model(condition)</code></pre>
+          </div>
+        </div>
+
+        <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-400 flex items-center justify-between">
+          <span>Ready to submit? Submit a Pull Request with your adapter and preflight smoke test.</span>
+          <a href="https://github.com/open-vocoder-leaderboard" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition">
+            Open PR on GitHub →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 13: CHANGELOG & CITATION                                            -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-changelog" class="tab-panel hidden space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-8">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-100 mb-2">📜 Changelog &amp; Citation</h2>
+          <p class="text-sm text-slate-400">
+            BibTeX citation, release history, and platform updates.
+          </p>
+        </div>
+
+        <!-- Citation Block -->
+        <div>
+          <h3 class="font-bold text-sm text-slate-200 mb-2">BibTeX Citation</h3>
+          <div class="bibtex-box">
+            <button class="copy-btn" onclick="window.copyBibTeX('bibtex-code-block')">📋 Copy</button>
+            <pre><code id="bibtex-code-block">@misc{purohit2026prismv,
+  author       = {Ravindrakumar M. Purohit and Hemant A. Patil},
+  title        = {{PRISM-V}: Multidimensional Evaluation of Pretrained
+                  Neural Vocoders for Speech Synthesis},
+  year         = {2026},
+  howpublished = {GitHub Pages / Hugging Face Space},
+  note         = {Open neural vocoder evaluation leaderboard}
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- Version History Table -->
+        <div>
+          <h3 class="font-bold text-sm text-slate-200 mb-3">Version History</h3>
+          <div class="overflow-x-auto border border-slate-800 rounded-xl">
+            <table class="prism-table w-full text-xs">
+              <thead class="bg-slate-800">
+                <tr>
+                  <th class="p-3">Version</th>
+                  <th class="p-3">Release Date</th>
+                  <th class="p-3">Key Updates &amp; Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="p-3 font-bold text-indigo-400 font-mono">v1.0.1</td>
+                  <td class="p-3 font-mono">September 12, 2026</td>
+                  <td class="p-3 text-slate-300">Static deployment engine for GitHub Pages (zero CPU quota exhaustion), high-contrast badges, interactive A/B audio explorer with sync waveforms, and custom weighting calculator.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-slate-400 font-mono">v1.0.0</td>
+                  <td class="p-3 font-mono">September 10, 2026</td>
+                  <td class="p-3 text-slate-400">Initial public benchmark release: 15 pretrained neural vocoders evaluated across 4 English corpora.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-slate-500 font-mono italic">v1.1.0</td>
+                  <td class="p-3 font-mono text-slate-500">Upcoming</td>
+                  <td class="p-3 text-slate-500">Additional vocoder families (CodecGAN, DAC-based) and streaming inference latency profiles.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Bottom Persistent Citation Block ─────────────────────────────────── -->
+    <section class="mt-12 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+        <div>
+          <h3 class="text-sm font-bold text-slate-200">📙 Cite PRISM-V</h3>
+          <p class="text-xs text-slate-400">If you use this benchmark, evaluated checkpoints, or codebase in your scientific research, please cite:</p>
+        </div>
+        <button class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition" onclick="window.copyBibTeX('bottom-bibtex-code-block')">
+          📋 Copy BibTeX
+        </button>
+      </div>
+      <div class="bibtex-box">
+        <pre><code id="bottom-bibtex-code-block">@misc{purohit2026prismv,
+  author       = {Ravindrakumar M. Purohit and Hemant A. Patil},
+  title        = {{PRISM-V}: Multidimensional Evaluation of Pretrained
+                  Neural Vocoders for Speech Synthesis},
+  year         = {2026},
+  howpublished = {GitHub Pages / Hugging Face Space},
+  note         = {Open neural vocoder evaluation leaderboard}
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ── Research Footer ─────────────────────────────────────────────────── -->
+    <footer class="mt-8 pt-6 pb-12 border-t border-slate-800/80 text-center text-xs text-slate-500 space-y-2">
+      <div class="font-semibold text-slate-400">
+        <span class="prism-rainbow-text"><span class="prism-p">P</span><span class="prism-r">R</span><span class="prism-i">I</span><span class="prism-s">S</span><span class="prism-m">M</span>-V</span>
+        — Open Neural Vocoder Evaluation · ICASSP Benchmark Protocol v1.0.1
+      </div>
+      <div>
+        Hosted statically on <a href="https://pages.github.com/" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:underline">GitHub Pages</a>
+        · No compute server or quota limit required · Always accessible
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Pre-bundled Data and Application Logic -->
+  <script src="data/prism_data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

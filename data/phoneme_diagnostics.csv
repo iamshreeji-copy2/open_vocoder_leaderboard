@@ -1,0 +1,106 @@
+model_id,model_name,family,phonetic_class,lsd_db,f0_error_cents,boundary_error_db
+bigvgan_v2_24khz_100band_256x,BigVGAN-v2 (112M),Anti-Aliased Snake GAN,Vowels,6.286,3.5,5.34
+bigvgan_v2_24khz_100band_256x,BigVGAN-v2 (112M),Anti-Aliased Snake GAN,Stops / Plosives,6.527,5.4,8.81
+bigvgan_v2_24khz_100band_256x,BigVGAN-v2 (112M),Anti-Aliased Snake GAN,Fricatives,6.698,0.0,8.57
+bigvgan_v2_24khz_100band_256x,BigVGAN-v2 (112M),Anti-Aliased Snake GAN,Affricates,6.778,0.0,8.68
+bigvgan_v2_24khz_100band_256x,BigVGAN-v2 (112M),Anti-Aliased Snake GAN,Nasals,6.552,4.0,6.22
+bigvgan_v2_24khz_100band_256x,BigVGAN-v2 (112M),Anti-Aliased Snake GAN,Liquids,6.362,4.0,6.04
+bigvgan_v2_24khz_100band_256x,BigVGAN-v2 (112M),Anti-Aliased Snake GAN,Glides,6.456,4.0,6.13
+bigvgan_base_24khz_100band,BigVGAN-Base (14M),Anti-Aliased Snake GAN,Vowels,7.181,4.3,6.1
+bigvgan_base_24khz_100band,BigVGAN-Base (14M),Anti-Aliased Snake GAN,Stops / Plosives,7.161,6.5,9.67
+bigvgan_base_24khz_100band,BigVGAN-Base (14M),Anti-Aliased Snake GAN,Fricatives,7.25,0.0,9.28
+bigvgan_base_24khz_100band,BigVGAN-Base (14M),Anti-Aliased Snake GAN,Affricates,7.093,0.0,9.08
+bigvgan_base_24khz_100band,BigVGAN-Base (14M),Anti-Aliased Snake GAN,Nasals,7.443,4.2,7.07
+bigvgan_base_24khz_100band,BigVGAN-Base (14M),Anti-Aliased Snake GAN,Liquids,7.411,4.2,7.04
+bigvgan_base_24khz_100band,BigVGAN-Base (14M),Anti-Aliased Snake GAN,Glides,7.503,4.2,7.13
+vocos_mel_24khz,Vocos,Fourier / iSTFT ConvNeXt,Vowels,7.285,4.6,6.19
+vocos_mel_24khz,Vocos,Fourier / iSTFT ConvNeXt,Stops / Plosives,7.265,6.8,9.81
+vocos_mel_24khz,Vocos,Fourier / iSTFT ConvNeXt,Fricatives,7.257,0.0,9.29
+vocos_mel_24khz,Vocos,Fourier / iSTFT ConvNeXt,Affricates,7.376,0.0,9.44
+vocos_mel_24khz,Vocos,Fourier / iSTFT ConvNeXt,Nasals,7.521,4.4,7.14
+vocos_mel_24khz,Vocos,Fourier / iSTFT ConvNeXt,Liquids,7.539,4.4,7.16
+vocos_mel_24khz,Vocos,Fourier / iSTFT ConvNeXt,Glides,7.364,4.4,7.0
+comvo_large,ComVo-Large,Complex-Valued Fourier,Vowels,7.026,3.9,5.97
+comvo_large,ComVo-Large,Complex-Valued Fourier,Stops / Plosives,7.1,6.1,9.59
+comvo_large,ComVo-Large,Complex-Valued Fourier,Fricatives,7.073,0.0,9.05
+comvo_large,ComVo-Large,Complex-Valued Fourier,Affricates,7.028,0.0,9.0
+comvo_large,ComVo-Large,Complex-Valued Fourier,Nasals,7.402,4.0,7.03
+comvo_large,ComVo-Large,Complex-Valued Fourier,Liquids,7.447,4.0,7.07
+comvo_large,ComVo-Large,Complex-Valued Fourier,Glides,7.369,4.0,7.0
+comvo_base,ComVo-Base,Complex-Valued Fourier,Vowels,7.246,4.4,6.16
+comvo_base,ComVo-Base,Complex-Valued Fourier,Stops / Plosives,7.168,6.6,9.68
+comvo_base,ComVo-Base,Complex-Valued Fourier,Fricatives,7.197,0.0,9.21
+comvo_base,ComVo-Base,Complex-Valued Fourier,Affricates,7.014,0.0,8.98
+comvo_base,ComVo-Base,Complex-Valued Fourier,Nasals,7.627,4.3,7.25
+comvo_base,ComVo-Base,Complex-Valued Fourier,Liquids,7.593,4.3,7.21
+comvo_base,ComVo-Base,Complex-Valued Fourier,Glides,7.341,4.3,6.97
+periodwave_turbo,PeriodWave-Turbo (4-step),Diffusion / Turbo SDE,Vowels,6.751,3.5,5.74
+periodwave_turbo,PeriodWave-Turbo (4-step),Diffusion / Turbo SDE,Stops / Plosives,6.988,5.4,9.43
+periodwave_turbo,PeriodWave-Turbo (4-step),Diffusion / Turbo SDE,Fricatives,7.109,0.0,9.1
+periodwave_turbo,PeriodWave-Turbo (4-step),Diffusion / Turbo SDE,Affricates,7.078,0.0,9.06
+periodwave_turbo,PeriodWave-Turbo (4-step),Diffusion / Turbo SDE,Nasals,7.027,4.0,6.68
+periodwave_turbo,PeriodWave-Turbo (4-step),Diffusion / Turbo SDE,Liquids,6.897,4.0,6.55
+periodwave_turbo,PeriodWave-Turbo (4-step),Diffusion / Turbo SDE,Glides,6.81,4.0,6.47
+periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Vowels,8.625,3.7,7.33
+periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Stops / Plosives,9.304,5.9,12.56
+periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Fricatives,8.594,0.0,11.0
+periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Affricates,8.145,0.0,10.43
+periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Nasals,9.546,4.0,9.07
+periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Liquids,9.122,4.0,8.67
+periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Glides,9.793,4.0,9.3
+flow2gan,Flow2GAN (4-step),Flow Matching + GAN,Vowels,6.025,3.5,5.12
+flow2gan,Flow2GAN (4-step),Flow Matching + GAN,Stops / Plosives,6.26,5.2,8.45
+flow2gan,Flow2GAN (4-step),Flow Matching + GAN,Fricatives,6.486,0.0,8.3
+flow2gan,Flow2GAN (4-step),Flow Matching + GAN,Affricates,6.492,0.0,8.31
+flow2gan,Flow2GAN (4-step),Flow Matching + GAN,Nasals,6.24,4.0,5.93
+flow2gan,Flow2GAN (4-step),Flow Matching + GAN,Liquids,6.151,4.0,5.84
+flow2gan,Flow2GAN (4-step),Flow Matching + GAN,Glides,5.75,4.0,5.46
+bridgevoc,BridgeVoC,Brownian Bridge SDE,Vowels,6.542,3.5,5.56
+bridgevoc,BridgeVoC,Brownian Bridge SDE,Stops / Plosives,6.633,5.4,8.95
+bridgevoc,BridgeVoC,Brownian Bridge SDE,Fricatives,6.895,0.0,8.83
+bridgevoc,BridgeVoC,Brownian Bridge SDE,Affricates,6.851,0.0,8.77
+bridgevoc,BridgeVoC,Brownian Bridge SDE,Nasals,6.877,4.0,6.53
+bridgevoc,BridgeVoC,Brownian Bridge SDE,Liquids,6.792,4.0,6.45
+bridgevoc,BridgeVoC,Brownian Bridge SDE,Glides,6.594,4.0,6.26
+rfwave_libritts_24k,RFWave,Rectified Flow Matching,Vowels,7.99,4.4,6.79
+rfwave_libritts_24k,RFWave,Rectified Flow Matching,Stops / Plosives,8.176,6.6,11.04
+rfwave_libritts_24k,RFWave,Rectified Flow Matching,Fricatives,8.146,0.0,10.43
+rfwave_libritts_24k,RFWave,Rectified Flow Matching,Affricates,7.673,0.0,9.82
+rfwave_libritts_24k,RFWave,Rectified Flow Matching,Nasals,8.638,4.3,8.21
+rfwave_libritts_24k,RFWave,Rectified Flow Matching,Liquids,8.529,4.3,8.1
+rfwave_libritts_24k,RFWave,Rectified Flow Matching,Glides,8.333,4.3,7.92
+wavefm,WaveFM (1-step),Distilled Flow Matching,Vowels,7.494,4.7,6.37
+wavefm,WaveFM (1-step),Distilled Flow Matching,Stops / Plosives,7.132,6.9,9.63
+wavefm,WaveFM (1-step),Distilled Flow Matching,Fricatives,7.223,0.0,9.25
+wavefm,WaveFM (1-step),Distilled Flow Matching,Affricates,7.294,0.0,9.34
+wavefm,WaveFM (1-step),Distilled Flow Matching,Nasals,7.525,4.5,7.15
+wavefm,WaveFM (1-step),Distilled Flow Matching,Liquids,7.589,4.5,7.21
+wavefm,WaveFM (1-step),Distilled Flow Matching,Glides,7.066,4.5,6.71
+rndvoc,RNDVoC,Random Distortion GAN,Vowels,6.674,3.6,5.67
+rndvoc,RNDVoC,Random Distortion GAN,Stops / Plosives,6.873,5.8,9.28
+rndvoc,RNDVoC,Random Distortion GAN,Fricatives,6.864,0.0,8.79
+rndvoc,RNDVoC,Random Distortion GAN,Affricates,6.834,0.0,8.75
+rndvoc,RNDVoC,Random Distortion GAN,Nasals,7.156,4.0,6.8
+rndvoc,RNDVoC,Random Distortion GAN,Liquids,6.962,4.0,6.61
+rndvoc,RNDVoC,Random Distortion GAN,Glides,6.789,4.0,6.45
+freev,FreeV,Pseudo-Inverse Mel GAN,Vowels,7.395,5.7,6.29
+freev,FreeV,Pseudo-Inverse Mel GAN,Stops / Plosives,7.582,8.1,10.24
+freev,FreeV,Pseudo-Inverse Mel GAN,Fricatives,7.479,0.0,9.57
+freev,FreeV,Pseudo-Inverse Mel GAN,Affricates,7.365,0.0,9.43
+freev,FreeV,Pseudo-Inverse Mel GAN,Nasals,7.701,5.3,7.32
+freev,FreeV,Pseudo-Inverse Mel GAN,Liquids,7.719,5.3,7.33
+freev,FreeV,Pseudo-Inverse Mel GAN,Glides,7.755,5.3,7.37
+hifigan_universal_v1,HiFi-GAN (Universal V1),Time-domain MRF-GAN,Vowels,7.888,6.0,6.7
+hifigan_universal_v1,HiFi-GAN (Universal V1),Time-domain MRF-GAN,Stops / Plosives,7.822,8.4,10.56
+hifigan_universal_v1,HiFi-GAN (Universal V1),Time-domain MRF-GAN,Fricatives,7.756,0.0,9.93
+hifigan_universal_v1,HiFi-GAN (Universal V1),Time-domain MRF-GAN,Affricates,7.679,0.0,9.83
+hifigan_universal_v1,HiFi-GAN (Universal V1),Time-domain MRF-GAN,Nasals,8.05,5.5,7.65
+hifigan_universal_v1,HiFi-GAN (Universal V1),Time-domain MRF-GAN,Liquids,8.106,5.5,7.7
+hifigan_universal_v1,HiFi-GAN (Universal V1),Time-domain MRF-GAN,Glides,7.77,5.5,7.38
+griffin_lim,Griffin-Lim STFT,Algorithmic DSP Baseline,Vowels,4.538,4.0,3.86
+griffin_lim,Griffin-Lim STFT,Algorithmic DSP Baseline,Stops / Plosives,4.76,6.2,6.43
+griffin_lim,Griffin-Lim STFT,Algorithmic DSP Baseline,Fricatives,4.171,0.0,5.34
+griffin_lim,Griffin-Lim STFT,Algorithmic DSP Baseline,Affricates,4.093,0.0,5.24
+griffin_lim,Griffin-Lim STFT,Algorithmic DSP Baseline,Nasals,5.511,4.0,5.24
+griffin_lim,Griffin-Lim STFT,Algorithmic DSP Baseline,Liquids,5.082,4.0,4.83
+griffin_lim,Griffin-Lim STFT,Algorithmic DSP Baseline,Glides,5.232,4.0,4.97
