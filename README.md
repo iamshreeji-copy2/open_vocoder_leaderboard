@@ -213,7 +213,7 @@ If you use the PRISM-V benchmark, evaluated checkpoints, audio samples, or leade
 ```bibtex
 @misc{purohit2026prismv,
   author       = {Ravindrakumar M. Purohit and Hemant A. Patil},
-  title        = {PRISM-V: A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis},
+  title        = {{PRISM-V}: A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis},
   year         = {2026},
   howpublished = {\url{https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/}},
   note         = {Open neural vocoder evaluation leaderboard}
