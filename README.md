@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/Final_logo.png" alt="PRISM-V Leaderboard Logo" width="620px">
+<img src="assets/Final_logo.png" alt="PRISM-V Leaderboard Logo" width="100%">
 
 # 🎙️ PRISM-V: Open Evaluation of Pretrained Neural Vocoders
 ### A Multidimensional Scientific Benchmark for Speech Synthesis
