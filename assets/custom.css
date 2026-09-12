@@ -245,41 +245,52 @@ code, kbd, samp, pre, .font-mono {
   background: var(--prism);
 }
 
-/* ── Accessibility Toolbar ───────────────────────────────────────────────── */
+/* ── Accessibility & Theme Dock (Vertical Format on Right Edge) ───────────── */
 #prism-accessibility-toolbar {
   position: fixed;
-  top: 14px;
-  right: 20px;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
   z-index: 9999;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 9999px;
+  gap: 5px;
+  padding: 8px 5px;
+  border-radius: 20px;
   background: var(--surface);
   border: 1px solid var(--border-2);
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(12px);
-  transition: all 180ms ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 1px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  user-select: none;
 }
 
 #prism-accessibility-toolbar:hover {
   border-color: var(--prism);
-  box-shadow: var(--shadow-prism);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), 0 0 16px rgba(129, 140, 248, 0.35);
 }
 
 .toolbar-label {
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 1;
+  padding: 1px 0;
   user-select: none;
+  opacity: 0.85;
 }
 
 .font-step-btn {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text-primary);
-  padding: 2px 7px;
+  width: 28px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 6px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   cursor: pointer;
   transition: all 150ms ease;
@@ -289,17 +300,20 @@ code, kbd, samp, pre, .font-mono {
   background: var(--prism-light);
   border-color: var(--prism);
   color: var(--prism);
+  transform: scale(1.08);
 }
 
 .font-step-btn:disabled {
-  opacity: 0.35;
+  opacity: 0.25;
   cursor: not-allowed;
 }
 
 .font-scale-dots {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
+  margin: 1px 0;
 }
 
 .font-dot {
@@ -321,28 +335,31 @@ code, kbd, samp, pre, .font-mono {
 .font-dot:hover {
   border-color: var(--prism);
   color: var(--prism);
+  transform: scale(1.14);
 }
 
 .font-dot.active {
   background: var(--prism);
   border-color: var(--prism);
   color: #FFFFFF !important;
-  box-shadow: 0 0 8px rgba(129, 140, 248, 0.5);
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.6);
+  transform: scale(1.08);
 }
 
 .toolbar-divider {
-  width: 1px;
-  height: 18px;
+  width: 18px;
+  height: 1px;
   background: var(--border-2);
-  margin: 0 4px;
+  margin: 2px 0;
 }
 
 #theme-toggle-btn {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text-primary);
-  padding: 4px 8px;
-  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   font-size: 13px;
   cursor: pointer;
   transition: all 150ms ease;
@@ -354,7 +371,17 @@ code, kbd, samp, pre, .font-mono {
 #theme-toggle-btn:hover {
   background: var(--prism-light);
   border-color: var(--prism);
-  transform: rotate(15deg);
+  transform: scale(1.08) rotate(15deg);
+}
+
+@media (max-width: 640px) {
+  #prism-accessibility-toolbar {
+    right: 4px;
+    padding: 6px 3px;
+    gap: 3px;
+    transform: translateY(-50%) scale(0.85);
+    transform-origin: right center;
+  }
 }
 
 /* ── PRISM Glowing Rainbow Text ──────────────────────────────────────────── */

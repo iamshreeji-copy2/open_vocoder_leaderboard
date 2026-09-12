@@ -50,23 +50,23 @@
 </head>
 <body class="antialiased selection:bg-indigo-500 selection:text-white">
 
-  <!-- ── Accessibility & Theme Control Toolbar (Fixed Top-Right) ──────────── -->
-  <div id="prism-accessibility-toolbar" role="toolbar" aria-label="Accessibility and Display Controls">
-    <span class="toolbar-label" title="Accessibility Font Size (5 Levels)">🔤</span>
-    <button id="font-dec-btn" class="font-step-btn" onclick="window.stepPrismFont && window.stepPrismFont(-1)" title="Decrease font size (A−)" aria-label="Decrease font size">A−</button>
-    <div class="font-scale-dots" role="radiogroup" aria-label="Font scale 1 to 5">
-      <button class="font-dot" data-level="1" onclick="window.setPrismFontLevel && window.setPrismFontLevel(1)" title="Scale 1/5: Smallest (82%)">1</button>
-      <button class="font-dot" data-level="2" onclick="window.setPrismFontLevel && window.setPrismFontLevel(2)" title="Scale 2/5: Small (91%)">2</button>
-      <button class="font-dot active" data-level="3" onclick="window.setPrismFontLevel && window.setPrismFontLevel(3)" title="Scale 3/5: Default (100%)">3</button>
-      <button class="font-dot" data-level="4" onclick="window.setPrismFontLevel && window.setPrismFontLevel(4)" title="Scale 4/5: Large (112%)">4</button>
-      <button class="font-dot" data-level="5" onclick="window.setPrismFontLevel && window.setPrismFontLevel(5)" title="Scale 5/5: Largest (125%)">5</button>
-    </div>
-    <button id="font-inc-btn" class="font-step-btn" onclick="window.stepPrismFont && window.stepPrismFont(1)" title="Increase font size (A+)" aria-label="Increase font size">A+</button>
-    <div class="toolbar-divider" aria-hidden="true"></div>
+  <!-- ── Accessibility & Theme Control Dock (Vertical Right Side) ──────── -->
+  <aside id="prism-accessibility-toolbar" role="toolbar" aria-label="Accessibility and Display Controls">
     <button id="theme-toggle-btn" onclick="window.togglePrismTheme && window.togglePrismTheme()" title="Toggle Dark / Light Mode" aria-label="Toggle Dark / Light Mode">
       <span id="theme-icon">☀️</span>
     </button>
-  </div>
+    <div class="toolbar-divider" aria-hidden="true"></div>
+    <span class="toolbar-label" title="Accessibility Font Size (5 Levels)">🔤</span>
+    <button id="font-inc-btn" class="font-step-btn" onclick="window.stepPrismFont && window.stepPrismFont(1)" title="Increase font size (A+)" aria-label="Increase font size">A+</button>
+    <div class="font-scale-dots" role="radiogroup" aria-label="Font scale 1 to 5">
+      <button class="font-dot" data-level="5" onclick="window.setPrismFontLevel && window.setPrismFontLevel(5)" title="Scale 5/5: Largest (125%)">5</button>
+      <button class="font-dot" data-level="4" onclick="window.setPrismFontLevel && window.setPrismFontLevel(4)" title="Scale 4/5: Large (112%)">4</button>
+      <button class="font-dot active" data-level="3" onclick="window.setPrismFontLevel && window.setPrismFontLevel(3)" title="Scale 3/5: Default (100%)">3</button>
+      <button class="font-dot" data-level="2" onclick="window.setPrismFontLevel && window.setPrismFontLevel(2)" title="Scale 2/5: Small (91%)">2</button>
+      <button class="font-dot" data-level="1" onclick="window.setPrismFontLevel && window.setPrismFontLevel(1)" title="Scale 1/5: Smallest (82%)">1</button>
+    </div>
+    <button id="font-dec-btn" class="font-step-btn" onclick="window.stepPrismFont && window.stepPrismFont(-1)" title="Decrease font size (A−)" aria-label="Decrease font size">A−</button>
+  </aside>
 
   <!-- ── Main Application Container ────────────────────────────────────────── -->
   <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
