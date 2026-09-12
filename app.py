@@ -1397,9 +1397,13 @@ if __name__ == "__main__":
     if not os.path.exists(fav_path):
         fav_path = os.path.join(BASE_DIR, "logo.png")
 
+    server_name = "0.0.0.0" if os.getenv("SPACE_ID") else "127.0.0.1"
+    print(f"[*] PRISM-V Leaderboard launching on http://{server_name}:7860")
+
     demo.launch(
-        server_name="0.0.0.0",
+        server_name=server_name,
         server_port=7860,
+        show_error=True,
         head=DARK_MODE_JS,
         css=css_content,
         favicon_path=fav_path if os.path.exists(fav_path) else None,
@@ -1411,3 +1415,4 @@ if __name__ == "__main__":
             font_mono=[gr.themes.GoogleFont("IBM Plex Mono"), "monospace"],
         )
     )
+
