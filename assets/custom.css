@@ -940,6 +940,109 @@ button:active, .gr-button:active, a[target="_blank"]:active {
   font-weight: 800 !important;
 }
 
+/* ── Table Legend Card / Banner ────────────────────────────────────────── */
+.table-legend-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 18px;
+  margin: 12px 0 16px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+}
+.table-legend-banner:hover {
+  border-color: var(--border-2);
+}
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.legend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-family: Arial, sans-serif;
+  font-size: calc(0.74rem * var(--font-scale, 1));
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.legend-badge-code {
+  background: rgba(22, 163, 74, 0.14);
+  color: #4ADE80;
+  border: 1px solid rgba(74, 222, 128, 0.35);
+}
+.legend-badge-ckpt {
+  background: rgba(14, 116, 144, 0.16);
+  color: #22D3EE;
+  border: 1px solid rgba(34, 211, 238, 0.35);
+}
+.legend-badge-pareto {
+  background: rgba(217, 119, 6, 0.16);
+  color: #FCD34D;
+  border: 1px solid rgba(252, 211, 77, 0.35);
+}
+.legend-desc {
+  font-family: Arial, sans-serif;
+  font-size: calc(0.78rem * var(--font-scale, 1));
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.legend-divider {
+  color: var(--border-2);
+  opacity: 0.5;
+  font-weight: 300;
+  user-select: none;
+}
+
+[data-theme="light"] .table-legend-banner, .light .table-legend-banner {
+  background: #F8FAFC;
+  border-color: #E2E8F0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+[data-theme="light"] .legend-badge-code, .light .legend-badge-code {
+  background: #DCFCE7;
+  color: #15803D;
+  border-color: #86EFAC;
+}
+[data-theme="light"] .legend-badge-ckpt, .light .legend-badge-ckpt {
+  background: #ECFEFF;
+  color: #0E7490;
+  border-color: #A5F3FC;
+}
+[data-theme="light"] .legend-badge-pareto, .light .legend-badge-pareto {
+  background: #FEF3C7;
+  color: #92400E;
+  border-color: #FDE68A;
+}
+[data-theme="light"] .legend-desc, .light .legend-desc {
+  color: #334155;
+  font-weight: 500;
+}
+
+/* ── Bottom Citation Card ─────────────────────────────────────────────── */
+#bottom-citation-card {
+  margin-top: 36px;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  background: var(--surface) !important;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm) !important;
+}
+#bottom-citation-card .label-wrap {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+}
+
 /* PRISM Dimension Pills */
 .prism-dimension-bar {
   display: flex;

@@ -810,10 +810,24 @@ with gr.Blocks(title="PRISM-V · Open Neural Vocoder Evaluation") as demo:
                 value=build_display_df(DF_LB, DATASET_COLS, init_vis),
                 interactive=False, wrap=False, datatype="html", elem_id="prism-lb-table")
 
-            gr.Markdown(
-                "> **Code ✅** = training/inference code available publicly.  "
-                "> **Checkpoint ✅** = weights freely downloadable.  "
-                "> **⭐ Pareto** = non-dominated on quality and speed simultaneously.")
+            gr.HTML("""
+<div class="table-legend-banner">
+  <div class="legend-chip">
+    <span class="legend-badge legend-badge-code">💻 Code ✅</span>
+    <span class="legend-desc">Training &amp; inference code publicly available</span>
+  </div>
+  <span class="legend-divider">|</span>
+  <div class="legend-chip">
+    <span class="legend-badge legend-badge-ckpt">📦 Checkpoint ✅</span>
+    <span class="legend-desc">Pretrained weights freely downloadable</span>
+  </div>
+  <span class="legend-divider">|</span>
+  <div class="legend-chip">
+    <span class="legend-badge legend-badge-pareto">⭐ Pareto</span>
+    <span class="legend-desc">Non-dominated Pareto frontier on quality &amp; speed</span>
+  </div>
+</div>
+""")
 
             def update_lb(search, datasets, track, arch_cats, edge, code_flt, ckpt_flt, dso, dss, dsp, dsr, dsi, _v):
                 df = filter_df(DF_LB, search, datasets, track, arch_cats, edge, code_flt, ckpt_flt)
@@ -1348,6 +1362,16 @@ Submit a PR to the [PRISM-V Benchmark Repository]({GITHUB_URL}) including model 
             gr.Code(value=BIBTEX, language="latex", label="BibTeX Citation (Click top-right icon to copy)")
             gr.Markdown("---")
             gr.Markdown(CHANGELOG_MD)
+    # ── End of Website: Citation Card ──────────────────────────────────────────
+    with gr.Accordion("📙 Cite PRISM-V (BibTeX)", open=True, elem_id="bottom-citation-card"):
+        gr.Markdown(
+            "If you use the **PRISM-V** benchmark, evaluated checkpoints, audio samples, or leaderboard codebase in your research, please cite:"
+        )
+        gr.Code(
+            value=BIBTEX,
+            language="latex",
+            label="BibTeX Citation (Click top-right icon to copy)"
+        )
 
     # ── Footer ─────────────────────────────────────────────────────────────────
     gr.HTML(f"""
