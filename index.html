@@ -48,7 +48,7 @@
   <!-- Custom PRISM-V Styles -->
   <link rel="stylesheet" href="assets/custom.css" />
 </head>
-<body class="bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
+<body class="antialiased selection:bg-indigo-500 selection:text-white">
 
   <!-- ── Accessibility & Theme Control Toolbar (Fixed Top-Right) ──────────── -->
   <div id="prism-accessibility-toolbar" role="toolbar" aria-label="Accessibility and Display Controls">
@@ -140,44 +140,44 @@
     <!-- TAB 1: OVERVIEW                                                         -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <section id="tab-panel-overview" class="tab-panel space-y-8">
-      <!-- Executive Summary -->
+      <!-- Overview & Benchmark Motivation -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
-        <div class="max-w-3xl">
-          <h2 class="text-2xl font-bold mb-3 text-slate-100">Executive Overview &amp; Benchmark Motivation</h2>
-          <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-4">
+        <div class="max-w-4xl">
+          <h2 class="text-2xl font-bold mb-3 text-slate-100">Overview &amp; Benchmark Motivation</h2>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-4 text-justify">
             Traditional neural vocoder evaluations predominantly report PESQ and MCD exclusively on clean, single-speaker studio recordings (e.g., LJSpeech). In production speech synthesis and voice conversion, however, practitioners deploy models on diverse voices, accented speech, and real-world noisy audio across hardware constrained to sub-realtime latencies.
           </p>
-          <p class="text-slate-400 text-sm leading-relaxed">
+          <p class="text-slate-400 text-sm leading-relaxed text-justify">
             <strong>PRISM-V</strong> establishes a comprehensive, zero-shot, training-free benchmark evaluating 15 pretrained vocoder architectures across four English acoustic corpora and five core dimensions: <strong>P</strong>erceptual quality, <strong>R</strong>econstruction fidelity, <strong>I</strong>ntelligibility preservation, <strong>S</strong>peaker identity, and <strong>M</strong>odel edge efficiency.
           </p>
         </div>
 
         <!-- KPI Cards Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
-          <div class="kpi-card">
-            <div class="text-xs uppercase text-slate-400 font-bold mb-1">Pretrained Models</div>
-            <div class="text-2xl sm:text-3xl font-extrabold text-indigo-400 font-mono">15</div>
-            <div class="text-[11px] text-slate-500 mt-1">GAN, Flow, SDE, Fourier</div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-6 text-center">
+          <div class="kpi-card kpi-card-indigo text-center flex flex-col items-center justify-center p-4 rounded-xl border">
+            <div class="text-xs uppercase font-bold mb-1 kpi-title">Pretrained Models</div>
+            <div class="text-2xl sm:text-3xl font-extrabold font-mono kpi-val">15</div>
+            <div class="text-[11px] mt-1 kpi-sub">GAN, Flow, SDE, Fourier</div>
           </div>
-          <div class="kpi-card">
-            <div class="text-xs uppercase text-slate-400 font-bold mb-1">Acoustic Corpora</div>
-            <div class="text-2xl sm:text-3xl font-extrabold text-cyan-400 font-mono">4</div>
-            <div class="text-[11px] text-slate-500 mt-1">Studio, Multi, Accent, Noisy</div>
+          <div class="kpi-card kpi-card-cyan text-center flex flex-col items-center justify-center p-4 rounded-xl border">
+            <div class="text-xs uppercase font-bold mb-1 kpi-title">Acoustic Corpora</div>
+            <div class="text-2xl sm:text-3xl font-extrabold font-mono kpi-val">4</div>
+            <div class="text-[11px] mt-1 kpi-sub">Studio, Multi, Accent, Noisy</div>
           </div>
-          <div class="kpi-card">
-            <div class="text-xs uppercase text-slate-400 font-bold mb-1">PRISM Dimensions</div>
-            <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">5</div>
-            <div class="text-[11px] text-slate-500 mt-1">Holistic deployment scoring</div>
+          <div class="kpi-card kpi-card-emerald text-center flex flex-col items-center justify-center p-4 rounded-xl border">
+            <div class="text-xs uppercase font-bold mb-1 kpi-title">PRISM Dimensions</div>
+            <div class="text-2xl sm:text-3xl font-extrabold font-mono kpi-val">5</div>
+            <div class="text-[11px] mt-1 kpi-sub">Holistic deployment scoring</div>
           </div>
-          <div class="kpi-card">
-            <div class="text-xs uppercase text-slate-400 font-bold mb-1">Max Throughput</div>
-            <div class="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono">370×</div>
-            <div class="text-[11px] text-slate-500 mt-1">RT on Edge profiling</div>
+          <div class="kpi-card kpi-card-amber text-center flex flex-col items-center justify-center p-4 rounded-xl border">
+            <div class="text-xs uppercase font-bold mb-1 kpi-title">Max Throughput</div>
+            <div class="text-2xl sm:text-3xl font-extrabold font-mono kpi-val">370×</div>
+            <div class="text-[11px] mt-1 kpi-sub">RT on Edge profiling</div>
           </div>
-          <div class="kpi-card">
-            <div class="text-xs uppercase text-slate-400 font-bold mb-1">Reproducibility</div>
-            <div class="text-2xl sm:text-3xl font-extrabold text-rose-400 font-mono">100%</div>
-            <div class="text-[11px] text-slate-500 mt-1">Open data &amp; checkpoints</div>
+          <div class="kpi-card kpi-card-rose text-center flex flex-col items-center justify-center p-4 rounded-xl border">
+            <div class="text-xs uppercase font-bold mb-1 kpi-title">Reproducibility</div>
+            <div class="text-2xl sm:text-3xl font-extrabold font-mono kpi-val">100%</div>
+            <div class="text-[11px] mt-1 kpi-sub">Open data &amp; checkpoints</div>
           </div>
         </div>
       </div>
@@ -185,23 +185,23 @@
       <!-- Key Findings Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div class="text-2xl mb-2">🎯</div>
-          <h3 class="text-base font-bold text-slate-100 mb-2">Studio PESQ Mismatch</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
+          <div class="text-3xl mb-2 text-center">🎯</div>
+          <h3 class="text-base font-bold text-slate-100 mb-2 text-center">Studio PESQ Mismatch</h3>
+          <p class="text-xs text-slate-400 leading-relaxed text-justify">
             Models scoring &gt;4.4 PESQ on clean LJSpeech (e.g. BigVGAN-v2, PeriodWave) show variable degradation on mobile microphone noise (Free_ST) and accented speech (VCTK). Cross-corpus evaluation is required for true generalization.
           </p>
         </div>
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div class="text-2xl mb-2">⚡</div>
-          <h3 class="text-base font-bold text-slate-100 mb-2">The Flow-Matching Frontier</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
+          <div class="text-3xl mb-2 text-center">⚡</div>
+          <h3 class="text-base font-bold text-slate-100 mb-2 text-center">The Flow-Matching Frontier</h3>
+          <p class="text-xs text-slate-400 leading-relaxed text-justify">
             Modern flow matching models (Flow2GAN, WaveFM) and Brownian Bridge SDEs (BridgeVoC) compress diffusion generation into 1 to 4 steps, matching 30-step diffusion fidelity at 12–35× real-time throughput.
           </p>
         </div>
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div class="text-2xl mb-2">📱</div>
-          <h3 class="text-base font-bold text-slate-100 mb-2">Edge Deployment Realities</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
+          <div class="text-3xl mb-2 text-center">📱</div>
+          <h3 class="text-base font-bold text-slate-100 mb-2 text-center">Edge Deployment Realities</h3>
+          <p class="text-xs text-slate-400 leading-relaxed text-justify">
             Fourier / iSTFT ConvNeXt models (Vocos) and pseudo-inverse GANs (FreeV) achieve &gt;300× throughput with under 400 MB peak VRAM, unlocking viable on-device streaming neural synthesis on edge hardware.
           </p>
         </div>
