@@ -1361,7 +1361,7 @@ Submit a PR to the [PRISM-V Benchmark Repository]({GITHUB_URL}) including model 
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         with gr.TabItem("📜 Changelog & Citation"):
             gr.Markdown("### 📙 Citation\nIf you use the PRISM-V benchmark, evaluated checkpoints, or code in your research, please cite:")
-            gr.Code(value=BIBTEX, language="latex", label="BibTeX Citation (Click top-right icon to copy)")
+            gr.Code(value=BIBTEX, language="latex", label="BibTeX Citation")
             gr.Markdown("---")
             gr.Markdown(CHANGELOG_MD)
     # ── End of Website: Citation Card ──────────────────────────────────────────
@@ -1372,7 +1372,7 @@ Submit a PR to the [PRISM-V Benchmark Repository]({GITHUB_URL}) including model 
         gr.Code(
             value=BIBTEX,
             language="latex",
-            label="BibTeX Citation (Click top-right icon to copy)"
+            label="BibTeX Citation"
         )
 
     # ── Footer ─────────────────────────────────────────────────────────────────
