@@ -216,7 +216,7 @@ If you use the PRISM-V benchmark, evaluated checkpoints, audio samples, or leade
   title        = {{PRISM-V}: Multidimensional Evaluation of Pretrained
                   Neural Vocoders for Speech Synthesis},
   year         = {2026},
-  howpublished = {GitHub Pages / Hugging Face Space},
+  howpublished = {\url{https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/}},
   note         = {Open neural vocoder evaluation leaderboard}
 }
 ```
