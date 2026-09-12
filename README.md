@@ -44,7 +44,7 @@
 
 ## 🔬 What is PRISM-V?
 
-**PRISM-V** (**P**erformance, **R**obustness, **I**nference, **S**peech-quality, and **M**ultidimensionality for **V**ocoders) is an open, standardized scientific benchmark and interactive leaderboard for evaluating pretrained neural vocoders in modern text-to-speech (TTS) and speech-to-speech synthesis pipelines.
+**PRISM-V** (**P**erceptual, **R**econstruction, **I**ntelligibility, **S**peaker, and **M**odel Efficiency for **V**ocoders) is an open, standardized scientific benchmark and interactive leaderboard for evaluating pretrained neural vocoders in modern text-to-speech (TTS) and speech-to-speech synthesis pipelines.
 
 Rather than relying on isolated single-corpus PESQ figures or inconsistent community evaluations, PRISM-V executes an identical, reproducible protocol evaluating:
 

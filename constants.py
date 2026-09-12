@@ -218,11 +218,11 @@ METRIC_DEFS = {
                  "Generator model parameter count in millions. Excludes training-only discriminators and preprocessing modules. Part of the M (Model efficiency) PRISM-V dimension."),
     "Score":    ("PRISM-V Score (1–100)", "↑ higher better",
                  "Composite deployment index combining five dimensions: "
-                 "P (Perceptual quality via UTMOS + NISQA), "
-                 "R (Reconstruction fidelity via PESQ + MCD + LSD), "
-                 "I (Intelligibility preservation via STOI + ΔWER), "
-                 "S (Speaker preservation via embedding similarity), "
-                 "M (Model efficiency via RTF + VRAM + Params). "
+                 "P (Perceptual via UTMOS + NISQA), "
+                 "R (Reconstruction via PESQ + MCD + LSD), "
+                 "I (Intelligibility via STOI + ΔWER), "
+                 "S (Speaker via embedding similarity), "
+                 "M (Model Efficiency via RTF + VRAM + Params). "
                  "Geometric aggregation with hardware feasibility gate under Edge Profiling. "
                  "Score 100 = ideal across all dimensions; score 1 = hardware-infeasible on this profile."),
 }
@@ -330,15 +330,15 @@ Models are evaluated exactly as practitioners deploy them — no fine-tuning, no
 
 ### The Five PRISM-V Dimensions
 
-PRISM-V evaluates **P**erceptual quality · **R**econstruction fidelity · **I**ntelligibility preservation · **S**peaker preservation · **M**odel efficiency (Vocoders).
+PRISM-V evaluates **P**erceptual · **R**econstruction · **I**ntelligibility · **S**peaker · **M**odel Efficiency (Vocoders).
 
 | Dimension | Evaluation Focus | Key Empirical Measures |
 |---|---|---|
-| **P — Perceptual quality** | Naturalness & listening perception | UTMOS (neural MOS), NISQA-TTS naturalness |
-| **R — Reconstruction fidelity** | Waveform fidelity against reference | PESQ (wideband), MCD (cepstral), LSD (spectral) |
-| **I — Intelligibility preservation** | Speech intelligibility & ASR content preservation | STOI (intelligibility), ΔWER (ASR degradation) |
-| **S — Speaker preservation** | Speaker identity & acoustic consistency | Speaker embedding cosine similarity |
-| **M — Model efficiency** | Real-world execution efficiency on edge hardware | RTF (throughput), Peak VRAM, Parameter count |
+| **P — Perceptual** | Naturalness & listening perception | UTMOS (neural MOS), NISQA-TTS naturalness |
+| **R — Reconstruction** | Waveform fidelity against reference | PESQ (wideband), MCD (cepstral), LSD (spectral) |
+| **I — Intelligibility** | Speech intelligibility & ASR content preservation | STOI (intelligibility), ΔWER (ASR degradation) |
+| **S — Speaker** | Speaker identity & acoustic consistency | Speaker embedding cosine similarity |
+| **M — Model Efficiency** | Real-world execution efficiency on edge hardware | RTF (throughput), Peak VRAM, Parameter count |
 
 The **PRISM-V Score (1–100)** provides a holistic aggregate ranking across all five core dimensions, highlighting models that balance high acoustic fidelity with edge efficiency.
 
