@@ -2032,18 +2032,49 @@
     `).join('');
   }
 
+  function colorizeBibtex(text) {
+    if (!text) return '';
+    const prismColored = '<span style="font-weight:700;"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span>';
+    const escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    return escaped.replace(/PRISM-V/g, prismColored);
+  }
+
   function renderChangelog() {
     const bibtexEl = document.getElementById('bibtex-code-block');
     const bottomBibtexEl = document.getElementById('bottom-bibtex-code-block');
-    if (bibtexEl && state.data) bibtexEl.textContent = state.data.bibtex;
-    if (bottomBibtexEl && state.data) bottomBibtexEl.textContent = state.data.bibtex;
+    if (bibtexEl && state.data && state.data.bibtex) {
+      bibtexEl.innerHTML = colorizeBibtex(state.data.bibtex);
+    }
+    if (bottomBibtexEl && state.data && state.data.bibtex) {
+      bottomBibtexEl.innerHTML = colorizeBibtex(state.data.bibtex);
+    }
   }
 
-  window.copyBibTeX = function (targetId = 'bibtex-code-block') {
+  window.copyBibTeX = function (targetId = 'bottom-bibtex-code-block') {
     const el = document.getElementById(targetId);
     if (!el) return;
-    navigator.clipboard.writeText(el.textContent).then(() => {
-      alert('BibTeX citation copied to clipboard!');
+    const textToCopy = (state.data && state.data.bibtex) ? state.data.bibtex : el.textContent.trim();
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      const buttons = document.querySelectorAll(`button[onclick*="${targetId}"]`);
+      buttons.forEach(btn => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '✓ Copied!';
+        btn.classList.add('!bg-emerald-600', '!text-white', '!border-emerald-500');
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.remove('!bg-emerald-600', '!text-white', '!border-emerald-500');
+        }, 2000);
+      });
+    }).catch(() => {
+      const textarea = document.createElement('textarea');
+      textarea.value = textToCopy;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
     });
   };
 
