@@ -470,43 +470,55 @@ DARK_MODE_JS = """<script>
     }
   };
 
+  let isApplyingTheme = false;
   function applyTheme(theme) {
-    const isDark = theme === 'dark';
-    const bg = isDark ? '#0B1120' : '#FFFFFF';
-    const fg = isDark ? '#F8FAFC' : '#0F172A';
+    if (isApplyingTheme) return;
+    isApplyingTheme = true;
+    try {
+      const isDark = theme === 'dark';
+      const bg = isDark ? '#0B1120' : '#FFFFFF';
+      const fg = isDark ? '#F8FAFC' : '#0F172A';
 
-    document.documentElement.setAttribute('data-theme', theme);
-    document.documentElement.style.backgroundColor = bg;
-    document.documentElement.style.color = fg;
-    document.documentElement.style.colorScheme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.style.backgroundColor = bg;
+      document.documentElement.style.color = fg;
+      document.documentElement.style.colorScheme = theme;
 
-    const vars = THEME_VARS[theme] || THEME_VARS.dark;
-    for (const [k, v] of Object.entries(vars)) {
-      document.documentElement.style.setProperty(k, v);
-      if (document.body) document.body.style.setProperty(k, v);
-    }
-
-    const els = [
-      document.documentElement,
-      document.body,
-      document.querySelector('gradio-app'),
-      document.querySelector('.gradio-container')
-    ];
-    document.querySelectorAll('.contain, .main, .gradio-container, gradio-app').forEach(el => els.push(el));
-
-    els.filter(Boolean).forEach(el => {
-      el.setAttribute('data-theme', theme);
-      if (isDark) {
-        el.classList.add('dark');
-        el.classList.remove('light');
-      } else {
-        el.classList.remove('dark');
-        el.classList.add('light');
+      const vars = THEME_VARS[theme] || THEME_VARS.dark;
+      for (const [k, v] of Object.entries(vars)) {
+        document.documentElement.style.setProperty(k, v);
+        if (document.body) document.body.style.setProperty(k, v);
       }
-    });
 
-    const icon = document.getElementById('theme-icon');
-    if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+      const app = document.querySelector('gradio-app');
+      if (app) {
+        app.setAttribute('data-theme', theme);
+        if (isDark) {
+          app.classList.add('dark');
+          app.classList.remove('light');
+        } else {
+          app.classList.remove('dark');
+          app.classList.add('light');
+        }
+      }
+
+      const container = document.querySelector('.gradio-container');
+      if (container) {
+        container.setAttribute('data-theme', theme);
+        if (isDark) {
+          container.classList.add('dark');
+          container.classList.remove('light');
+        } else {
+          container.classList.remove('dark');
+          container.classList.add('light');
+        }
+      }
+
+      const icon = document.getElementById('theme-icon');
+      if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+    } finally {
+      isApplyingTheme = false;
+    }
   }
 
   function applyFontLevel(level) {
@@ -567,28 +579,18 @@ DARK_MODE_JS = """<script>
     window.setPrismFontLevel(next);
   };
 
-  document.addEventListener('DOMContentLoaded', function() {
-    applyTheme(localStorage.getItem('prism-theme') || 'dark');
-    applyFontLevel(localStorage.getItem('prism-font-level') || '3');
-  });
-
-  window.addEventListener('load', function() {
-    applyTheme(localStorage.getItem('prism-theme') || 'dark');
-    applyFontLevel(localStorage.getItem('prism-font-level') || '3');
-  });
-
-  const observer = new MutationObserver(function() {
+  function checkInit() {
     const currentTheme = localStorage.getItem('prism-theme') || 'dark';
     const currentFont = localStorage.getItem('prism-font-level') || '3';
-    const app = document.querySelector('gradio-app');
-    if (app && (app.getAttribute('data-theme') !== currentTheme || app.style.backgroundColor === '')) {
-      applyTheme(currentTheme);
-      applyFontLevel(currentFont);
-    }
-  });
-  if (document.documentElement) {
-    observer.observe(document.documentElement, { attributes: true, childList: true, subtree: true });
+    applyTheme(currentTheme);
+    applyFontLevel(currentFont);
   }
+
+  document.addEventListener('DOMContentLoaded', checkInit);
+  window.addEventListener('load', checkInit);
+  checkInit();
+  setTimeout(checkInit, 400);
+  setTimeout(checkInit, 1200);
 })();
 </script>"""
 
