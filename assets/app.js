@@ -147,6 +147,9 @@
 
     // Redraw all active Plotly charts with updated theme colors
     requestAnimationFrame(updateActivePlotlyCharts);
+    if (state.activeTab === 'audio-explorer') {
+      requestAnimationFrame(updateAudioExplorer);
+    }
   }
 
   function toggleTheme() {
@@ -1060,12 +1063,26 @@
     const currentItem = state.data.arena_manifest.find(item => item.tag === state.audio.currentTag);
     if (!currentItem) return;
 
+    const tag = currentItem.tag;
+    const wfTagData = window.PRISM_WAVEFORMS ? window.PRISM_WAVEFORMS[tag] : null;
+
     // Reference audio
     const refPlayer = document.getElementById('audio-ref-player');
     const refPath = currentItem.ref_audio;
     if (refPlayer) {
       refPlayer.src = refPath;
-      initWaveformCanvas('ref-waveform', refPath, refPlayer);
+      const gtWf = wfTagData ? wfTagData['ground_truth'] : null;
+      if (gtWf) {
+        const metaBadge = document.getElementById('ref-metadata-badge');
+        if (metaBadge) metaBadge.textContent = `Uncompressed 24kHz Reference · ${gtWf.dur.toFixed(2)}s`;
+        const peakEl = document.getElementById('ref-stats-peak');
+        if (peakEl) peakEl.textContent = `Peak: ${gtWf.peak.toFixed(3)}`;
+        const rmsEl = document.getElementById('ref-stats-rms');
+        if (rmsEl) rmsEl.textContent = `RMS: ${gtWf.rms.toFixed(1)} dBFS`;
+        const timeDisp = document.getElementById('ref-playhead-time');
+        if (timeDisp) timeDisp.textContent = `0.00s / ${gtWf.dur.toFixed(2)}s`;
+        drawScientificWaveform('ref-waveform-canvas', gtWf, refPlayer, 'ref-playhead-time', '#10B981');
+      }
     }
 
     // Model A
@@ -1076,7 +1093,12 @@
       const pathA = currentItem.models[mA.model_id];
       if (playerA) {
         playerA.src = pathA;
-        initWaveformCanvas('audio-a-waveform', pathA, playerA);
+        const aWf = wfTagData ? wfTagData[mA.model_id] : null;
+        if (aWf) {
+          const timeA = document.getElementById('audio-a-playhead-time');
+          if (timeA) timeA.textContent = `0.00s / ${aWf.dur.toFixed(2)}s`;
+          drawScientificWaveform('audio-a-waveform-canvas', aWf, playerA, 'audio-a-playhead-time', '#6366F1');
+        }
       }
       if (cardA) cardA.innerHTML = renderModelCardSnippet(mA);
     }
@@ -1089,7 +1111,12 @@
       const pathB = currentItem.models[mB.model_id];
       if (playerB) {
         playerB.src = pathB;
-        initWaveformCanvas('audio-b-waveform', pathB, playerB);
+        const bWf = wfTagData ? wfTagData[mB.model_id] : null;
+        if (bWf) {
+          const timeB = document.getElementById('audio-b-playhead-time');
+          if (timeB) timeB.textContent = `0.00s / ${bWf.dur.toFixed(2)}s`;
+          drawScientificWaveform('audio-b-waveform-canvas', bWf, playerB, 'audio-b-playhead-time', '#06B6D4');
+        }
       }
       if (cardB) cardB.innerHTML = renderModelCardSnippet(mB);
     }
@@ -1195,58 +1222,218 @@
     `;
   }
 
-  // Visual Waveform rendering on HTML5 Canvas
-  function initWaveformCanvas(canvasId, audioUrl, audioElement) {
+  // ── Genuine Acoustic Waveform Rendering: Time (s) vs Amplitude ───────────
+  function drawScientificWaveform(canvasId, waveformData, audioElement, timeDisplayId, themeColor = '#10B981') {
     const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
+    if (!canvas || !waveformData) return;
+
     const ctx = canvas.getContext('2d');
-    const width = canvas.width = canvas.parentElement.clientWidth || 300;
-    const height = canvas.height = 60;
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    const width = rect.width || canvas.parentElement.clientWidth || 500;
+    const height = rect.height || 140;
 
-    // Draw static placeholder waveform peaks
-    function drawWaveform(progress = 0) {
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
+
+    const padding = { top: 16, bottom: 26, left: 42, right: 18 };
+    const plotWidth = Math.max(10, width - padding.left - padding.right);
+    const plotHeight = Math.max(10, height - padding.top - padding.bottom);
+    const duration = waveformData.dur || 1.0;
+    const tArr = waveformData.t || [];
+    const minArr = waveformData.min || [];
+    const maxArr = waveformData.max || [];
+    const nPoints = tArr.length;
+
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+
+    function render(currentTime = 0) {
       ctx.clearRect(0, 0, width, height);
-      const isDark = state.theme === 'dark';
-      const barCount = Math.floor(width / 4);
-      const barWidth = 2.5;
 
-      for (let i = 0; i < barCount; i++) {
-        // pseudo random envelope based on index seed
-        const seed = Math.sin(i * 0.18) * Math.cos(i * 0.42) * 0.5 + 0.5;
-        const barHeight = Math.max(4, seed * (height - 12));
-        const x = i * 4;
-        const y = (height - barHeight) / 2;
+      // 1. Graph Background & Axes Grids
+      ctx.fillStyle = isDark ? '#0B1120' : '#F8FAFC';
+      ctx.fillRect(padding.left, padding.top, plotWidth, plotHeight);
 
-        const isPlayed = (x / width) <= progress;
-        if (isPlayed) {
-          ctx.fillStyle = '#818CF8';
-        } else {
-          ctx.fillStyle = isDark ? '#334155' : '#CBD5E1';
-        }
-        ctx.fillRect(x, y, barWidth, barHeight);
+      // Horizontal amplitude grid lines: +1.0, +0.5, 0.0, -0.5, -1.0
+      const yLevels = [
+        { amp: 1.0, label: '+1.0' },
+        { amp: 0.5, label: '+0.5' },
+        { amp: 0.0, label: ' 0.0' },
+        { amp: -0.5, label: '-0.5' },
+        { amp: -1.0, label: '-1.0' }
+      ];
+
+      ctx.font = '10px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+
+      yLevels.forEach(lvl => {
+        const y = padding.top + ((1.0 - lvl.amp) / 2.0) * plotHeight;
+
+        ctx.beginPath();
+        ctx.setLineDash(lvl.amp === 0.0 ? [4, 4] : [2, 4]);
+        ctx.strokeStyle = lvl.amp === 0.0
+          ? (isDark ? '#475569' : '#94A3B8')
+          : (isDark ? '#1E293B' : '#E2E8F0');
+        ctx.lineWidth = lvl.amp === 0.0 ? 1.5 : 1;
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(padding.left + plotWidth, y);
+        ctx.stroke();
+
+        ctx.fillStyle = isDark ? '#94A3B8' : '#64748B';
+        ctx.fillText(lvl.label, padding.left - 6, y);
+      });
+      ctx.setLineDash([]);
+
+      // Vertical Y-axis line
+      ctx.beginPath();
+      ctx.strokeStyle = isDark ? '#334155' : '#CBD5E1';
+      ctx.lineWidth = 1.5;
+      ctx.moveTo(padding.left, padding.top);
+      ctx.lineTo(padding.left, padding.top + plotHeight);
+      ctx.stroke();
+
+      // Horizontal X-axis line
+      ctx.beginPath();
+      ctx.moveTo(padding.left, padding.top + plotHeight);
+      ctx.lineTo(padding.left + plotWidth, padding.top + plotHeight);
+      ctx.stroke();
+
+      // Time ticks and labels
+      const step = duration > 6 ? 1.0 : (duration > 3 ? 0.5 : 0.25);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+
+      for (let sec = 0; sec <= duration; sec += step) {
+        const x = padding.left + (sec / duration) * plotWidth;
+        ctx.beginPath();
+        ctx.strokeStyle = isDark ? '#334155' : '#CBD5E1';
+        ctx.lineWidth = 1;
+        ctx.moveTo(x, padding.top + plotHeight);
+        ctx.lineTo(x, padding.top + plotHeight + 4);
+        ctx.stroke();
+
+        ctx.fillStyle = isDark ? '#94A3B8' : '#64748B';
+        ctx.fillText(`${sec.toFixed(1)}s`, x, padding.top + plotHeight + 6);
       }
+
+      // Y-axis label: "Amplitude"
+      ctx.save();
+      ctx.translate(12, padding.top + plotHeight / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = isDark ? '#64748B' : '#94A3B8';
+      ctx.font = '9px Inter, sans-serif';
+      ctx.fillText('AMPLITUDE', 0, 0);
+      ctx.restore();
+
+      // 2. Draw Genuine Audio Signal Waveform Envelope
+      if (nPoints > 0) {
+        const grad = ctx.createLinearGradient(0, padding.top, 0, padding.top + plotHeight);
+        grad.addColorStop(0, themeColor);
+        grad.addColorStop(0.5, themeColor + '88');
+        grad.addColorStop(1, themeColor);
+
+        ctx.beginPath();
+        for (let i = 0; i < nPoints; i++) {
+          const x = padding.left + (tArr[i] / duration) * plotWidth;
+          const yMax = padding.top + ((1.0 - maxArr[i]) / 2.0) * plotHeight;
+          if (i === 0) ctx.moveTo(x, yMax);
+          else ctx.lineTo(x, yMax);
+        }
+        for (let i = nPoints - 1; i >= 0; i--) {
+          const x = padding.left + (tArr[i] / duration) * plotWidth;
+          const yMin = padding.top + ((1.0 - minArr[i]) / 2.0) * plotHeight;
+          ctx.lineTo(x, yMin);
+        }
+        ctx.closePath();
+        ctx.fillStyle = isDark ? (themeColor + '33') : (themeColor + '22');
+        ctx.fill();
+
+        // Waveform border lines
+        ctx.beginPath();
+        ctx.strokeStyle = themeColor;
+        ctx.lineWidth = 1.2;
+        for (let i = 0; i < nPoints; i++) {
+          const x = padding.left + (tArr[i] / duration) * plotWidth;
+          const yMax = padding.top + ((1.0 - maxArr[i]) / 2.0) * plotHeight;
+          if (i === 0) ctx.moveTo(x, yMax);
+          else ctx.lineTo(x, yMax);
+        }
+        ctx.stroke();
+
+        ctx.beginPath();
+        for (let i = 0; i < nPoints; i++) {
+          const x = padding.left + (tArr[i] / duration) * plotWidth;
+          const yMin = padding.top + ((1.0 - minArr[i]) / 2.0) * plotHeight;
+          if (i === 0) ctx.moveTo(x, yMin);
+          else ctx.lineTo(x, yMin);
+        }
+        ctx.stroke();
+      }
+
+      // 3. Draw Synchronized Playhead (Time Cursor)
+      const cursorX = padding.left + Math.max(0, Math.min(1, currentTime / duration)) * plotWidth;
+
+      // Shaded played region
+      ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)';
+      ctx.fillRect(padding.left, padding.top, cursorX - padding.left, plotHeight);
+
+      // Vertical playhead line
+      ctx.beginPath();
+      ctx.strokeStyle = '#F59E0B';
+      ctx.lineWidth = 2;
+      ctx.moveTo(cursorX, padding.top - 4);
+      ctx.lineTo(cursorX, padding.top + plotHeight + 2);
+      ctx.stroke();
+
+      // Playhead pin on top
+      ctx.beginPath();
+      ctx.arc(cursorX, padding.top - 4, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#F59E0B';
+      ctx.fill();
     }
 
-    drawWaveform(0);
+    render(audioElement ? audioElement.currentTime : 0);
 
-    // Update waveform on audio timeupdate
+    // Synchronize with audio events
     if (audioElement) {
       audioElement.ontimeupdate = () => {
-        if (audioElement.duration) {
-          const progress = audioElement.currentTime / audioElement.duration;
-          drawWaveform(progress);
+        render(audioElement.currentTime);
+        if (timeDisplayId) {
+          const disp = document.getElementById(timeDisplayId);
+          if (disp) {
+            disp.textContent = `${audioElement.currentTime.toFixed(2)}s / ${duration.toFixed(2)}s`;
+          }
         }
       };
 
-      // Click to seek
-      canvas.onclick = (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const ratio = Math.max(0, Math.min(1, clickX / rect.width));
-        if (audioElement.duration) {
-          audioElement.currentTime = ratio * audioElement.duration;
+      // Click or drag to seek on the real time axis
+      let isDragging = false;
+      function seekFromEvent(e) {
+        const cRect = canvas.getBoundingClientRect();
+        const clickX = e.clientX - cRect.left;
+        const ratio = Math.max(0, Math.min(1, (clickX - padding.left) / plotWidth));
+        const targetTime = ratio * duration;
+        audioElement.currentTime = targetTime;
+        render(targetTime);
+        if (timeDisplayId) {
+          const disp = document.getElementById(timeDisplayId);
+          if (disp) disp.textContent = `${targetTime.toFixed(2)}s / ${duration.toFixed(2)}s`;
         }
+      }
+
+      canvas.onmousedown = (e) => {
+        isDragging = true;
+        seekFromEvent(e);
       };
+      window.addEventListener('mousemove', (e) => {
+        if (isDragging) seekFromEvent(e);
+      });
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
     }
   }
 
@@ -1872,6 +2059,12 @@
     window.addEventListener('popstate', () => {
       const tab = window.location.hash.replace('#', '') || 'overview';
       switchTab(tab, false);
+    });
+
+    window.addEventListener('resize', () => {
+      if (state.activeTab === 'audio-explorer') {
+        updateAudioExplorer();
+      }
     });
 
     initData();

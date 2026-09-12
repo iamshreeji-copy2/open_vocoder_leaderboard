@@ -6,9 +6,9 @@
 
 ---
 
-## 🌟 Zero-Cost Static Architecture (GitHub Pages)
+## 🌟 Web Architecture (GitHub Pages)
 
-This repository hosts the static, serverless web edition of the **PRISM-V Benchmark**. Unlike compute-backed containers that exhaust cloud quotas (e.g. Hugging Face CPU Basic), this version runs **100% on client-side HTML, CSS (Tailwind), and JavaScript (Plotly.js)**.
+This repository hosts the static web edition of the **PRISM-V Benchmark**. The application runs entirely on **client-side HTML, CSS (Tailwind), and JavaScript (Plotly.js)**.
 
 ```text
               Offline PRISM-V Evaluation
@@ -24,9 +24,8 @@ GitHub Pages ──► Static PRISM-V Platform (index.html)
         Leaderboard   Plots    Audio Explorer
 ```
 
-- **0 CPU Quota Exhaustion**: Zero Python server required for public viewing.
-- **Ultra-Fast & Responsive**: Sub-10ms instantaneous table filtering and dynamic recalculation.
-- **Offline & Standalone Ready**: Pre-bundled dataset in `data/prism_data.js` allows double-clicking `index.html` to run locally without CORS restrictions.
+- **Client-Side Rendering**: Instantaneous table filtering and dynamic recalculation.
+- **Offline & Standalone Ready**: Pre-bundled dataset in `data/prism_data.js` allows opening `index.html` locally without CORS restrictions.
 
 ---
 

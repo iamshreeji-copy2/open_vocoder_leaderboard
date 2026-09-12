@@ -553,17 +553,35 @@
         </div>
 
         <!-- Ground truth reference card -->
-        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 mb-6">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-              <span>🟢</span> Ground Truth Reference Audio
-            </span>
-            <span class="text-[11px] text-slate-500">Uncompressed 24kHz Reference</span>
+        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 mb-6 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2.5">
+              <span class="text-sm font-bold text-emerald-400 flex items-center gap-1.5">
+                <span>🟢</span> Ground Truth Reference Audio
+              </span>
+              <span id="ref-metadata-badge" class="text-xs font-mono px-2.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold">
+                Uncompressed 24kHz Reference · 7.55s
+              </span>
+            </div>
+            <div class="flex items-center gap-3 text-xs text-slate-400 font-mono">
+              <span id="ref-stats-peak">Peak: 0.841</span>
+              <span>·</span>
+              <span id="ref-stats-rms">RMS: -19.8 dBFS</span>
+            </div>
           </div>
-          <div class="audio-player-custom">
-            <canvas id="ref-waveform" class="audio-waveform-canvas"></canvas>
-            <audio id="audio-ref-player" controls class="w-full mt-1"></audio>
+
+          <!-- Time vs Amplitude Acoustic Waveform Graph -->
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 mb-3">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5 px-1">
+              <span class="font-semibold text-slate-300">Acoustic Signal: Amplitude vs Time (seconds)</span>
+              <span id="ref-playhead-time" class="font-mono text-emerald-400 font-bold">0.00s / 7.55s</span>
+            </div>
+            <div class="relative w-full h-40">
+              <canvas id="ref-waveform-canvas" class="w-full h-full block rounded-lg cursor-crosshair"></canvas>
+            </div>
           </div>
+
+          <audio id="audio-ref-player" controls class="w-full"></audio>
         </div>
 
         <!-- Head-to-Head Comparison Banner -->
@@ -575,12 +593,18 @@
           <div class="space-y-4">
             <div>
               <label class="block text-xs font-bold uppercase text-indigo-400 mb-1.5">Model A Candidate</label>
-              <select id="audio-model-a-select" class="w-full p-2 rounded-xl bg-slate-800 border border-slate-700 text-xs sm:text-sm text-slate-100 font-bold"></select>
+              <select id="audio-model-a-select" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs sm:text-sm text-slate-100 font-bold"></select>
             </div>
             <div id="audio-a-card"></div>
-            <div class="audio-player-custom">
-              <canvas id="audio-a-waveform" class="audio-waveform-canvas"></canvas>
-              <audio id="audio-a-player" controls class="w-full mt-1"></audio>
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4">
+              <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5 px-1">
+                <span class="font-semibold text-indigo-400">Model A Signal: Amplitude vs Time (s)</span>
+                <span id="audio-a-playhead-time" class="font-mono text-indigo-400 font-bold">0.00s</span>
+              </div>
+              <div class="relative w-full h-32 mb-2">
+                <canvas id="audio-a-waveform-canvas" class="w-full h-full block rounded-lg cursor-crosshair"></canvas>
+              </div>
+              <audio id="audio-a-player" controls class="w-full"></audio>
             </div>
           </div>
 
@@ -588,12 +612,18 @@
           <div class="space-y-4">
             <div>
               <label class="block text-xs font-bold uppercase text-cyan-400 mb-1.5">Model B Candidate</label>
-              <select id="audio-model-b-select" class="w-full p-2 rounded-xl bg-slate-800 border border-slate-700 text-xs sm:text-sm text-slate-100 font-bold"></select>
+              <select id="audio-model-b-select" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs sm:text-sm text-slate-100 font-bold"></select>
             </div>
             <div id="audio-b-card"></div>
-            <div class="audio-player-custom">
-              <canvas id="audio-b-waveform" class="audio-waveform-canvas"></canvas>
-              <audio id="audio-b-player" controls class="w-full mt-1"></audio>
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4">
+              <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5 px-1">
+                <span class="font-semibold text-cyan-400">Model B Signal: Amplitude vs Time (s)</span>
+                <span id="audio-b-playhead-time" class="font-mono text-cyan-400 font-bold">0.00s</span>
+              </div>
+              <div class="relative w-full h-32 mb-2">
+                <canvas id="audio-b-waveform-canvas" class="w-full h-full block rounded-lg cursor-crosshair"></canvas>
+              </div>
+              <audio id="audio-b-player" controls class="w-full"></audio>
             </div>
           </div>
         </div>
@@ -1098,17 +1128,17 @@ class MyVocoderAdapter(BaseVocoderAdapter):
     <footer class="mt-8 pt-6 pb-12 border-t border-slate-800/80 text-center text-xs text-slate-500 space-y-2">
       <div class="font-semibold text-slate-400">
         <span class="prism-rainbow-text"><span class="prism-p">P</span><span class="prism-r">R</span><span class="prism-i">I</span><span class="prism-s">S</span><span class="prism-m">M</span>-V</span>
-        — Open Neural Vocoder Evaluation · ICASSP Benchmark Protocol v1.0.1
+        — Open Neural Vocoder Evaluation
       </div>
       <div>
-        Hosted statically on <a href="https://pages.github.com/" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:underline">GitHub Pages</a>
-        · No compute server or quota limit required · Always accessible
+        <a href="https://github.com/open-vocoder-leaderboard" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:underline">PRISM-V Benchmark Repository</a>
       </div>
     </footer>
 
   </div>
 
   <!-- Pre-bundled Data and Application Logic -->
+  <script src="data/waveform_data.js"></script>
   <script src="data/prism_data.js"></script>
   <script src="assets/app.js"></script>
 </body>
