@@ -1,0 +1,98 @@
+[
+  {
+    "tag": "clean_reading_ljspeech",
+    "dataset": "LJSpeech",
+    "filename": "LJ001-0009.wav",
+    "description": "LJSpeech: Clean single-speaker studio reading (\"Printing then for our purpose...\")",
+    "ref_audio": "assets/audio_samples/clean_reading_ljspeech/ground_truth.wav",
+    "models": {
+      "bigvgan_v2_24khz_100band_256x": "assets/audio_samples/clean_reading_ljspeech/bigvgan_v2_24khz_100band_256x.wav",
+      "bigvgan_base_24khz_100band": "assets/audio_samples/clean_reading_ljspeech/bigvgan_base_24khz_100band.wav",
+      "vocos_mel_24khz": "assets/audio_samples/clean_reading_ljspeech/vocos_mel_24khz.wav",
+      "comvo_large": "assets/audio_samples/clean_reading_ljspeech/comvo_large.wav",
+      "comvo_base": "assets/audio_samples/clean_reading_ljspeech/comvo_base.wav",
+      "periodwave_turbo": "assets/audio_samples/clean_reading_ljspeech/periodwave_turbo.wav",
+      "periodwave_24k": "assets/audio_samples/clean_reading_ljspeech/periodwave_24k.wav",
+      "flow2gan": "assets/audio_samples/clean_reading_ljspeech/flow2gan.wav",
+      "bridgevoc": "assets/audio_samples/clean_reading_ljspeech/bridgevoc.wav",
+      "rfwave_libritts_24k": "assets/audio_samples/clean_reading_ljspeech/rfwave_libritts_24k.wav",
+      "wavefm": "assets/audio_samples/clean_reading_ljspeech/wavefm.wav",
+      "rndvoc": "assets/audio_samples/clean_reading_ljspeech/rndvoc.wav",
+      "freev": "assets/audio_samples/clean_reading_ljspeech/freev.wav",
+      "hifigan_universal_v1": "assets/audio_samples/clean_reading_ljspeech/hifigan_universal_v1.wav",
+      "griffin_lim": "assets/audio_samples/clean_reading_ljspeech/griffin_lim.wav"
+    }
+  },
+  {
+    "tag": "multispeaker_libritts",
+    "dataset": "LibriTTS",
+    "filename": "100_121669_000005_000002.wav",
+    "description": "LibriTTS: Multi-speaker narrative audio-book (\"Tom did not like to steal...\")",
+    "ref_audio": "assets/audio_samples/multispeaker_libritts/ground_truth.wav",
+    "models": {
+      "bigvgan_v2_24khz_100band_256x": "assets/audio_samples/multispeaker_libritts/bigvgan_v2_24khz_100band_256x.wav",
+      "bigvgan_base_24khz_100band": "assets/audio_samples/multispeaker_libritts/bigvgan_base_24khz_100band.wav",
+      "vocos_mel_24khz": "assets/audio_samples/multispeaker_libritts/vocos_mel_24khz.wav",
+      "comvo_large": "assets/audio_samples/multispeaker_libritts/comvo_large.wav",
+      "comvo_base": "assets/audio_samples/multispeaker_libritts/comvo_base.wav",
+      "periodwave_turbo": "assets/audio_samples/multispeaker_libritts/periodwave_turbo.wav",
+      "periodwave_24k": "assets/audio_samples/multispeaker_libritts/periodwave_24k.wav",
+      "flow2gan": "assets/audio_samples/multispeaker_libritts/flow2gan.wav",
+      "bridgevoc": "assets/audio_samples/multispeaker_libritts/bridgevoc.wav",
+      "rfwave_libritts_24k": "assets/audio_samples/multispeaker_libritts/rfwave_libritts_24k.wav",
+      "wavefm": "assets/audio_samples/multispeaker_libritts/wavefm.wav",
+      "rndvoc": "assets/audio_samples/multispeaker_libritts/rndvoc.wav",
+      "freev": "assets/audio_samples/multispeaker_libritts/freev.wav",
+      "hifigan_universal_v1": "assets/audio_samples/multispeaker_libritts/hifigan_universal_v1.wav",
+      "griffin_lim": "assets/audio_samples/multispeaker_libritts/griffin_lim.wav"
+    }
+  },
+  {
+    "tag": "accented_vctk",
+    "dataset": "VCTK",
+    "filename": "p225_039.wav",
+    "description": "VCTK: Regional Scottish/British accented speech (\"However, the decision has been welcomed...\")",
+    "ref_audio": "assets/audio_samples/accented_vctk/ground_truth.wav",
+    "models": {
+      "bigvgan_v2_24khz_100band_256x": "assets/audio_samples/accented_vctk/bigvgan_v2_24khz_100band_256x.wav",
+      "bigvgan_base_24khz_100band": "assets/audio_samples/accented_vctk/bigvgan_base_24khz_100band.wav",
+      "vocos_mel_24khz": "assets/audio_samples/accented_vctk/vocos_mel_24khz.wav",
+      "comvo_large": "assets/audio_samples/accented_vctk/comvo_large.wav",
+      "comvo_base": "assets/audio_samples/accented_vctk/comvo_base.wav",
+      "periodwave_turbo": "assets/audio_samples/accented_vctk/periodwave_turbo.wav",
+      "periodwave_24k": "assets/audio_samples/accented_vctk/periodwave_24k.wav",
+      "flow2gan": "assets/audio_samples/accented_vctk/flow2gan.wav",
+      "bridgevoc": "assets/audio_samples/accented_vctk/bridgevoc.wav",
+      "rfwave_libritts_24k": "assets/audio_samples/accented_vctk/rfwave_libritts_24k.wav",
+      "wavefm": "assets/audio_samples/accented_vctk/wavefm.wav",
+      "rndvoc": "assets/audio_samples/accented_vctk/rndvoc.wav",
+      "freev": "assets/audio_samples/accented_vctk/freev.wav",
+      "hifigan_universal_v1": "assets/audio_samples/accented_vctk/hifigan_universal_v1.wav",
+      "griffin_lim": "assets/audio_samples/accented_vctk/griffin_lim.wav"
+    }
+  },
+  {
+    "tag": "device_noisy_freest",
+    "dataset": "Free_ST",
+    "filename": "f0001_us_f0001_00011.wav",
+    "description": "Free_ST: Real-world mobile microphone acoustic condition (\"Which is right next to the sun...\")",
+    "ref_audio": "assets/audio_samples/device_noisy_freest/ground_truth.wav",
+    "models": {
+      "bigvgan_v2_24khz_100band_256x": "assets/audio_samples/device_noisy_freest/bigvgan_v2_24khz_100band_256x.wav",
+      "bigvgan_base_24khz_100band": "assets/audio_samples/device_noisy_freest/bigvgan_base_24khz_100band.wav",
+      "vocos_mel_24khz": "assets/audio_samples/device_noisy_freest/vocos_mel_24khz.wav",
+      "comvo_large": "assets/audio_samples/device_noisy_freest/comvo_large.wav",
+      "comvo_base": "assets/audio_samples/device_noisy_freest/comvo_base.wav",
+      "periodwave_turbo": "assets/audio_samples/device_noisy_freest/periodwave_turbo.wav",
+      "periodwave_24k": "assets/audio_samples/device_noisy_freest/periodwave_24k.wav",
+      "flow2gan": "assets/audio_samples/device_noisy_freest/flow2gan.wav",
+      "bridgevoc": "assets/audio_samples/device_noisy_freest/bridgevoc.wav",
+      "rfwave_libritts_24k": "assets/audio_samples/device_noisy_freest/rfwave_libritts_24k.wav",
+      "wavefm": "assets/audio_samples/device_noisy_freest/wavefm.wav",
+      "rndvoc": "assets/audio_samples/device_noisy_freest/rndvoc.wav",
+      "freev": "assets/audio_samples/device_noisy_freest/freev.wav",
+      "hifigan_universal_v1": "assets/audio_samples/device_noisy_freest/hifigan_universal_v1.wav",
+      "griffin_lim": "assets/audio_samples/device_noisy_freest/griffin_lim.wav"
+    }
+  }
+]

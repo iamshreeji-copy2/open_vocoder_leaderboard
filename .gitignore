@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+*.pyc
+.DS_Store
+.env
+.venv
+env/
+venv/
+extract_space_data.py
