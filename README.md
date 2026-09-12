@@ -2,7 +2,7 @@
 
 <img src="assets/Final_logo.png" alt="PRISM-V Leaderboard Logo" width="100%">
 
-# 🎙️ PRISM-V: A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis
+# 🎙️ <span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V: A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis
 ### An Open Benchmark for Neural Vocoder Evaluation
 
 [![Live Website](https://img.shields.io/badge/🌐%20Live%20Leaderboard-GitHub%20Pages-4ade80?style=for-the-badge&logo=githubpages&logoColor=white)](https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/)
@@ -36,17 +36,17 @@
 
 ## 📢 News and Updates
 
-- **[Sept 2026]** **PRISM-V Static Web Platform Launched!** Interactive client-side leaderboard and Audio Explorer with genuine Time vs Amplitude waveform rendering live at **[iamshreeji-copy2.github.io/open_vocoder_leaderboard](https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/)**.
+- **[Sept 2026]** **<span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V Static Web Platform Launched!** Interactive client-side leaderboard and Audio Explorer with genuine Time vs Amplitude waveform rendering live at **[iamshreeji-copy2.github.io/open_vocoder_leaderboard](https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/)**.
 - **[Aug 2026]** Benchmarking completed across 15 open-source neural vocoder checkpoints spanning GAN, Flow, Transformer, and Diffusion paradigms across 4 diverse speech corpora.
 - **[July 2026]** Montreal Forced Aligner (MFA) phoneme diagnostic pipeline integrated to track fine-grained phonemic class fidelity (vowels, fricatives, stops, nasals, approximants).
 
 ---
 
-## 🔬 What is PRISM-V?
+## 🔬 What is <span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V?
 
-**PRISM-V** (**P**erceptual, **R**econstruction, **I**ntelligibility, **S**peaker, and **M**odel Efficiency for **V**ocoders) is an open, standardized scientific benchmark and interactive leaderboard for evaluating pretrained neural vocoders in modern text-to-speech (TTS) and speech-to-speech synthesis pipelines.
+**<span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V** (**P**erceptual, **R**econstruction, **I**ntelligibility, **S**peaker, and **M**odel Efficiency for **V**ocoders) is an open, standardized scientific benchmark and interactive leaderboard for evaluating pretrained neural vocoders in modern text-to-speech (TTS) and speech-to-speech synthesis pipelines.
 
-Rather than relying on isolated single-corpus PESQ figures or inconsistent community evaluations, PRISM-V executes an identical, reproducible protocol evaluating:
+Rather than relying on isolated single-corpus PESQ figures or inconsistent community evaluations, **<span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V** executes an identical, reproducible protocol evaluating:
 
 1. **Acoustic Quality & Reconstruction Fidelity**: Objective metrics including PESQ-WB, Mel-Cepstral Distortion (MCD), STOI, Pitch RMSE (F0), and Voiced/Unvoiced F1-score.
 2. **Cross-Corpus Generalization & Robustness**: Out-of-domain performance on multi-speaker narrative, accented speech, and real-world noisy acoustic conditions without re-training or fine-tuning.
@@ -81,7 +81,7 @@ Rather than relying on isolated single-corpus PESQ figures or inconsistent commu
 
 ## 📦 Evaluated Neural Vocoders
 
-PRISM-V benchmarks **15 representative neural vocoders** covering all major generative speech synthesis paradigms:
+**<span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V** benchmarks **15 representative neural vocoders** covering all major generative speech synthesis paradigms:
 
 | Paradigm | Models Evaluated | Sampling Rate | Description |
 |---|---|---|---|
@@ -206,9 +206,9 @@ Contributions, questions, and feature suggestions are always welcome:
 
 ---
 
-## 📙 Citation
+## 📙 Cite <span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V
 
-If you use the PRISM-V benchmark, evaluated checkpoints, audio samples, or leaderboard codebase in your research, please cite:
+If you use the **<span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V** benchmark, evaluated checkpoints, audio samples, or leaderboard codebase in your research, please cite:
 
 ```bibtex
 @misc{purohit2026prismv,
