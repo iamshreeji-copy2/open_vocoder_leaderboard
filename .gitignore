@@ -7,3 +7,5 @@ __pycache__/
 env/
 venv/
 extract_space_data.py
+push_to_space.py
+
