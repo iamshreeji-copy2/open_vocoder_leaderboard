@@ -2,8 +2,8 @@
 
 <img src="assets/Final_logo.png" alt="PRISM-V Leaderboard Logo" width="100%">
 
-# 🎙️ PRISM-V: Open Evaluation of Pretrained Neural Vocoders
-### A Multidimensional Scientific Benchmark for Speech Synthesis
+# 🎙️ PRISM-V: A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis
+### An Open Benchmark for Neural Vocoder Evaluation
 
 [![Live Website](https://img.shields.io/badge/🌐%20Live%20Leaderboard-GitHub%20Pages-4ade80?style=for-the-badge&logo=githubpages&logoColor=white)](https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/)
 [![Paper](https://img.shields.io/badge/📄%20Paper-ICASSP%202027-6366f1?style=for-the-badge&logo=arxiv&logoColor=white)](#-citation)

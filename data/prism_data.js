@@ -2,7 +2,7 @@
 window.PRISM_DATA = {
   "identity": {
     "name": "PRISM-V",
-    "full_name": "PRISM-V: Open Evaluation of Pretrained Neural Vocoders",
+    "full_name": "PRISM-V: A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis",
     "tagline": "Quality · Robustness · Generalization · Efficiency",
     "description": "The 🤗 PRISM-V Leaderboard evaluates open-source and pretrained neural vocoders on English speech across diverse acoustic conditions, generative architectures, and edge deployment profiles.",
     "version": "v1.0.1",

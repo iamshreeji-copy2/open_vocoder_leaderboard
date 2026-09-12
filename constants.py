@@ -1,11 +1,11 @@
 """
-constants.py — PRISM-V: Open Neural Vocoder Evaluation
+constants.py — PRISM-V: A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis
 All model metadata, open-source status, architecture taxonomy, and static content.
 """
 
 # ── PRISM-V Identity ──────────────────────────────────────────────────────────
 PRISM_NAME    = "PRISM-V"
-PRISM_FULL    = "PRISM-V: Open Evaluation of Pretrained Neural Vocoders"
+PRISM_FULL    = "PRISM-V: A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis"
 PRISM_TAGLINE = "Quality · Robustness · Generalization · Efficiency"
 PRISM_DESC    = (
     "The 🤗 PRISM-V Leaderboard evaluates open-source and pretrained neural vocoders on English speech "

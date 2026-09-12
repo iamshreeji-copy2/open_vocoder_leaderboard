@@ -1,5 +1,5 @@
 /**
- * app.js — PRISM-V: Open Neural Vocoder Evaluation Platform
+ * app.js — PRISM-V: A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis Platform
  * Research-Grade Static Client Engine for GitHub Pages (github.io)
  *
  * Implements:
