@@ -1398,6 +1398,8 @@ if __name__ == "__main__":
         fav_path = os.path.join(BASE_DIR, "logo.png")
 
     demo.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
         head=DARK_MODE_JS,
         css=css_content,
         favicon_path=fav_path if os.path.exists(fav_path) else None,
