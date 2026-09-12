@@ -359,7 +359,7 @@ code, kbd, samp, pre, .font-mono {
   color: var(--text-primary);
   width: 28px;
   height: 28px;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 13px;
   cursor: pointer;
   transition: all 150ms ease;
@@ -371,7 +371,7 @@ code, kbd, samp, pre, .font-mono {
 #theme-toggle-btn:hover {
   background: var(--prism-light);
   border-color: var(--prism);
-  transform: scale(1.08) rotate(15deg);
+  transform: scale(1.08);
 }
 
 @media (max-width: 640px) {
