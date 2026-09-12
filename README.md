@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/logo_web.png" alt="PRISM-V Leaderboard Logo" width="460px">
+<img src="assets/Final_logo.png" alt="PRISM-V Leaderboard Logo" width="620px">
 
 # 🎙️ PRISM-V: Open Evaluation of Pretrained Neural Vocoders
 ### A Multidimensional Scientific Benchmark for Speech Synthesis
@@ -182,8 +182,8 @@ open_vocoder_leaderboard/
 ├── assets/
 │   ├── app.js               # Leaderboard logic, sorting, tab navigation, Plotly charts
 │   ├── custom.css           # Design tokens, typography, dark mode styling
-│   ├── logo_web.png         # Web-optimized benchmark logo
-│   ├── logo.png             # Full-resolution banner logo
+│   ├── Final_logo.png       # Official PRISM-V benchmark logo
+│   ├── logo.png             # Benchmark banner logo
 │   └── audio_samples/       # Authentic 24 kHz speech samples (64 WAV files)
 └── data/
     ├── prism_data.js        # Bundled JSON dataset for instant standalone execution
