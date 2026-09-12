@@ -2,13 +2,13 @@
 title: PRISM-V Open Neural Vocoder Leaderboard
 emoji: 🎙️
 colorFrom: indigo
-colorTo: cyan
+colorTo: blue
 sdk: gradio
 sdk_version: 5.20.0
 app_file: app.py
 pinned: true
 license: mit
-short_description: "PRISM-V: Open Evaluation of Pretrained Neural Vocoders Across Quality, Robustness & Efficiency"
+short_description: "PRISM-V: Open Evaluation of Pretrained Neural Vocoders"
 ---
 
 # 🎙️ PRISM-V: Open Evaluation of Pretrained Neural Vocoders
