@@ -658,7 +658,7 @@
 
     // Define columns
     const columns = [
-      { id: 'rank', label: 'Rank & <span class="prism-rainbow-text font-bold"><span class="prism-p" style="color:var(--prism-p,#6366f1)">P</span><span class="prism-r" style="color:var(--prism-r,#06b6d4)">R</span><span class="prism-i" style="color:var(--prism-i,#10b981)">I</span><span class="prism-s" style="color:var(--prism-s,#f59e0b)">S</span><span class="prism-m" style="color:var(--prism-m,#f43f5e)">M</span>-V</span> Score', group: 'prism', sortKey: 'overall_score', always: true },
+      { id: 'rank', label: 'Rank & <span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Score', group: 'prism', sortKey: 'overall_score', always: true },
       { id: 'model_name', label: 'Model', group: 'prism', sortKey: 'model_name', always: true },
       { id: 'pesq', label: 'PESQ ↑', group: 'objective', sortKey: 'pesq', tip: 'Perceptual Evaluation of Speech Quality (ITU-T P.862)' },
       { id: 'stoi', label: 'STOI ↑', group: 'objective', sortKey: 'stoi', tip: 'Short-Time Objective Intelligibility' },
@@ -916,7 +916,7 @@
     ).filter(Boolean);
 
     const rows = [
-      { label: '🏆 <span class="prism-rainbow-text font-bold"><span class="prism-p" style="color:var(--prism-p,#6366f1)">P</span><span class="prism-r" style="color:var(--prism-r,#06b6d4)">R</span><span class="prism-i" style="color:var(--prism-i,#10b981)">I</span><span class="prism-s" style="color:var(--prism-s,#f59e0b)">S</span><span class="prism-m" style="color:var(--prism-m,#f43f5e)">M</span>-V</span> Score (1–100) ↑', get: m => m.overall_score.toFixed(1) },
+      { label: '🏆 <span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Score (1–100) ↑', get: m => m.overall_score.toFixed(1) },
       { label: 'Wideband PESQ ↑', get: m => m.pesq.toFixed(3) },
       { label: 'STOI Intelligibility ↑', get: m => m.stoi.toFixed(3) },
       { label: 'UTMOS Neural MOS ↑', get: m => m.utmos.toFixed(2) },
@@ -1960,7 +1960,7 @@
           <div class="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4">
             <h3 class="font-bold text-xs uppercase text-slate-400 tracking-wider mb-3">Quality & Fidelity</h3>
             <div class="space-y-2 text-xs">
-              <div class="flex justify-between"><span><span class="prism-rainbow-text font-bold"><span class="prism-p" style="color:var(--prism-p,#6366f1)">P</span><span class="prism-r" style="color:var(--prism-r,#06b6d4)">R</span><span class="prism-i" style="color:var(--prism-i,#10b981)">I</span><span class="prism-s" style="color:var(--prism-s,#f59e0b)">S</span><span class="prism-m" style="color:var(--prism-m,#f43f5e)">M</span>-V</span> Score:</span><span class="font-mono font-bold text-indigo-500">${m.overall_score.toFixed(1)} / 100</span></div>
+              <div class="flex justify-between"><span><span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Score:</span><span class="font-mono font-bold text-indigo-500">${m.overall_score.toFixed(1)} / 100</span></div>
               <div class="flex justify-between"><span>Wideband PESQ:</span><span class="font-mono font-bold">${m.pesq.toFixed(3)}</span></div>
               <div class="flex justify-between"><span>STOI Intelligibility:</span><span class="font-mono">${m.stoi.toFixed(3)}</span></div>
               <div class="flex justify-between"><span>UTMOS Neural MOS:</span><span class="font-mono text-purple-500 font-bold">${m.utmos.toFixed(2)}</span></div>
@@ -2019,7 +2019,7 @@
   // ═══════════════════════════════════════════════════════════════════════════
   function colorizePrismV(text) {
     if (!text) return '';
-    const prismColored = '<span class="prism-rainbow-text font-bold"><span class="prism-p" style="color:var(--prism-p,#6366f1)">P</span><span class="prism-r" style="color:var(--prism-r,#06b6d4)">R</span><span class="prism-i" style="color:var(--prism-i,#10b981)">I</span><span class="prism-s" style="color:var(--prism-s,#f59e0b)">S</span><span class="prism-m" style="color:var(--prism-m,#f43f5e)">M</span>-V</span>';
+    const prismColored = '<span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span>';
     return text.replace(/PRISM-V/g, prismColored);
   }
 

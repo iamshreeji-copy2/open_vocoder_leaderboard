@@ -51,17 +51,17 @@ window.PRISM_DATA = {
       "Non-Autoregressive"
     ],
     "rfwave_libritts_24k": [
-      "Flow-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Flow-based"
     ],
     "wavefm": [
-      "Flow-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Flow-based"
     ],
     "flow2gan": [
-      "Flow-based",
       "GAN-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Flow-based"
     ],
     "bridgevoc": [
       "Non-Autoregressive",
@@ -533,9 +533,9 @@ window.PRISM_DATA = {
       "architecture_family": "Flow Matching + GAN",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "Flow-based",
         "GAN-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Flow-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1203,8 +1203,8 @@ window.PRISM_DATA = {
       "architecture_family": "Distilled Flow Matching",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "Flow-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Flow-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1337,8 +1337,8 @@ window.PRISM_DATA = {
       "architecture_family": "Rectified Flow Matching",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "Flow-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Flow-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
