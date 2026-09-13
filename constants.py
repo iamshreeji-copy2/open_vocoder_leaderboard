@@ -394,19 +394,10 @@ Spectral distance, F0 pitch deviation, and boundary precision are analyzed per p
 CHANGELOG_MD = """
 ## 📋 Release Notes & Changelog
 
-### 🚀 What's New in v1.0.1 (September 12, 2026)
-- **🎨 UI & Contrast Enhancements**: High-contrast gold, silver, and bronze rank badges with enhanced visibility across both dark and light modes.
-- **✨ Cleaner Visual Experience**: Redesigned model availability chips, streamlined citation blocks, and uncluttered layout.
-- **⚡ Performance & Stability**: Upgraded zero-latency client-side theme engine with hardened lifecycle hooks for fluid, lag-free responsiveness.
-
----
-
 ### 📜 Version History
 
 | Version | Release Date | Key Updates |
 |---|---|---|
-| **v1.0.1** | **September 12, 2026** | High-contrast UI polish, uncluttered citation cards, and client-side engine stability fixes |
-| **v1.0.0** | September 10, 2026 | Initial public release: 15 pretrained neural vocoders evaluated across 4 English corpora |
-| *v1.1.0* | Upcoming | Additional vocoder families (CodecGAN, DAC-based) and streaming inference benchmarks |
-| *v1.2.0* | Planned | Accented and multilingual speech generalization evaluation tracks |
+| **v1.0.0** | September 10, 2026 | Initial public release of the open vocoder benchmark evaluating 15 pretrained neural vocoders across 4 diverse English speech corpora |
+| **v1.0.1** | September 12, 2026 | Interactive A/B audio listening explorer with synchronized waveforms, customizable multidimensional weighting calculator, standardized PRISM-V color palette, and accessibility controls |
 """
