@@ -12,7 +12,7 @@ PRISM_DESC    = (
     "across diverse acoustic conditions, generative architectures, and edge deployment profiles."
 )
 PRISM_VERSION = "v1.0.1"
-GITHUB_URL    = "https://github.com/open-vocoder-leaderboard"
+GITHUB_URL    = "https://github.com/iamshreeji-copy2/open_vocoder_leaderboard"
 
 # ── Architecture Taxonomy ─────────────────────────────────────────────────────
 #  Used for the architecture filter pills (multi-select supported)
