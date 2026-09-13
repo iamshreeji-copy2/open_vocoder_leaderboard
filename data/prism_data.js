@@ -19,36 +19,36 @@ window.PRISM_DATA = {
   ],
   "model_arch_tags": {
     "hifigan_universal_v1": [
-      "GAN-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "GAN-based"
     ],
     "bigvgan_base_24khz_100band": [
-      "GAN-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "GAN-based"
     ],
     "bigvgan_v2_24khz_100band_256x": [
-      "GAN-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "GAN-based"
     ],
     "freev": [
-      "GAN-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "GAN-based"
     ],
     "rndvoc": [
-      "GAN-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "GAN-based"
     ],
     "vocos_mel_24khz": [
-      "Fourier / Transformer-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Fourier / Transformer-based"
     ],
     "comvo_base": [
-      "Fourier / Transformer-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Fourier / Transformer-based"
     ],
     "comvo_large": [
-      "Fourier / Transformer-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Fourier / Transformer-based"
     ],
     "rfwave_libritts_24k": [
       "Flow-based",
@@ -59,21 +59,21 @@ window.PRISM_DATA = {
       "Non-Autoregressive"
     ],
     "flow2gan": [
-      "GAN-based",
       "Flow-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "GAN-based"
     ],
     "bridgevoc": [
-      "Diffusion-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Diffusion-based"
     ],
     "periodwave_turbo": [
-      "Diffusion-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Diffusion-based"
     ],
     "periodwave_24k": [
-      "Diffusion-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Diffusion-based"
     ],
     "griffin_lim": [
       "Algorithmic DSP"
@@ -466,8 +466,8 @@ window.PRISM_DATA = {
       "architecture_family": "Fourier / iSTFT ConvNeXt",
       "arch_category": "Fourier / Transformer-based",
       "arch_tags": [
-        "Fourier / Transformer-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Fourier / Transformer-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -533,9 +533,9 @@ window.PRISM_DATA = {
       "architecture_family": "Flow Matching + GAN",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "GAN-based",
         "Flow-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "GAN-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -601,8 +601,8 @@ window.PRISM_DATA = {
       "architecture_family": "Random Distortion GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "GAN-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "GAN-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -668,8 +668,8 @@ window.PRISM_DATA = {
       "architecture_family": "Brownian Bridge SDE",
       "arch_category": "Diffusion-based",
       "arch_tags": [
-        "Diffusion-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Diffusion-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -735,8 +735,8 @@ window.PRISM_DATA = {
       "architecture_family": "Complex-Valued Fourier",
       "arch_category": "Fourier / Transformer-based",
       "arch_tags": [
-        "Fourier / Transformer-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Fourier / Transformer-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -802,8 +802,8 @@ window.PRISM_DATA = {
       "architecture_family": "Diffusion / Turbo SDE",
       "arch_category": "Diffusion-based",
       "arch_tags": [
-        "Diffusion-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Diffusion-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -869,8 +869,8 @@ window.PRISM_DATA = {
       "architecture_family": "Anti-Aliased Snake GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "GAN-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "GAN-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -936,8 +936,8 @@ window.PRISM_DATA = {
       "architecture_family": "Complex-Valued Fourier",
       "arch_category": "Fourier / Transformer-based",
       "arch_tags": [
-        "Fourier / Transformer-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Fourier / Transformer-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1069,8 +1069,8 @@ window.PRISM_DATA = {
       "architecture_family": "Pseudo-Inverse Mel GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "GAN-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "GAN-based"
       ],
       "track": "22.05kHz Legacy Track",
       "sampling_rate_hz": 22050,
@@ -1136,8 +1136,8 @@ window.PRISM_DATA = {
       "architecture_family": "Anti-Aliased Snake GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "GAN-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "GAN-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1270,8 +1270,8 @@ window.PRISM_DATA = {
       "architecture_family": "Diffusion / Full SDE",
       "arch_category": "Diffusion-based",
       "arch_tags": [
-        "Diffusion-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Diffusion-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1404,8 +1404,8 @@ window.PRISM_DATA = {
       "architecture_family": "Time-domain MRF-GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "GAN-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "GAN-based"
       ],
       "track": "22.05kHz Legacy Track",
       "sampling_rate_hz": 22050,

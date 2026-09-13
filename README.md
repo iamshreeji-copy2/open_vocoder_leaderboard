@@ -139,9 +139,23 @@ This repository is designed to be hosted directly on GitHub Pages without any co
 
 ## ➕ Submitting a New Vocoder
 
-We welcome submissions of new or open-source neural vocoder checkpoints:
+We welcome submissions of new or open-source neural vocoder checkpoints from the speech research community:
 
-1. Subclass the standard `BaseVocoderAdapter` interface:
+### 1. Fork the Repository to Your GitHub Account
+Click [**Fork Repository**](https://github.com/iamshreeji-copy2/open_vocoder_leaderboard/fork) to create an independent copy under your personal GitHub profile (`github.com/<your-username>/open_vocoder_leaderboard`).
+
+### 2. Clone Your Fork & Create a Branch
+```bash
+# Clone your personal fork
+git clone https://github.com/<YOUR-USERNAME>/open_vocoder_leaderboard.git
+cd open_vocoder_leaderboard
+
+# Create a dedicated feature branch
+git checkout -b add-my-vocoder-model
+```
+
+### 3. Subclass the Standard Adapter Interface
+Create your adapter file at `src/vocoder_benchmark/models/adapters/my_vocoder.py`:
 
 ```python
 from abc import ABC, abstractmethod
@@ -151,24 +165,34 @@ class BaseVocoderAdapter(ABC):
     """PRISM-V Standard Model Adapter Interface"""
 
     @abstractmethod
-    def load_model(self, checkpoint_path: str, device: str = "cuda") -> None:
+    def load(self, device: str = "cuda", precision: str = "fp32") -> None:
         """Load checkpoint weights and set model to eval mode."""
         pass
 
     @abstractmethod
-    def synthesize(self, mel_spectrogram: torch.Tensor) -> torch.Tensor:
-        """Synthesize 24 kHz or 22.05 kHz speech audio from mel spectrogram.
-        
-        Args:
-            mel_spectrogram: Tensor of shape (B, n_mels, T)
-        Returns:
-            audio: Tensor of shape (B, num_samples)
-        """
+    def preprocess(self, waveform: torch.Tensor, sr: int) -> torch.Tensor:
+        """Extract 80-band log-mel spectrogram matching standard acoustic parameters."""
+        pass
+
+    @abstractmethod
+    def infer(self, condition: torch.Tensor, seed: int = 42) -> torch.Tensor:
+        """Synthesize 24 kHz or 22.05 kHz speech audio from mel spectrogram tensor."""
         pass
 ```
 
-2. Generate synthesized speech on the 4 evaluation test sets using the benchmark standard mel-spectrogram parameters (80 mel bands, 1024 FFT, 256 hop size).
-3. Submit a [Pull Request](https://github.com/iamshreeji-copy2/open_vocoder_leaderboard/pulls) with your adapter script, checkpoint URL, and synthesis logs.
+Test your adapter locally with the verification smoke test:
+```bash
+pytest tests/test_adapters.py -k my_vocoder
+```
+
+### 4. Push & Open a Pull Request Upstream
+```bash
+git add src/vocoder_benchmark/models/adapters/my_vocoder.py configs/models/
+git commit -m "feat(adapter): add MyVocoder adapter and benchmark config"
+git push -u origin add-my-vocoder-model
+```
+
+Navigate to [**Compare Across Forks**](https://github.com/iamshreeji-copy2/open_vocoder_leaderboard/compare) to open a Pull Request into `iamshreeji-copy2/open_vocoder_leaderboard:main`. Our automated benchmark pipeline evaluates your submission across all 4 corpora and publishes the results to the public leaderboard.
 
 ---
 
