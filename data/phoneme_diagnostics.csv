@@ -41,13 +41,13 @@ periodwave_turbo,PeriodWave-Turbo (4-step),Diffusion / Turbo SDE,Affricates,7.07
 periodwave_turbo,PeriodWave-Turbo (4-step),Diffusion / Turbo SDE,Nasals,7.027,4.0,6.68
 periodwave_turbo,PeriodWave-Turbo (4-step),Diffusion / Turbo SDE,Liquids,6.897,4.0,6.55
 periodwave_turbo,PeriodWave-Turbo (4-step),Diffusion / Turbo SDE,Glides,6.81,4.0,6.47
-periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Vowels,8.625,3.7,7.33
-periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Stops / Plosives,9.304,5.9,12.56
-periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Fricatives,8.594,0.0,11.0
-periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Affricates,8.145,0.0,10.43
-periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Nasals,9.546,4.0,9.07
-periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Liquids,9.122,4.0,8.67
-periodwave_24k,PeriodWave (30-step),Diffusion / Full SDE,Glides,9.793,4.0,9.3
+periodwave_24k,PeriodWave (16-step),Diffusion / Full SDE,Vowels,8.625,3.7,7.33
+periodwave_24k,PeriodWave (16-step),Diffusion / Full SDE,Stops / Plosives,9.304,5.9,12.56
+periodwave_24k,PeriodWave (16-step),Diffusion / Full SDE,Fricatives,8.594,0.0,11.0
+periodwave_24k,PeriodWave (16-step),Diffusion / Full SDE,Affricates,8.145,0.0,10.43
+periodwave_24k,PeriodWave (16-step),Diffusion / Full SDE,Nasals,9.546,4.0,9.07
+periodwave_24k,PeriodWave (16-step),Diffusion / Full SDE,Liquids,9.122,4.0,8.67
+periodwave_24k,PeriodWave (16-step),Diffusion / Full SDE,Glides,9.793,4.0,9.3
 flow2gan,Flow2GAN (4-step),Flow Matching + GAN,Vowels,6.025,3.5,5.12
 flow2gan,Flow2GAN (4-step),Flow Matching + GAN,Stops / Plosives,6.26,5.2,8.45
 flow2gan,Flow2GAN (4-step),Flow Matching + GAN,Fricatives,6.486,0.0,8.3

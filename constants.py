@@ -11,7 +11,7 @@ PRISM_DESC    = (
     "The 🤗 PRISM-V Leaderboard evaluates open-source and pretrained neural vocoders on English speech "
     "across diverse acoustic conditions, generative architectures, and edge deployment profiles."
 )
-PRISM_VERSION = "v1.0.1"
+PRISM_VERSION = "v2.0.0"
 GITHUB_URL    = "https://github.com/iamshreeji-copy2/open_vocoder_leaderboard"
 
 # ── Architecture Taxonomy ─────────────────────────────────────────────────────
@@ -400,4 +400,5 @@ CHANGELOG_MD = """
 |---|---|---|
 | **v1.0.0** | September 10, 2026 | Initial public release of the open vocoder benchmark evaluating 15 pretrained neural vocoders across 4 diverse English speech corpora |
 | **v1.0.1** | September 12, 2026 | Interactive A/B audio listening explorer with synchronized waveforms, customizable multidimensional weighting calculator, standardized PRISM-V color palette, and accessibility controls |
+| **v2.0.0** | September 16, 2026 | Official release of certified PRISM-V-v2 evaluation data: axiomatic multi-dimensional geometric scoring (P, R, I, S, M), calibrated edge GTX 1650 FP32 profiling, per-corpus reconstruction and intelligibility diagnostics across LJSpeech, LibriTTS, VCTK, and Free_ST, and certified leaderboard rankings |
 """

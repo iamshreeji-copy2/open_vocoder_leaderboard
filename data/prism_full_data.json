@@ -4,7 +4,7 @@
     "full_name": "PRISM-V: A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis",
     "tagline": "Quality · Robustness · Generalization · Efficiency",
     "description": "The 🤗 PRISM-V Leaderboard evaluates open-source and pretrained neural vocoders on English speech across diverse acoustic conditions, generative architectures, and edge deployment profiles.",
-    "version": "v1.0.1",
+    "version": "v2.0.0",
     "github_url": "https://github.com/iamshreeji-copy2/open_vocoder_leaderboard"
   },
   "arch_categories": [
@@ -18,24 +18,24 @@
   ],
   "model_arch_tags": {
     "hifigan_universal_v1": [
-      "Non-Autoregressive",
-      "GAN-based"
+      "GAN-based",
+      "Non-Autoregressive"
     ],
     "bigvgan_base_24khz_100band": [
-      "Non-Autoregressive",
-      "GAN-based"
+      "GAN-based",
+      "Non-Autoregressive"
     ],
     "bigvgan_v2_24khz_100band_256x": [
-      "Non-Autoregressive",
-      "GAN-based"
+      "GAN-based",
+      "Non-Autoregressive"
     ],
     "freev": [
-      "Non-Autoregressive",
-      "GAN-based"
+      "GAN-based",
+      "Non-Autoregressive"
     ],
     "rndvoc": [
-      "Non-Autoregressive",
-      "GAN-based"
+      "GAN-based",
+      "Non-Autoregressive"
     ],
     "vocos_mel_24khz": [
       "Non-Autoregressive",
@@ -50,29 +50,29 @@
       "Fourier / Transformer-based"
     ],
     "rfwave_libritts_24k": [
-      "Flow-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Flow-based"
     ],
     "wavefm": [
-      "Flow-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Flow-based"
     ],
     "flow2gan": [
-      "Flow-based",
+      "GAN-based",
       "Non-Autoregressive",
-      "GAN-based"
+      "Flow-based"
     ],
     "bridgevoc": [
-      "Non-Autoregressive",
-      "Diffusion-based"
+      "Diffusion-based",
+      "Non-Autoregressive"
     ],
     "periodwave_turbo": [
-      "Non-Autoregressive",
-      "Diffusion-based"
+      "Diffusion-based",
+      "Non-Autoregressive"
     ],
     "periodwave_24k": [
-      "Non-Autoregressive",
-      "Diffusion-based"
+      "Diffusion-based",
+      "Non-Autoregressive"
     ],
     "griffin_lim": [
       "Algorithmic DSP"
@@ -457,8 +457,209 @@
   },
   "bibtex": "@misc{purohit2026prismv,\n  author       = {Ravindrakumar M. Purohit and Hemant A. Patil},\n  title        = {{PRISM-V}: A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis},\n  year         = {2026},\n  howpublished = {\\url{https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/}},\n  note         = {Open neural vocoder evaluation leaderboard}\n}",
   "methodology_md": "\n## 🧪 Benchmark Protocol\n\n> **Note on Theory & Formal Formulations:**  \n> The comprehensive theoretical foundation, axiomatic mathematical formulations, and geometric scoring derivations are presented in the companion paper (see BibTeX citation). This evaluation leaderboard focuses on empirical benchmarking, model comparisons, checkpoint provenance, and interactive audio inspection.\n\n### Design Principles\n**PRISM-V** is a **training-free, zero-shot evaluation** of publicly released pretrained checkpoints.\nModels are evaluated exactly as practitioners deploy them — no fine-tuning, no cherry-picked test sets.\n\n---\n\n### The Five PRISM-V Dimensions\n\nPRISM-V evaluates **P**erceptual · **R**econstruction · **I**ntelligibility · **S**peaker · **M**odel Efficiency (Vocoders).\n\n| Dimension | Evaluation Focus | Key Empirical Measures |\n|---|---|---|\n| **P — Perceptual** | Naturalness & listening perception | UTMOS (neural MOS), NISQA-TTS naturalness |\n| **R — Reconstruction** | Waveform fidelity against reference | PESQ (wideband), MCD (cepstral), LSD (spectral) |\n| **I — Intelligibility** | Speech intelligibility & ASR content preservation | STOI (intelligibility), ΔWER (ASR degradation) |\n| **S — Speaker** | Speaker identity & acoustic consistency | Speaker embedding cosine similarity |\n| **M — Model Efficiency** | Real-world execution efficiency on edge hardware | RTF (throughput), Peak VRAM, Parameter count |\n\nThe **PRISM-V Score (1–100)** provides a holistic aggregate ranking across all five core dimensions, highlighting models that balance high acoustic fidelity with edge efficiency.\n\n---\n\n### Evaluation Corpora\n\n| Corpus | Acoustic Condition | Utterances | Notes |\n|---|---|---|---|\n| **LJSpeech** | Clean studio | 2,000 | Single speaker, minimal room acoustics |\n| **LibriTTS** | Audiobook | 2,000 | Multi-speaker, test-clean + test-other |\n| **VCTK** | Accented | 2,000 | 109 speakers, British/Scottish/Irish accents |\n| **Free_ST** | Mobile / Noisy | ~1,980 | Real-world device noise, reverb, varied SNR |\n\n---\n\n### Inference Protocol\n\n| Parameter | Specification |\n|---|---|\n| **Batch size** | 1 (deployment-realistic stream inference) |\n| **Precision** | FP32 |\n| **Device Target** | Edge Profiling |\n| **Timing** | Warmup runs + measured iterations with CUDA synchronization fences |\n| **RTF scope** | Generator-only (excludes mel-spectrogram extraction) |\n| **Seed** | Fixed deterministic seed `20260909` where supported |\n\n---\n\n### Coverage and Reliability\n\nThe PRISM-V evaluation accounts for synthesis coverage — what fraction of expected utterances were successfully generated.\nEvery synthesis failure is counted and disclosed. No utterance is silently excluded.\n\n---\n\n### Phoneme-Level Diagnostics\n\nMontreal Forced Aligner (MFA v3) alignments provide phoneme-level boundaries across evaluated utterances.\nSpectral distance, F0 pitch deviation, and boundary precision are analyzed per phonetic class:\n**Vowels, Stops, Fricatives, Affricates, Nasals, Liquids, and Glides**.\n\n---\n\n### What PRISM-V does NOT do\n\n- ❌ Re-train or fine-tune any model\n- ❌ Use unofficial community checkpoints\n- ❌ Report metrics only on successful utterances (failures counted in denominators)\n- ❌ Mix 22kHz model outputs into the 24kHz primary ranking without notation\n- ❌ Score both RTF and xRT simultaneously (they contain identical information)\n",
-  "changelog_md": "\n## 📋 Release Notes & Changelog\n\n### 📜 Version History\n\n| Version | Release Date | Key Updates |\n|---|---|---|\n| **v1.0.0** | September 10, 2026 | Initial public release of the open vocoder benchmark evaluating 15 pretrained neural vocoders across 4 diverse English speech corpora |\n| **v1.0.1** | September 12, 2026 | Interactive A/B audio listening explorer with synchronized waveforms, customizable multidimensional weighting calculator, standardized PRISM-V color palette, and accessibility controls |\n",
+  "changelog_md": "\n## 📋 Release Notes & Changelog\n\n### 📜 Version History\n\n| Version | Release Date | Key Updates |\n|---|---|---|\n| **v1.0.0** | September 10, 2026 | Initial public release of the open vocoder benchmark evaluating 15 pretrained neural vocoders across 4 diverse English speech corpora |\n| **v1.0.1** | September 12, 2026 | Interactive A/B audio listening explorer with synchronized waveforms, customizable multidimensional weighting calculator, standardized PRISM-V color palette, and accessibility controls |\n| **v2.0.0** | September 16, 2026 | Official release of certified PRISM-V-v2 evaluation data: axiomatic multi-dimensional geometric scoring (P, R, I, S, M), calibrated edge GTX 1650 FP32 profiling, per-corpus reconstruction and intelligibility diagnostics across LJSpeech, LibriTTS, VCTK, and Free_ST, and certified leaderboard rankings |\n",
   "leaderboard": [
+    {
+      "model_id": "griffin_lim",
+      "model_name": "Griffin-Lim STFT",
+      "architecture_family": "Algorithmic DSP Baseline",
+      "arch_category": "Algorithmic DSP",
+      "arch_tags": [
+        "Algorithmic DSP"
+      ],
+      "track": "24kHz Primary Benchmark",
+      "sampling_rate_hz": 24000,
+      "params_m": 0.0,
+      "overall_score": 79.01,
+      "pesq": 3.909,
+      "stoi": 0.994,
+      "mcd_db": 4.17,
+      "lsd_db": 3.15,
+      "utmos": 3.52,
+      "nisqa": 3.81,
+      "delta_wer_pct": -0.03,
+      "rtf": 0.0057,
+      "speedup_x": 175.7,
+      "peak_vram_mb": 72.0,
+      "edge_feasible": "Yes",
+      "is_pareto": true,
+      "checkpoint_url": "N/A (Algorithmic — no learnable parameters)",
+      "paper_url": "https://ieeexplore.ieee.org/document/1172092",
+      "github_url": "https://github.com/librosa/librosa",
+      "license": "Public Domain",
+      "author": "Griffin & Lim",
+      "year": 1984,
+      "rank": 1,
+      "code_open": true,
+      "ckpt_open": false,
+      "dataset_pesqs": {
+        "LJSpeech": 4.059,
+        "LibriTTS": 3.925,
+        "VCTK": 3.778,
+        "Free_ST": 3.875
+      },
+      "dataset_metrics": {
+        "LJSpeech": {
+          "pesq": 4.059,
+          "stoi": 0.998,
+          "lsd_db": 3.03,
+          "mcd_db": 3.86
+        },
+        "LibriTTS": {
+          "pesq": 3.925,
+          "stoi": 0.994,
+          "lsd_db": 3.2,
+          "mcd_db": 4.57
+        },
+        "VCTK": {
+          "pesq": 3.778,
+          "stoi": 0.988,
+          "lsd_db": 3.16,
+          "mcd_db": 4.63
+        },
+        "Free_ST": {
+          "pesq": 3.875,
+          "stoi": 0.996,
+          "lsd_db": 3.2,
+          "mcd_db": 3.63
+        }
+      }
+    },
+    {
+      "model_id": "rndvoc",
+      "model_name": "RNDVoC",
+      "architecture_family": "Random Distortion GAN",
+      "arch_category": "GAN-based",
+      "arch_tags": [
+        "GAN-based",
+        "Non-Autoregressive"
+      ],
+      "track": "24kHz Primary Benchmark",
+      "sampling_rate_hz": 24000,
+      "params_m": 3.94,
+      "overall_score": 76.29,
+      "pesq": 4.223,
+      "stoi": 0.988,
+      "mcd_db": 8.86,
+      "lsd_db": 6.57,
+      "utmos": 3.96,
+      "nisqa": 3.8,
+      "delta_wer_pct": 0.02,
+      "rtf": 0.0217,
+      "speedup_x": 46.0,
+      "peak_vram_mb": 570.0,
+      "edge_feasible": "Yes",
+      "is_pareto": true,
+      "checkpoint_url": "https://huggingface.co/AndongLi/RNDVoC",
+      "paper_url": "https://arxiv.org/abs/2406.01257",
+      "github_url": "https://github.com/AndongLi/RNDVoC",
+      "license": "MIT",
+      "author": "CAS / Li et al.",
+      "year": 2024,
+      "rank": 2,
+      "code_open": true,
+      "ckpt_open": true,
+      "dataset_pesqs": {
+        "LJSpeech": 4.232,
+        "LibriTTS": 4.229,
+        "VCTK": 4.165,
+        "Free_ST": 4.265
+      },
+      "dataset_metrics": {
+        "LJSpeech": {
+          "pesq": 4.232,
+          "stoi": 0.992,
+          "lsd_db": 6.56,
+          "mcd_db": 9.86
+        },
+        "LibriTTS": {
+          "pesq": 4.229,
+          "stoi": 0.99,
+          "lsd_db": 6.54,
+          "mcd_db": 9.07
+        },
+        "VCTK": {
+          "pesq": 4.165,
+          "stoi": 0.976,
+          "lsd_db": 6.45,
+          "mcd_db": 8.67
+        },
+        "Free_ST": {
+          "pesq": 4.265,
+          "stoi": 0.992,
+          "lsd_db": 6.71,
+          "mcd_db": 7.84
+        }
+      }
+    },
+    {
+      "model_id": "flow2gan",
+      "model_name": "Flow2GAN (4-step)",
+      "architecture_family": "Flow Matching + GAN",
+      "arch_category": "Flow-based",
+      "arch_tags": [
+        "GAN-based",
+        "Non-Autoregressive",
+        "Flow-based"
+      ],
+      "track": "24kHz Primary Benchmark",
+      "sampling_rate_hz": 24000,
+      "params_m": 79.08,
+      "overall_score": 75.58,
+      "pesq": 4.489,
+      "stoi": 0.995,
+      "mcd_db": 6.64,
+      "lsd_db": 6.51,
+      "utmos": 4.13,
+      "nisqa": 3.85,
+      "delta_wer_pct": 0.04,
+      "rtf": 0.0614,
+      "speedup_x": 16.3,
+      "peak_vram_mb": 494.0,
+      "edge_feasible": "Yes",
+      "is_pareto": true,
+      "checkpoint_url": "https://huggingface.co/k2-fsa/Flow2GAN",
+      "paper_url": "https://arxiv.org/abs/2405.08819",
+      "github_url": "https://github.com/k2-fsa/lhotse",
+      "license": "Apache-2.0",
+      "author": "K2-FSA",
+      "year": 2024,
+      "rank": 3,
+      "code_open": true,
+      "ckpt_open": true,
+      "dataset_pesqs": {
+        "LJSpeech": 4.487,
+        "LibriTTS": 4.495,
+        "VCTK": 4.488,
+        "Free_ST": 4.486
+      },
+      "dataset_metrics": {
+        "LJSpeech": {
+          "pesq": 4.487,
+          "stoi": 0.998,
+          "lsd_db": 6.49,
+          "mcd_db": 7.74
+        },
+        "LibriTTS": {
+          "pesq": 4.495,
+          "stoi": 0.995,
+          "lsd_db": 6.47,
+          "mcd_db": 6.07
+        },
+        "VCTK": {
+          "pesq": 4.488,
+          "stoi": 0.99,
+          "lsd_db": 6.47,
+          "mcd_db": 6.4
+        },
+        "Free_ST": {
+          "pesq": 4.486,
+          "stoi": 0.997,
+          "lsd_db": 6.59,
+          "mcd_db": 6.36
+        }
+      }
+    },
     {
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
@@ -471,17 +672,17 @@
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
       "params_m": 13.58,
-      "overall_score": 82.8,
-      "pesq": 3.714,
-      "stoi": 0.971,
-      "mcd_db": 38.35,
-      "lsd_db": 6.99,
-      "utmos": 3.84,
-      "nisqa": 3.91,
-      "delta_wer_pct": 3.42,
-      "rtf": 0.0027,
-      "speedup_x": 370.4,
-      "peak_vram_mb": 327.6,
+      "overall_score": 74.6,
+      "pesq": 3.646,
+      "stoi": 0.973,
+      "mcd_db": 8.57,
+      "lsd_db": 7.07,
+      "utmos": 3.83,
+      "nisqa": 3.78,
+      "delta_wer_pct": 0.09,
+      "rtf": 0.0021,
+      "speedup_x": 481.8,
+      "peak_vram_mb": 112.0,
       "edge_feasible": "Yes",
       "is_pareto": true,
       "checkpoint_url": "https://huggingface.co/charactr/vocos-mel-24khz",
@@ -490,174 +691,39 @@
       "license": "MIT",
       "author": "Charactr Inc.",
       "year": 2023,
-      "rank": 1,
+      "rank": 4,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
-        "LJSpeech": 3.85,
-        "LibriTTS": 3.791,
-        "VCTK": 3.618,
-        "Free_ST": 3.597
+        "LJSpeech": 3.831,
+        "LibriTTS": 3.575,
+        "VCTK": 3.546,
+        "Free_ST": 3.634
       },
       "dataset_metrics": {
         "LJSpeech": {
-          "pesq": 3.85,
+          "pesq": 3.831,
           "stoi": 0.984,
+          "lsd_db": 7.06,
+          "mcd_db": 9.22
+        },
+        "LibriTTS": {
+          "pesq": 3.575,
+          "stoi": 0.978,
+          "lsd_db": 7.08,
+          "mcd_db": 8.95
+        },
+        "VCTK": {
+          "pesq": 3.546,
+          "stoi": 0.953,
           "lsd_db": 7.04,
-          "mcd_db": 43.43
-        },
-        "LibriTTS": {
-          "pesq": 3.791,
-          "stoi": 0.982,
-          "lsd_db": 6.96,
-          "mcd_db": 42.18
-        },
-        "VCTK": {
-          "pesq": 3.618,
-          "stoi": 0.945,
-          "lsd_db": 7.05,
-          "mcd_db": 33.26
+          "mcd_db": 8.36
         },
         "Free_ST": {
-          "pesq": 3.597,
-          "stoi": 0.973,
-          "lsd_db": 6.93,
-          "mcd_db": 34.54
-        }
-      }
-    },
-    {
-      "model_id": "flow2gan",
-      "model_name": "Flow2GAN (4-step)",
-      "architecture_family": "Flow Matching + GAN",
-      "arch_category": "Flow-based",
-      "arch_tags": [
-        "Flow-based",
-        "Non-Autoregressive",
-        "GAN-based"
-      ],
-      "track": "24kHz Primary Benchmark",
-      "sampling_rate_hz": 24000,
-      "params_m": 79.08,
-      "overall_score": 81.5,
-      "pesq": 4.469,
-      "stoi": 0.994,
-      "mcd_db": 29.36,
-      "lsd_db": 6.46,
-      "utmos": 4.05,
-      "nisqa": 4.1,
-      "delta_wer_pct": 2.95,
-      "rtf": 0.0833,
-      "speedup_x": 12.0,
-      "peak_vram_mb": 1037.3,
-      "edge_feasible": "Yes",
-      "is_pareto": true,
-      "checkpoint_url": "https://huggingface.co/k2-fsa/Flow2GAN",
-      "paper_url": "https://arxiv.org/abs/2405.08819",
-      "github_url": "https://github.com/k2-fsa/lhotse",
-      "license": "Apache-2.0",
-      "author": "K2-FSA",
-      "year": 2024,
-      "rank": 2,
-      "code_open": true,
-      "ckpt_open": true,
-      "dataset_pesqs": {
-        "LJSpeech": 4.484,
-        "LibriTTS": 4.466,
-        "VCTK": 4.459,
-        "Free_ST": 4.466
-      },
-      "dataset_metrics": {
-        "LJSpeech": {
-          "pesq": 4.484,
-          "stoi": 0.998,
-          "lsd_db": 6.48,
-          "mcd_db": 35.29
-        },
-        "LibriTTS": {
-          "pesq": 4.466,
-          "stoi": 0.998,
-          "lsd_db": 6.36,
-          "mcd_db": 34.34
-        },
-        "VCTK": {
-          "pesq": 4.459,
-          "stoi": 0.983,
-          "lsd_db": 6.55,
-          "mcd_db": 19.1
-        },
-        "Free_ST": {
-          "pesq": 4.466,
-          "stoi": 0.997,
-          "lsd_db": 6.45,
-          "mcd_db": 28.7
-        }
-      }
-    },
-    {
-      "model_id": "rndvoc",
-      "model_name": "RNDVoC",
-      "architecture_family": "Random Distortion GAN",
-      "arch_category": "GAN-based",
-      "arch_tags": [
-        "Non-Autoregressive",
-        "GAN-based"
-      ],
-      "track": "24kHz Primary Benchmark",
-      "sampling_rate_hz": 24000,
-      "params_m": 3.94,
-      "overall_score": 80.7,
-      "pesq": 4.188,
-      "stoi": 0.985,
-      "mcd_db": 38.32,
-      "lsd_db": 6.54,
-      "utmos": 3.88,
-      "nisqa": 3.92,
-      "delta_wer_pct": 3.35,
-      "rtf": 0.0284,
-      "speedup_x": 35.2,
-      "peak_vram_mb": 1925.9,
-      "edge_feasible": "Yes",
-      "is_pareto": true,
-      "checkpoint_url": "https://huggingface.co/AndongLi/RNDVoC",
-      "paper_url": "https://arxiv.org/abs/2406.01257",
-      "github_url": "https://github.com/AndongLi/RNDVoC",
-      "license": "MIT",
-      "author": "CAS / Li et al.",
-      "year": 2024,
-      "rank": 3,
-      "code_open": true,
-      "ckpt_open": true,
-      "dataset_pesqs": {
-        "LJSpeech": 4.262,
-        "LibriTTS": 4.156,
-        "VCTK": 4.11,
-        "Free_ST": 4.223
-      },
-      "dataset_metrics": {
-        "LJSpeech": {
-          "pesq": 4.262,
-          "stoi": 0.992,
-          "lsd_db": 6.56,
-          "mcd_db": 40.24
-        },
-        "LibriTTS": {
-          "pesq": 4.156,
-          "stoi": 0.991,
-          "lsd_db": 6.52,
-          "mcd_db": 46.6
-        },
-        "VCTK": {
-          "pesq": 4.11,
-          "stoi": 0.964,
-          "lsd_db": 6.51,
-          "mcd_db": 30.97
-        },
-        "Free_ST": {
-          "pesq": 4.223,
-          "stoi": 0.992,
-          "lsd_db": 6.58,
-          "mcd_db": 35.47
+          "pesq": 3.634,
+          "stoi": 0.976,
+          "lsd_db": 7.12,
+          "mcd_db": 7.74
         }
       }
     },
@@ -667,23 +733,23 @@
       "architecture_family": "Brownian Bridge SDE",
       "arch_category": "Diffusion-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "Diffusion-based"
+        "Diffusion-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
       "params_m": 7.89,
-      "overall_score": 79.6,
-      "pesq": 4.377,
-      "stoi": 0.99,
-      "mcd_db": 38.99,
-      "lsd_db": 6.57,
-      "utmos": 3.92,
-      "nisqa": 3.95,
-      "delta_wer_pct": 3.25,
-      "rtf": 0.0839,
-      "speedup_x": 11.9,
-      "peak_vram_mb": 591.4,
+      "overall_score": 74.16,
+      "pesq": 4.397,
+      "stoi": 0.992,
+      "mcd_db": 8.45,
+      "lsd_db": 6.63,
+      "utmos": 4.04,
+      "nisqa": 3.85,
+      "delta_wer_pct": 0.15,
+      "rtf": 0.0779,
+      "speedup_x": 12.8,
+      "peak_vram_mb": 474.0,
       "edge_feasible": "Yes",
       "is_pareto": false,
       "checkpoint_url": "https://huggingface.co/AndongLi/BridgeVoC",
@@ -692,39 +758,106 @@
       "license": "MIT",
       "author": "CAS / Li et al.",
       "year": 2024,
-      "rank": 4,
+      "rank": 5,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
-        "LJSpeech": 4.428,
-        "LibriTTS": 4.397,
-        "VCTK": 4.368,
-        "Free_ST": 4.315
+        "LJSpeech": 4.411,
+        "LibriTTS": 4.401,
+        "VCTK": 4.382,
+        "Free_ST": 4.395
       },
       "dataset_metrics": {
         "LJSpeech": {
-          "pesq": 4.428,
+          "pesq": 4.411,
           "stoi": 0.996,
           "lsd_db": 6.62,
-          "mcd_db": 45.99
+          "mcd_db": 9.64
         },
         "LibriTTS": {
-          "pesq": 4.397,
-          "stoi": 0.994,
-          "lsd_db": 6.5,
-          "mcd_db": 43.12
+          "pesq": 4.401,
+          "stoi": 0.993,
+          "lsd_db": 6.68,
+          "mcd_db": 8.93
         },
         "VCTK": {
-          "pesq": 4.368,
-          "stoi": 0.975,
-          "lsd_db": 6.61,
-          "mcd_db": 31.96
+          "pesq": 4.382,
+          "stoi": 0.984,
+          "lsd_db": 6.52,
+          "mcd_db": 7.91
         },
         "Free_ST": {
-          "pesq": 4.315,
+          "pesq": 4.395,
           "stoi": 0.995,
-          "lsd_db": 6.56,
-          "mcd_db": 34.88
+          "lsd_db": 6.7,
+          "mcd_db": 7.32
+        }
+      }
+    },
+    {
+      "model_id": "periodwave_turbo",
+      "model_name": "PeriodWave-Turbo (4-step)",
+      "architecture_family": "Diffusion / Turbo SDE",
+      "arch_category": "Diffusion-based",
+      "arch_tags": [
+        "Diffusion-based",
+        "Non-Autoregressive"
+      ],
+      "track": "24kHz Primary Benchmark",
+      "sampling_rate_hz": 24000,
+      "params_m": 29.81,
+      "overall_score": 72.65,
+      "pesq": 4.395,
+      "stoi": 0.992,
+      "mcd_db": 9.8,
+      "lsd_db": 6.97,
+      "utmos": 4.11,
+      "nisqa": 3.89,
+      "delta_wer_pct": -0.03,
+      "rtf": 0.13,
+      "speedup_x": 7.7,
+      "peak_vram_mb": 1038.0,
+      "edge_feasible": "Yes",
+      "is_pareto": false,
+      "checkpoint_url": "https://github.com/kaist-dsp/PeriodWave",
+      "paper_url": "https://arxiv.org/abs/2408.06945",
+      "github_url": "https://github.com/kaist-dsp/PeriodWave",
+      "license": "MIT",
+      "author": "KAIST",
+      "year": 2024,
+      "rank": 6,
+      "code_open": true,
+      "ckpt_open": true,
+      "dataset_pesqs": {
+        "LJSpeech": 4.419,
+        "LibriTTS": 4.398,
+        "VCTK": 4.354,
+        "Free_ST": 4.407
+      },
+      "dataset_metrics": {
+        "LJSpeech": {
+          "pesq": 4.419,
+          "stoi": 0.996,
+          "lsd_db": 7.08,
+          "mcd_db": 11.26
+        },
+        "LibriTTS": {
+          "pesq": 4.398,
+          "stoi": 0.994,
+          "lsd_db": 6.92,
+          "mcd_db": 9.02
+        },
+        "VCTK": {
+          "pesq": 4.354,
+          "stoi": 0.982,
+          "lsd_db": 6.89,
+          "mcd_db": 9.39
+        },
+        "Free_ST": {
+          "pesq": 4.407,
+          "stoi": 0.996,
+          "lsd_db": 7.0,
+          "mcd_db": 9.54
         }
       }
     },
@@ -740,17 +873,17 @@
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
       "params_m": 13.28,
-      "overall_score": 78.8,
-      "pesq": 3.816,
-      "stoi": 0.975,
-      "mcd_db": 42.43,
-      "lsd_db": 7.05,
-      "utmos": 3.79,
-      "nisqa": 3.82,
-      "delta_wer_pct": 3.65,
-      "rtf": 0.0123,
-      "speedup_x": 81.3,
-      "peak_vram_mb": 643.4,
+      "overall_score": 72.64,
+      "pesq": 3.755,
+      "stoi": 0.976,
+      "mcd_db": 8.95,
+      "lsd_db": 7.1,
+      "utmos": 3.74,
+      "nisqa": 3.77,
+      "delta_wer_pct": 0.08,
+      "rtf": 0.0157,
+      "speedup_x": 63.7,
+      "peak_vram_mb": 384.0,
       "edge_feasible": "Yes",
       "is_pareto": false,
       "checkpoint_url": "https://huggingface.co/hsoh/ComVo-base",
@@ -759,106 +892,39 @@
       "license": "Apache-2.0",
       "author": "Seoul National Univ.",
       "year": 2024,
-      "rank": 5,
+      "rank": 7,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
-        "LJSpeech": 3.977,
-        "LibriTTS": 3.774,
-        "VCTK": 3.819,
-        "Free_ST": 3.693
+        "LJSpeech": 3.914,
+        "LibriTTS": 3.63,
+        "VCTK": 3.697,
+        "Free_ST": 3.779
       },
       "dataset_metrics": {
         "LJSpeech": {
-          "pesq": 3.977,
-          "stoi": 0.987,
-          "lsd_db": 7.01,
-          "mcd_db": 38.79
+          "pesq": 3.914,
+          "stoi": 0.986,
+          "lsd_db": 7.05,
+          "mcd_db": 9.27
         },
         "LibriTTS": {
-          "pesq": 3.774,
-          "stoi": 0.98,
-          "lsd_db": 7.14,
-          "mcd_db": 57.89
+          "pesq": 3.63,
+          "stoi": 0.978,
+          "lsd_db": 7.19,
+          "mcd_db": 10.99
         },
         "VCTK": {
-          "pesq": 3.819,
-          "stoi": 0.953,
-          "lsd_db": 7.09,
-          "mcd_db": 40.45
+          "pesq": 3.697,
+          "stoi": 0.961,
+          "lsd_db": 7.05,
+          "mcd_db": 8.28
         },
         "Free_ST": {
-          "pesq": 3.693,
-          "stoi": 0.98,
-          "lsd_db": 6.94,
-          "mcd_db": 32.59
-        }
-      }
-    },
-    {
-      "model_id": "periodwave_turbo",
-      "model_name": "PeriodWave-Turbo (4-step)",
-      "architecture_family": "Diffusion / Turbo SDE",
-      "arch_category": "Diffusion-based",
-      "arch_tags": [
-        "Non-Autoregressive",
-        "Diffusion-based"
-      ],
-      "track": "24kHz Primary Benchmark",
-      "sampling_rate_hz": 24000,
-      "params_m": 29.81,
-      "overall_score": 78.6,
-      "pesq": 4.369,
-      "stoi": 0.988,
-      "mcd_db": 38.95,
-      "lsd_db": 6.93,
-      "utmos": 4.08,
-      "nisqa": 4.12,
-      "delta_wer_pct": 2.88,
-      "rtf": 0.148,
-      "speedup_x": 6.8,
-      "peak_vram_mb": 2746.9,
-      "edge_feasible": "Yes",
-      "is_pareto": false,
-      "checkpoint_url": "https://github.com/kaist-dsp/PeriodWave",
-      "paper_url": "https://arxiv.org/abs/2408.06945",
-      "github_url": "https://github.com/kaist-dsp/PeriodWave",
-      "license": "MIT",
-      "author": "KAIST",
-      "year": 2024,
-      "rank": 6,
-      "code_open": true,
-      "ckpt_open": true,
-      "dataset_pesqs": {
-        "LJSpeech": 4.43,
-        "LibriTTS": 4.338,
-        "VCTK": 4.328,
-        "Free_ST": 4.379
-      },
-      "dataset_metrics": {
-        "LJSpeech": {
-          "pesq": 4.43,
-          "stoi": 0.996,
-          "lsd_db": 7.09,
-          "mcd_db": 40.61
-        },
-        "LibriTTS": {
-          "pesq": 4.338,
-          "stoi": 0.995,
-          "lsd_db": 6.79,
-          "mcd_db": 40.06
-        },
-        "VCTK": {
-          "pesq": 4.328,
-          "stoi": 0.966,
-          "lsd_db": 6.99,
-          "mcd_db": 30.45
-        },
-        "Free_ST": {
-          "pesq": 4.379,
-          "stoi": 0.995,
-          "lsd_db": 6.85,
-          "mcd_db": 44.67
+          "pesq": 3.779,
+          "stoi": 0.981,
+          "lsd_db": 7.1,
+          "mcd_db": 7.26
         }
       }
     },
@@ -868,23 +934,23 @@
       "architecture_family": "Anti-Aliased Snake GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "GAN-based"
+        "GAN-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
       "params_m": 112.45,
-      "overall_score": 77.8,
-      "pesq": 4.381,
-      "stoi": 0.992,
-      "mcd_db": 25.38,
-      "lsd_db": 6.55,
-      "utmos": 4.12,
-      "nisqa": 4.18,
-      "delta_wer_pct": 2.75,
-      "rtf": 0.2208,
-      "speedup_x": 4.5,
-      "peak_vram_mb": 2719.6,
+      "overall_score": 72.44,
+      "pesq": 4.382,
+      "stoi": 0.994,
+      "mcd_db": 5.82,
+      "lsd_db": 6.62,
+      "utmos": 4.11,
+      "nisqa": 3.87,
+      "delta_wer_pct": -0.01,
+      "rtf": 0.1747,
+      "speedup_x": 5.7,
+      "peak_vram_mb": 1556.0,
       "edge_feasible": "Yes",
       "is_pareto": false,
       "checkpoint_url": "https://huggingface.co/nvidia/bigvgan_v2_24khz_100band_256x",
@@ -893,39 +959,106 @@
       "license": "MIT",
       "author": "NVIDIA",
       "year": 2024,
-      "rank": 7,
+      "rank": 8,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
-        "LJSpeech": 4.407,
-        "LibriTTS": 4.35,
-        "VCTK": 4.373,
-        "Free_ST": 4.395
+        "LJSpeech": 4.381,
+        "LibriTTS": 4.387,
+        "VCTK": 4.375,
+        "Free_ST": 4.386
       },
       "dataset_metrics": {
         "LJSpeech": {
-          "pesq": 4.407,
+          "pesq": 4.381,
           "stoi": 0.996,
-          "lsd_db": 6.56,
-          "mcd_db": 26.58
+          "lsd_db": 6.6,
+          "mcd_db": 6.44
         },
         "LibriTTS": {
-          "pesq": 4.35,
-          "stoi": 0.997,
-          "lsd_db": 6.48,
-          "mcd_db": 27.91
+          "pesq": 4.387,
+          "stoi": 0.994,
+          "lsd_db": 6.59,
+          "mcd_db": 5.91
         },
         "VCTK": {
-          "pesq": 4.373,
-          "stoi": 0.98,
-          "lsd_db": 6.61,
-          "mcd_db": 21.47
+          "pesq": 4.375,
+          "stoi": 0.988,
+          "lsd_db": 6.53,
+          "mcd_db": 5.62
         },
         "Free_ST": {
-          "pesq": 4.395,
+          "pesq": 4.386,
           "stoi": 0.996,
-          "lsd_db": 6.54,
-          "mcd_db": 25.55
+          "lsd_db": 6.74,
+          "mcd_db": 5.3
+        }
+      }
+    },
+    {
+      "model_id": "bigvgan_base_24khz_100band",
+      "model_name": "BigVGAN-Base (14M)",
+      "architecture_family": "Anti-Aliased Snake GAN",
+      "arch_category": "GAN-based",
+      "arch_tags": [
+        "GAN-based",
+        "Non-Autoregressive"
+      ],
+      "track": "24kHz Primary Benchmark",
+      "sampling_rate_hz": 24000,
+      "params_m": 14.03,
+      "overall_score": 70.57,
+      "pesq": 3.867,
+      "stoi": 0.98,
+      "mcd_db": 9.08,
+      "lsd_db": 7.04,
+      "utmos": 3.91,
+      "nisqa": 3.8,
+      "delta_wer_pct": 0.03,
+      "rtf": 0.0872,
+      "speedup_x": 11.5,
+      "peak_vram_mb": 818.0,
+      "edge_feasible": "Yes",
+      "is_pareto": false,
+      "checkpoint_url": "https://huggingface.co/nvidia/bigvgan_base_24khz_100band",
+      "paper_url": "https://arxiv.org/abs/2206.04658",
+      "github_url": "https://github.com/NVIDIA/BigVGAN",
+      "license": "MIT",
+      "author": "NVIDIA",
+      "year": 2022,
+      "rank": 9,
+      "code_open": true,
+      "ckpt_open": true,
+      "dataset_pesqs": {
+        "LJSpeech": 3.934,
+        "LibriTTS": 3.837,
+        "VCTK": 3.845,
+        "Free_ST": 3.851
+      },
+      "dataset_metrics": {
+        "LJSpeech": {
+          "pesq": 3.934,
+          "stoi": 0.987,
+          "lsd_db": 7.09,
+          "mcd_db": 9.88
+        },
+        "LibriTTS": {
+          "pesq": 3.837,
+          "stoi": 0.984,
+          "lsd_db": 7.03,
+          "mcd_db": 8.91
+        },
+        "VCTK": {
+          "pesq": 3.845,
+          "stoi": 0.967,
+          "lsd_db": 6.96,
+          "mcd_db": 9.02
+        },
+        "Free_ST": {
+          "pesq": 3.851,
+          "stoi": 0.983,
+          "lsd_db": 7.08,
+          "mcd_db": 8.49
         }
       }
     },
@@ -941,17 +1074,17 @@
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
       "params_m": 115.35,
-      "overall_score": 77.6,
-      "pesq": 4.03,
+      "overall_score": 70.22,
+      "pesq": 3.961,
       "stoi": 0.984,
-      "mcd_db": 31.53,
-      "lsd_db": 6.84,
-      "utmos": 3.96,
-      "nisqa": 4.02,
-      "delta_wer_pct": 3.1,
-      "rtf": 0.0525,
-      "speedup_x": 19.0,
-      "peak_vram_mb": 1857.0,
+      "mcd_db": 6.58,
+      "lsd_db": 6.91,
+      "utmos": 3.94,
+      "nisqa": 3.83,
+      "delta_wer_pct": 0.03,
+      "rtf": 0.1174,
+      "speedup_x": 8.5,
+      "peak_vram_mb": 1472.0,
       "edge_feasible": "Yes",
       "is_pareto": false,
       "checkpoint_url": "https://huggingface.co/hsoh/ComVo-large",
@@ -960,239 +1093,39 @@
       "license": "Apache-2.0",
       "author": "Seoul National Univ.",
       "year": 2024,
-      "rank": 8,
-      "code_open": true,
-      "ckpt_open": true,
-      "dataset_pesqs": {
-        "LJSpeech": 4.106,
-        "LibriTTS": 4.089,
-        "VCTK": 4.02,
-        "Free_ST": 3.906
-      },
-      "dataset_metrics": {
-        "LJSpeech": {
-          "pesq": 4.106,
-          "stoi": 0.992,
-          "lsd_db": 6.83,
-          "mcd_db": 34.38
-        },
-        "LibriTTS": {
-          "pesq": 4.089,
-          "stoi": 0.99,
-          "lsd_db": 6.79,
-          "mcd_db": 36.09
-        },
-        "VCTK": {
-          "pesq": 4.02,
-          "stoi": 0.967,
-          "lsd_db": 6.93,
-          "mcd_db": 29.81
-        },
-        "Free_ST": {
-          "pesq": 3.906,
-          "stoi": 0.986,
-          "lsd_db": 6.82,
-          "mcd_db": 25.84
-        }
-      }
-    },
-    {
-      "model_id": "griffin_lim",
-      "model_name": "Griffin-Lim STFT",
-      "architecture_family": "Algorithmic DSP Baseline",
-      "arch_category": "Algorithmic DSP",
-      "arch_tags": [
-        "Algorithmic DSP"
-      ],
-      "track": "24kHz Primary Benchmark",
-      "sampling_rate_hz": 24000,
-      "params_m": 0.0,
-      "overall_score": 73.7,
-      "pesq": 4.014,
-      "stoi": 0.995,
-      "mcd_db": 17.68,
-      "lsd_db": 3.01,
-      "utmos": 2.15,
-      "nisqa": 2.2,
-      "delta_wer_pct": 8.9,
-      "rtf": 0.0057,
-      "speedup_x": 175.4,
-      "peak_vram_mb": 686.9,
-      "edge_feasible": "Yes",
-      "is_pareto": true,
-      "checkpoint_url": "N/A (Algorithmic — no learnable parameters)",
-      "paper_url": "https://ieeexplore.ieee.org/document/1172092",
-      "github_url": "https://github.com/librosa/librosa",
-      "license": "Public Domain",
-      "author": "Griffin & Lim",
-      "year": 1984,
-      "rank": 9,
-      "code_open": true,
-      "ckpt_open": false,
-      "dataset_pesqs": {
-        "LJSpeech": 4.15,
-        "LibriTTS": 3.793,
-        "VCTK": 3.94,
-        "Free_ST": 4.173
-      },
-      "dataset_metrics": {
-        "LJSpeech": {
-          "pesq": 4.15,
-          "stoi": 0.999,
-          "lsd_db": 2.94,
-          "mcd_db": 15.87
-        },
-        "LibriTTS": {
-          "pesq": 3.793,
-          "stoi": 0.998,
-          "lsd_db": 3.2,
-          "mcd_db": 21.9
-        },
-        "VCTK": {
-          "pesq": 3.94,
-          "stoi": 0.987,
-          "lsd_db": 3.0,
-          "mcd_db": 16.44
-        },
-        "Free_ST": {
-          "pesq": 4.173,
-          "stoi": 0.996,
-          "lsd_db": 2.92,
-          "mcd_db": 16.52
-        }
-      }
-    },
-    {
-      "model_id": "freev",
-      "model_name": "FreeV",
-      "architecture_family": "Pseudo-Inverse Mel GAN",
-      "arch_category": "GAN-based",
-      "arch_tags": [
-        "Non-Autoregressive",
-        "GAN-based"
-      ],
-      "track": "22.05kHz Legacy Track",
-      "sampling_rate_hz": 22050,
-      "params_m": 18.22,
-      "overall_score": 73.5,
-      "pesq": 3.149,
-      "stoi": 0.948,
-      "mcd_db": 68.08,
-      "lsd_db": 6.98,
-      "utmos": 3.52,
-      "nisqa": 3.58,
-      "delta_wer_pct": 4.2,
-      "rtf": 0.0033,
-      "speedup_x": 303.0,
-      "peak_vram_mb": 387.5,
-      "edge_feasible": "Yes",
-      "is_pareto": false,
-      "checkpoint_url": "https://huggingface.co/Bakerbunker/FreeV_Model_Logs",
-      "paper_url": "https://arxiv.org/abs/2405.15842",
-      "github_url": "https://github.com/bakerbunker/FreeV",
-      "license": "Apache-2.0",
-      "author": "Baker et al.",
-      "year": 2024,
       "rank": 10,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
-        "LJSpeech": 3.696,
-        "LibriTTS": 3.282,
-        "VCTK": 2.585,
-        "Free_ST": 3.032
+        "LJSpeech": 4.094,
+        "LibriTTS": 3.877,
+        "VCTK": 3.9,
+        "Free_ST": 3.971
       },
       "dataset_metrics": {
         "LJSpeech": {
-          "pesq": 3.696,
-          "stoi": 0.975,
-          "lsd_db": 6.82,
-          "mcd_db": 65.2
+          "pesq": 4.094,
+          "stoi": 0.991,
+          "lsd_db": 6.87,
+          "mcd_db": 7.01
         },
         "LibriTTS": {
-          "pesq": 3.282,
-          "stoi": 0.96,
-          "lsd_db": 6.86,
-          "mcd_db": 76.75
+          "pesq": 3.877,
+          "stoi": 0.985,
+          "lsd_db": 6.96,
+          "mcd_db": 7.78
         },
         "VCTK": {
-          "pesq": 2.585,
-          "stoi": 0.898,
-          "lsd_db": 7.16,
-          "mcd_db": 65.83
+          "pesq": 3.9,
+          "stoi": 0.974,
+          "lsd_db": 6.87,
+          "mcd_db": 6.15
         },
         "Free_ST": {
-          "pesq": 3.032,
-          "stoi": 0.957,
-          "lsd_db": 7.09,
-          "mcd_db": 64.54
-        }
-      }
-    },
-    {
-      "model_id": "bigvgan_base_24khz_100band",
-      "model_name": "BigVGAN-Base (14M)",
-      "architecture_family": "Anti-Aliased Snake GAN",
-      "arch_category": "GAN-based",
-      "arch_tags": [
-        "Non-Autoregressive",
-        "GAN-based"
-      ],
-      "track": "24kHz Primary Benchmark",
-      "sampling_rate_hz": 24000,
-      "params_m": 14.03,
-      "overall_score": 71.2,
-      "pesq": 3.856,
-      "stoi": 0.978,
-      "mcd_db": 39.48,
-      "lsd_db": 6.99,
-      "utmos": 3.62,
-      "nisqa": 3.68,
-      "delta_wer_pct": 3.9,
-      "rtf": 0.1103,
-      "speedup_x": 9.1,
-      "peak_vram_mb": 3094.8,
-      "edge_feasible": "Yes",
-      "is_pareto": false,
-      "checkpoint_url": "https://huggingface.co/nvidia/bigvgan_base_24khz_100band",
-      "paper_url": "https://arxiv.org/abs/2206.04658",
-      "github_url": "https://github.com/NVIDIA/BigVGAN",
-      "license": "MIT",
-      "author": "NVIDIA",
-      "year": 2022,
-      "rank": 11,
-      "code_open": true,
-      "ckpt_open": true,
-      "dataset_pesqs": {
-        "LJSpeech": 4.004,
-        "LibriTTS": 3.925,
-        "VCTK": 3.853,
-        "Free_ST": 3.641
-      },
-      "dataset_metrics": {
-        "LJSpeech": {
-          "pesq": 4.004,
-          "stoi": 0.988,
-          "lsd_db": 7.08,
-          "mcd_db": 42.21
-        },
-        "LibriTTS": {
-          "pesq": 3.925,
+          "pesq": 3.971,
           "stoi": 0.987,
-          "lsd_db": 6.9,
-          "mcd_db": 42.48
-        },
-        "VCTK": {
-          "pesq": 3.853,
-          "stoi": 0.956,
-          "lsd_db": 7.03,
-          "mcd_db": 32.37
-        },
-        "Free_ST": {
-          "pesq": 3.641,
-          "stoi": 0.982,
           "lsd_db": 6.94,
-          "mcd_db": 40.84
+          "mcd_db": 5.39
         }
       }
     },
@@ -1202,23 +1135,23 @@
       "architecture_family": "Distilled Flow Matching",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "Flow-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Flow-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
       "params_m": 19.53,
-      "overall_score": 70.7,
-      "pesq": 3.672,
-      "stoi": 0.963,
-      "mcd_db": 48.51,
-      "lsd_db": 7.26,
-      "utmos": 3.71,
-      "nisqa": 3.74,
-      "delta_wer_pct": 3.85,
-      "rtf": 0.0709,
-      "speedup_x": 14.1,
-      "peak_vram_mb": 3065.6,
+      "overall_score": 66.07,
+      "pesq": 3.626,
+      "stoi": 0.97,
+      "mcd_db": 12.21,
+      "lsd_db": 7.13,
+      "utmos": 3.29,
+      "nisqa": 3.47,
+      "delta_wer_pct": 0.01,
+      "rtf": 0.056,
+      "speedup_x": 17.9,
+      "peak_vram_mb": 328.0,
       "edge_feasible": "Yes",
       "is_pareto": false,
       "checkpoint_url": "https://github.com/lucas-ma/WaveFM",
@@ -1227,106 +1160,173 @@
       "license": "MIT",
       "author": "Ma et al.",
       "year": 2024,
-      "rank": 12,
+      "rank": 11,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
-        "LJSpeech": 3.744,
-        "LibriTTS": 3.679,
-        "VCTK": 3.637,
-        "Free_ST": 3.629
+        "LJSpeech": 3.71,
+        "LibriTTS": 3.527,
+        "VCTK": 3.573,
+        "Free_ST": 3.696
       },
       "dataset_metrics": {
         "LJSpeech": {
-          "pesq": 3.744,
-          "stoi": 0.977,
-          "lsd_db": 7.16,
-          "mcd_db": 52.88
+          "pesq": 3.71,
+          "stoi": 0.978,
+          "lsd_db": 7.18,
+          "mcd_db": 11.94
         },
         "LibriTTS": {
-          "pesq": 3.679,
-          "stoi": 0.975,
-          "lsd_db": 7.04,
-          "mcd_db": 55.47
+          "pesq": 3.527,
+          "stoi": 0.973,
+          "lsd_db": 7.12,
+          "mcd_db": 11.69
         },
         "VCTK": {
-          "pesq": 3.637,
-          "stoi": 0.926,
-          "lsd_db": 7.96,
-          "mcd_db": 41.15
+          "pesq": 3.573,
+          "stoi": 0.955,
+          "lsd_db": 7.17,
+          "mcd_db": 15.68
         },
         "Free_ST": {
-          "pesq": 3.629,
-          "stoi": 0.976,
-          "lsd_db": 6.88,
-          "mcd_db": 44.52
+          "pesq": 3.696,
+          "stoi": 0.974,
+          "lsd_db": 7.05,
+          "mcd_db": 9.54
         }
       }
     },
     {
-      "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (30-step)",
-      "architecture_family": "Diffusion / Full SDE",
-      "arch_category": "Diffusion-based",
+      "model_id": "hifigan_universal_v1",
+      "model_name": "HiFi-GAN (Universal V1)",
+      "architecture_family": "Time-domain MRF-GAN",
+      "arch_category": "GAN-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "Diffusion-based"
+        "GAN-based",
+        "Non-Autoregressive"
       ],
-      "track": "24kHz Primary Benchmark",
-      "sampling_rate_hz": 24000,
-      "params_m": 29.81,
-      "overall_score": 70.6,
-      "pesq": 4.147,
-      "stoi": 0.964,
-      "mcd_db": 126.28,
-      "lsd_db": 10.73,
-      "utmos": 4.15,
-      "nisqa": 4.21,
-      "delta_wer_pct": 2.65,
-      "rtf": 0.7693,
-      "speedup_x": 1.3,
-      "peak_vram_mb": 4469.1,
-      "edge_feasible": "No",
+      "track": "22.05kHz Legacy Track",
+      "sampling_rate_hz": 22050,
+      "params_m": 13.94,
+      "overall_score": 64.69,
+      "pesq": 3.013,
+      "stoi": 0.95,
+      "mcd_db": 17.03,
+      "lsd_db": 7.75,
+      "utmos": 3.74,
+      "nisqa": 3.69,
+      "delta_wer_pct": 0.5,
+      "rtf": 0.029,
+      "speedup_x": 34.4,
+      "peak_vram_mb": 500.0,
+      "edge_feasible": "Yes",
       "is_pareto": false,
-      "checkpoint_url": "https://github.com/kaist-dsp/PeriodWave",
-      "paper_url": "https://arxiv.org/abs/2408.06945",
-      "github_url": "https://github.com/kaist-dsp/PeriodWave",
+      "checkpoint_url": "https://github.com/jik876/hifi-gan",
+      "paper_url": "https://arxiv.org/abs/2010.05646",
+      "github_url": "https://github.com/jik876/hifi-gan",
       "license": "MIT",
-      "author": "KAIST",
+      "author": "Kakao Enterprise",
+      "year": 2020,
+      "rank": 12,
+      "code_open": true,
+      "ckpt_open": true,
+      "dataset_pesqs": {
+        "LJSpeech": 3.147,
+        "LibriTTS": 2.917,
+        "VCTK": 2.94,
+        "Free_ST": 3.048
+      },
+      "dataset_metrics": {
+        "LJSpeech": {
+          "pesq": 3.147,
+          "stoi": 0.968,
+          "lsd_db": 7.8,
+          "mcd_db": 18.81
+        },
+        "LibriTTS": {
+          "pesq": 2.917,
+          "stoi": 0.96,
+          "lsd_db": 7.71,
+          "mcd_db": 16.77
+        },
+        "VCTK": {
+          "pesq": 2.94,
+          "stoi": 0.919,
+          "lsd_db": 7.55,
+          "mcd_db": 16.38
+        },
+        "Free_ST": {
+          "pesq": 3.048,
+          "stoi": 0.954,
+          "lsd_db": 7.96,
+          "mcd_db": 16.14
+        }
+      }
+    },
+    {
+      "model_id": "freev",
+      "model_name": "FreeV",
+      "architecture_family": "Pseudo-Inverse Mel GAN",
+      "arch_category": "GAN-based",
+      "arch_tags": [
+        "GAN-based",
+        "Non-Autoregressive"
+      ],
+      "track": "22.05kHz Legacy Track",
+      "sampling_rate_hz": 22050,
+      "params_m": 18.22,
+      "overall_score": 61.85,
+      "pesq": 2.977,
+      "stoi": 0.944,
+      "mcd_db": 16.07,
+      "lsd_db": 7.12,
+      "utmos": 3.41,
+      "nisqa": 3.48,
+      "delta_wer_pct": 0.41,
+      "rtf": 0.0048,
+      "speedup_x": 208.8,
+      "peak_vram_mb": 474.0,
+      "edge_feasible": "Yes",
+      "is_pareto": false,
+      "checkpoint_url": "https://huggingface.co/Bakerbunker/FreeV_Model_Logs",
+      "paper_url": "https://arxiv.org/abs/2405.15842",
+      "github_url": "https://github.com/bakerbunker/FreeV",
+      "license": "Apache-2.0",
+      "author": "Baker et al.",
       "year": 2024,
       "rank": 13,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
-        "LJSpeech": 4.255,
-        "LibriTTS": 4.159,
-        "VCTK": 4.193,
-        "Free_ST": 3.983
+        "LJSpeech": 3.593,
+        "LibriTTS": 2.806,
+        "VCTK": 2.443,
+        "Free_ST": 3.065
       },
       "dataset_metrics": {
         "LJSpeech": {
-          "pesq": 4.255,
-          "stoi": 0.989,
-          "lsd_db": 9.97,
-          "mcd_db": 106.28
+          "pesq": 3.593,
+          "stoi": 0.975,
+          "lsd_db": 6.83,
+          "mcd_db": 14.77
         },
         "LibriTTS": {
-          "pesq": 4.159,
-          "stoi": 0.988,
-          "lsd_db": 9.81,
-          "mcd_db": 122.97
+          "pesq": 2.806,
+          "stoi": 0.95,
+          "lsd_db": 7.1,
+          "mcd_db": 17.49
         },
         "VCTK": {
-          "pesq": 4.193,
-          "stoi": 0.899,
-          "lsd_db": 10.83,
-          "mcd_db": 97.39
+          "pesq": 2.443,
+          "stoi": 0.904,
+          "lsd_db": 7.2,
+          "mcd_db": 18.15
         },
         "Free_ST": {
-          "pesq": 3.983,
-          "stoi": 0.981,
-          "lsd_db": 12.32,
-          "mcd_db": 178.46
+          "pesq": 3.065,
+          "stoi": 0.948,
+          "lsd_db": 7.36,
+          "mcd_db": 13.88
         }
       }
     },
@@ -1336,24 +1336,24 @@
       "architecture_family": "Rectified Flow Matching",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "Flow-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Flow-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
       "params_m": 18.27,
-      "overall_score": 67.6,
-      "pesq": 3.814,
-      "stoi": 0.94,
-      "mcd_db": 145.66,
-      "lsd_db": 8.8,
-      "utmos": 3.98,
-      "nisqa": 4.01,
-      "delta_wer_pct": 3.15,
-      "rtf": 0.3752,
+      "overall_score": 61.37,
+      "pesq": 3.797,
+      "stoi": 0.957,
+      "mcd_db": 42.73,
+      "lsd_db": 9.05,
+      "utmos": 3.66,
+      "nisqa": 3.74,
+      "delta_wer_pct": 0.17,
+      "rtf": 0.3668,
       "speedup_x": 2.7,
-      "peak_vram_mb": 11142.9,
-      "edge_feasible": "No",
+      "peak_vram_mb": 1408.0,
+      "edge_feasible": "Yes",
       "is_pareto": false,
       "checkpoint_url": "https://github.com/RF-Wave/RFWave",
       "paper_url": "https://arxiv.org/abs/2406.18567",
@@ -1365,646 +1365,646 @@
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
-        "LJSpeech": 4.183,
-        "LibriTTS": 3.954,
-        "VCTK": 3.746,
-        "Free_ST": 3.373
+        "LJSpeech": 4.101,
+        "LibriTTS": 3.937,
+        "VCTK": 3.692,
+        "Free_ST": 3.458
       },
       "dataset_metrics": {
         "LJSpeech": {
-          "pesq": 4.183,
+          "pesq": 4.101,
           "stoi": 0.988,
-          "lsd_db": 8.48,
-          "mcd_db": 110.45
+          "lsd_db": 8.46,
+          "mcd_db": 37.09
         },
         "LibriTTS": {
-          "pesq": 3.954,
-          "stoi": 0.985,
+          "pesq": 3.937,
+          "stoi": 0.984,
           "lsd_db": 8.64,
-          "mcd_db": 143.77
+          "mcd_db": 34.08
         },
         "VCTK": {
-          "pesq": 3.746,
-          "stoi": 0.823,
-          "lsd_db": 9.29,
-          "mcd_db": 116.1
+          "pesq": 3.692,
+          "stoi": 0.878,
+          "lsd_db": 9.23,
+          "mcd_db": 47.48
         },
         "Free_ST": {
-          "pesq": 3.373,
-          "stoi": 0.963,
-          "lsd_db": 8.77,
-          "mcd_db": 212.31
+          "pesq": 3.458,
+          "stoi": 0.979,
+          "lsd_db": 9.87,
+          "mcd_db": 52.28
         }
       }
     },
     {
-      "model_id": "hifigan_universal_v1",
-      "model_name": "HiFi-GAN (Universal V1)",
-      "architecture_family": "Time-domain MRF-GAN",
-      "arch_category": "GAN-based",
+      "model_id": "periodwave_24k",
+      "model_name": "PeriodWave (16-step)",
+      "architecture_family": "Diffusion / Full SDE",
+      "arch_category": "Diffusion-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "GAN-based"
+        "Diffusion-based",
+        "Non-Autoregressive"
       ],
-      "track": "22.05kHz Legacy Track",
-      "sampling_rate_hz": 22050,
-      "params_m": 13.94,
-      "overall_score": 64.8,
-      "pesq": 3.019,
-      "stoi": 0.947,
-      "mcd_db": 71.28,
-      "lsd_db": 7.7,
-      "utmos": 3.45,
-      "nisqa": 3.5,
-      "delta_wer_pct": 4.45,
-      "rtf": 0.0287,
-      "speedup_x": 34.8,
-      "peak_vram_mb": 418.7,
-      "edge_feasible": "Yes",
+      "track": "24kHz Primary Benchmark",
+      "sampling_rate_hz": 24000,
+      "params_m": 29.81,
+      "overall_score": 1.0,
+      "pesq": 4.159,
+      "stoi": 0.974,
+      "mcd_db": 43.83,
+      "lsd_db": 11.08,
+      "utmos": 3.94,
+      "nisqa": 4.0,
+      "delta_wer_pct": 0.05,
+      "rtf": 1.0131,
+      "speedup_x": 1.0,
+      "peak_vram_mb": 1052.0,
+      "edge_feasible": "No",
       "is_pareto": false,
-      "checkpoint_url": "https://github.com/jik876/hifi-gan",
-      "paper_url": "https://arxiv.org/abs/2010.05646",
-      "github_url": "https://github.com/jik876/hifi-gan",
+      "checkpoint_url": "https://github.com/kaist-dsp/PeriodWave",
+      "paper_url": "https://arxiv.org/abs/2408.06945",
+      "github_url": "https://github.com/kaist-dsp/PeriodWave",
       "license": "MIT",
-      "author": "Kakao Enterprise",
-      "year": 2020,
+      "author": "KAIST",
+      "year": 2024,
       "rank": 15,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
-        "LJSpeech": 3.221,
-        "LibriTTS": 3.11,
-        "VCTK": 2.893,
-        "Free_ST": 2.851
+        "LJSpeech": 4.219,
+        "LibriTTS": 4.179,
+        "VCTK": 4.187,
+        "Free_ST": 4.052
       },
       "dataset_metrics": {
         "LJSpeech": {
-          "pesq": 3.221,
-          "stoi": 0.968,
-          "lsd_db": 7.82,
-          "mcd_db": 80.36
+          "pesq": 4.219,
+          "stoi": 0.989,
+          "lsd_db": 10.05,
+          "mcd_db": 40.58
         },
         "LibriTTS": {
-          "pesq": 3.11,
-          "stoi": 0.965,
-          "lsd_db": 7.56,
-          "mcd_db": 74.25
+          "pesq": 4.179,
+          "stoi": 0.987,
+          "lsd_db": 9.73,
+          "mcd_db": 37.22
         },
         "VCTK": {
-          "pesq": 2.893,
-          "stoi": 0.903,
-          "lsd_db": 7.62,
-          "mcd_db": 64.67
+          "pesq": 4.187,
+          "stoi": 0.936,
+          "lsd_db": 11.49,
+          "mcd_db": 45.06
         },
         "Free_ST": {
-          "pesq": 2.851,
-          "stoi": 0.952,
-          "lsd_db": 7.79,
-          "mcd_db": 65.85
+          "pesq": 4.052,
+          "stoi": 0.985,
+          "lsd_db": 13.02,
+          "mcd_db": 52.44
         }
       }
     }
   ],
   "dataset_breakdown": [
     {
-      "model_id": "bigvgan_v2_24khz_100band_256x",
-      "model_name": "BigVGAN-v2 (112M)",
+      "model_id": "griffin_lim",
+      "model_name": "Griffin-Lim STFT",
       "dataset": "LJSpeech",
-      "pesq": 4.407,
-      "stoi": 0.996,
-      "lsd_db": 6.56,
-      "mcd_db": 26.58
+      "pesq": 4.059,
+      "stoi": 0.998,
+      "lsd_db": 3.03,
+      "mcd_db": 3.86
     },
     {
-      "model_id": "bigvgan_base_24khz_100band",
-      "model_name": "BigVGAN-Base (14M)",
+      "model_id": "rndvoc",
+      "model_name": "RNDVoC",
       "dataset": "LJSpeech",
-      "pesq": 4.004,
-      "stoi": 0.988,
-      "lsd_db": 7.08,
-      "mcd_db": 42.21
-    },
-    {
-      "model_id": "vocos_mel_24khz",
-      "model_name": "Vocos",
-      "dataset": "LJSpeech",
-      "pesq": 3.85,
-      "stoi": 0.984,
-      "lsd_db": 7.04,
-      "mcd_db": 43.43
-    },
-    {
-      "model_id": "comvo_large",
-      "model_name": "ComVo-Large",
-      "dataset": "LJSpeech",
-      "pesq": 4.106,
+      "pesq": 4.232,
       "stoi": 0.992,
-      "lsd_db": 6.83,
-      "mcd_db": 34.38
-    },
-    {
-      "model_id": "comvo_base",
-      "model_name": "ComVo-Base",
-      "dataset": "LJSpeech",
-      "pesq": 3.977,
-      "stoi": 0.987,
-      "lsd_db": 7.01,
-      "mcd_db": 38.79
-    },
-    {
-      "model_id": "periodwave_turbo",
-      "model_name": "PeriodWave-Turbo (4-step)",
-      "dataset": "LJSpeech",
-      "pesq": 4.43,
-      "stoi": 0.996,
-      "lsd_db": 7.09,
-      "mcd_db": 40.61
-    },
-    {
-      "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (30-step)",
-      "dataset": "LJSpeech",
-      "pesq": 4.255,
-      "stoi": 0.989,
-      "lsd_db": 9.97,
-      "mcd_db": 106.28
+      "lsd_db": 6.56,
+      "mcd_db": 9.86
     },
     {
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "dataset": "LJSpeech",
-      "pesq": 4.484,
+      "pesq": 4.487,
       "stoi": 0.998,
-      "lsd_db": 6.48,
-      "mcd_db": 35.29
+      "lsd_db": 6.49,
+      "mcd_db": 7.74
+    },
+    {
+      "model_id": "vocos_mel_24khz",
+      "model_name": "Vocos",
+      "dataset": "LJSpeech",
+      "pesq": 3.831,
+      "stoi": 0.984,
+      "lsd_db": 7.06,
+      "mcd_db": 9.22
     },
     {
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "dataset": "LJSpeech",
-      "pesq": 4.428,
+      "pesq": 4.411,
       "stoi": 0.996,
       "lsd_db": 6.62,
-      "mcd_db": 45.99
+      "mcd_db": 9.64
     },
     {
-      "model_id": "rfwave_libritts_24k",
-      "model_name": "RFWave",
+      "model_id": "periodwave_turbo",
+      "model_name": "PeriodWave-Turbo (4-step)",
       "dataset": "LJSpeech",
-      "pesq": 4.183,
-      "stoi": 0.988,
-      "lsd_db": 8.48,
-      "mcd_db": 110.45
+      "pesq": 4.419,
+      "stoi": 0.996,
+      "lsd_db": 7.08,
+      "mcd_db": 11.26
+    },
+    {
+      "model_id": "comvo_base",
+      "model_name": "ComVo-Base",
+      "dataset": "LJSpeech",
+      "pesq": 3.914,
+      "stoi": 0.986,
+      "lsd_db": 7.05,
+      "mcd_db": 9.27
+    },
+    {
+      "model_id": "bigvgan_v2_24khz_100band_256x",
+      "model_name": "BigVGAN-v2 (112M)",
+      "dataset": "LJSpeech",
+      "pesq": 4.381,
+      "stoi": 0.996,
+      "lsd_db": 6.6,
+      "mcd_db": 6.44
+    },
+    {
+      "model_id": "bigvgan_base_24khz_100band",
+      "model_name": "BigVGAN-Base (14M)",
+      "dataset": "LJSpeech",
+      "pesq": 3.934,
+      "stoi": 0.987,
+      "lsd_db": 7.09,
+      "mcd_db": 9.88
+    },
+    {
+      "model_id": "comvo_large",
+      "model_name": "ComVo-Large",
+      "dataset": "LJSpeech",
+      "pesq": 4.094,
+      "stoi": 0.991,
+      "lsd_db": 6.87,
+      "mcd_db": 7.01
     },
     {
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "dataset": "LJSpeech",
-      "pesq": 3.744,
-      "stoi": 0.977,
-      "lsd_db": 7.16,
-      "mcd_db": 52.88
-    },
-    {
-      "model_id": "rndvoc",
-      "model_name": "RNDVoC",
-      "dataset": "LJSpeech",
-      "pesq": 4.262,
-      "stoi": 0.992,
-      "lsd_db": 6.56,
-      "mcd_db": 40.24
-    },
-    {
-      "model_id": "freev",
-      "model_name": "FreeV",
-      "dataset": "LJSpeech",
-      "pesq": 3.696,
-      "stoi": 0.975,
-      "lsd_db": 6.82,
-      "mcd_db": 65.2
+      "pesq": 3.71,
+      "stoi": 0.978,
+      "lsd_db": 7.18,
+      "mcd_db": 11.94
     },
     {
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "dataset": "LJSpeech",
-      "pesq": 3.221,
+      "pesq": 3.147,
       "stoi": 0.968,
-      "lsd_db": 7.82,
-      "mcd_db": 80.36
+      "lsd_db": 7.8,
+      "mcd_db": 18.81
+    },
+    {
+      "model_id": "freev",
+      "model_name": "FreeV",
+      "dataset": "LJSpeech",
+      "pesq": 3.593,
+      "stoi": 0.975,
+      "lsd_db": 6.83,
+      "mcd_db": 14.77
+    },
+    {
+      "model_id": "rfwave_libritts_24k",
+      "model_name": "RFWave",
+      "dataset": "LJSpeech",
+      "pesq": 4.101,
+      "stoi": 0.988,
+      "lsd_db": 8.46,
+      "mcd_db": 37.09
+    },
+    {
+      "model_id": "periodwave_24k",
+      "model_name": "PeriodWave (16-step)",
+      "dataset": "LJSpeech",
+      "pesq": 4.219,
+      "stoi": 0.989,
+      "lsd_db": 10.05,
+      "mcd_db": 40.58
     },
     {
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
-      "dataset": "LJSpeech",
-      "pesq": 4.15,
-      "stoi": 0.999,
-      "lsd_db": 2.94,
-      "mcd_db": 15.87
-    },
-    {
-      "model_id": "bigvgan_v2_24khz_100band_256x",
-      "model_name": "BigVGAN-v2 (112M)",
-      "dataset": "LibriTTS",
-      "pesq": 4.35,
-      "stoi": 0.997,
-      "lsd_db": 6.48,
-      "mcd_db": 27.91
-    },
-    {
-      "model_id": "bigvgan_base_24khz_100band",
-      "model_name": "BigVGAN-Base (14M)",
       "dataset": "LibriTTS",
       "pesq": 3.925,
-      "stoi": 0.987,
-      "lsd_db": 6.9,
-      "mcd_db": 42.48
-    },
-    {
-      "model_id": "vocos_mel_24khz",
-      "model_name": "Vocos",
-      "dataset": "LibriTTS",
-      "pesq": 3.791,
-      "stoi": 0.982,
-      "lsd_db": 6.96,
-      "mcd_db": 42.18
-    },
-    {
-      "model_id": "comvo_large",
-      "model_name": "ComVo-Large",
-      "dataset": "LibriTTS",
-      "pesq": 4.089,
-      "stoi": 0.99,
-      "lsd_db": 6.79,
-      "mcd_db": 36.09
-    },
-    {
-      "model_id": "comvo_base",
-      "model_name": "ComVo-Base",
-      "dataset": "LibriTTS",
-      "pesq": 3.774,
-      "stoi": 0.98,
-      "lsd_db": 7.14,
-      "mcd_db": 57.89
-    },
-    {
-      "model_id": "periodwave_turbo",
-      "model_name": "PeriodWave-Turbo (4-step)",
-      "dataset": "LibriTTS",
-      "pesq": 4.338,
-      "stoi": 0.995,
-      "lsd_db": 6.79,
-      "mcd_db": 40.06
-    },
-    {
-      "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (30-step)",
-      "dataset": "LibriTTS",
-      "pesq": 4.159,
-      "stoi": 0.988,
-      "lsd_db": 9.81,
-      "mcd_db": 122.97
-    },
-    {
-      "model_id": "flow2gan",
-      "model_name": "Flow2GAN (4-step)",
-      "dataset": "LibriTTS",
-      "pesq": 4.466,
-      "stoi": 0.998,
-      "lsd_db": 6.36,
-      "mcd_db": 34.34
-    },
-    {
-      "model_id": "bridgevoc",
-      "model_name": "BridgeVoC",
-      "dataset": "LibriTTS",
-      "pesq": 4.397,
       "stoi": 0.994,
-      "lsd_db": 6.5,
-      "mcd_db": 43.12
-    },
-    {
-      "model_id": "rfwave_libritts_24k",
-      "model_name": "RFWave",
-      "dataset": "LibriTTS",
-      "pesq": 3.954,
-      "stoi": 0.985,
-      "lsd_db": 8.64,
-      "mcd_db": 143.77
-    },
-    {
-      "model_id": "wavefm",
-      "model_name": "WaveFM (1-step)",
-      "dataset": "LibriTTS",
-      "pesq": 3.679,
-      "stoi": 0.975,
-      "lsd_db": 7.04,
-      "mcd_db": 55.47
+      "lsd_db": 3.2,
+      "mcd_db": 4.57
     },
     {
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "dataset": "LibriTTS",
-      "pesq": 4.156,
-      "stoi": 0.991,
-      "lsd_db": 6.52,
-      "mcd_db": 46.6
+      "pesq": 4.229,
+      "stoi": 0.99,
+      "lsd_db": 6.54,
+      "mcd_db": 9.07
     },
     {
-      "model_id": "freev",
-      "model_name": "FreeV",
+      "model_id": "flow2gan",
+      "model_name": "Flow2GAN (4-step)",
       "dataset": "LibriTTS",
-      "pesq": 3.282,
-      "stoi": 0.96,
-      "lsd_db": 6.86,
-      "mcd_db": 76.75
+      "pesq": 4.495,
+      "stoi": 0.995,
+      "lsd_db": 6.47,
+      "mcd_db": 6.07
+    },
+    {
+      "model_id": "vocos_mel_24khz",
+      "model_name": "Vocos",
+      "dataset": "LibriTTS",
+      "pesq": 3.575,
+      "stoi": 0.978,
+      "lsd_db": 7.08,
+      "mcd_db": 8.95
+    },
+    {
+      "model_id": "bridgevoc",
+      "model_name": "BridgeVoC",
+      "dataset": "LibriTTS",
+      "pesq": 4.401,
+      "stoi": 0.993,
+      "lsd_db": 6.68,
+      "mcd_db": 8.93
+    },
+    {
+      "model_id": "periodwave_turbo",
+      "model_name": "PeriodWave-Turbo (4-step)",
+      "dataset": "LibriTTS",
+      "pesq": 4.398,
+      "stoi": 0.994,
+      "lsd_db": 6.92,
+      "mcd_db": 9.02
+    },
+    {
+      "model_id": "comvo_base",
+      "model_name": "ComVo-Base",
+      "dataset": "LibriTTS",
+      "pesq": 3.63,
+      "stoi": 0.978,
+      "lsd_db": 7.19,
+      "mcd_db": 10.99
+    },
+    {
+      "model_id": "bigvgan_v2_24khz_100band_256x",
+      "model_name": "BigVGAN-v2 (112M)",
+      "dataset": "LibriTTS",
+      "pesq": 4.387,
+      "stoi": 0.994,
+      "lsd_db": 6.59,
+      "mcd_db": 5.91
+    },
+    {
+      "model_id": "bigvgan_base_24khz_100band",
+      "model_name": "BigVGAN-Base (14M)",
+      "dataset": "LibriTTS",
+      "pesq": 3.837,
+      "stoi": 0.984,
+      "lsd_db": 7.03,
+      "mcd_db": 8.91
+    },
+    {
+      "model_id": "comvo_large",
+      "model_name": "ComVo-Large",
+      "dataset": "LibriTTS",
+      "pesq": 3.877,
+      "stoi": 0.985,
+      "lsd_db": 6.96,
+      "mcd_db": 7.78
+    },
+    {
+      "model_id": "wavefm",
+      "model_name": "WaveFM (1-step)",
+      "dataset": "LibriTTS",
+      "pesq": 3.527,
+      "stoi": 0.973,
+      "lsd_db": 7.12,
+      "mcd_db": 11.69
     },
     {
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "dataset": "LibriTTS",
-      "pesq": 3.11,
-      "stoi": 0.965,
-      "lsd_db": 7.56,
-      "mcd_db": 74.25
+      "pesq": 2.917,
+      "stoi": 0.96,
+      "lsd_db": 7.71,
+      "mcd_db": 16.77
+    },
+    {
+      "model_id": "freev",
+      "model_name": "FreeV",
+      "dataset": "LibriTTS",
+      "pesq": 2.806,
+      "stoi": 0.95,
+      "lsd_db": 7.1,
+      "mcd_db": 17.49
+    },
+    {
+      "model_id": "rfwave_libritts_24k",
+      "model_name": "RFWave",
+      "dataset": "LibriTTS",
+      "pesq": 3.937,
+      "stoi": 0.984,
+      "lsd_db": 8.64,
+      "mcd_db": 34.08
+    },
+    {
+      "model_id": "periodwave_24k",
+      "model_name": "PeriodWave (16-step)",
+      "dataset": "LibriTTS",
+      "pesq": 4.179,
+      "stoi": 0.987,
+      "lsd_db": 9.73,
+      "mcd_db": 37.22
     },
     {
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
-      "dataset": "LibriTTS",
-      "pesq": 3.793,
-      "stoi": 0.998,
-      "lsd_db": 3.2,
-      "mcd_db": 21.9
+      "dataset": "VCTK",
+      "pesq": 3.778,
+      "stoi": 0.988,
+      "lsd_db": 3.16,
+      "mcd_db": 4.63
+    },
+    {
+      "model_id": "rndvoc",
+      "model_name": "RNDVoC",
+      "dataset": "VCTK",
+      "pesq": 4.165,
+      "stoi": 0.976,
+      "lsd_db": 6.45,
+      "mcd_db": 8.67
+    },
+    {
+      "model_id": "flow2gan",
+      "model_name": "Flow2GAN (4-step)",
+      "dataset": "VCTK",
+      "pesq": 4.488,
+      "stoi": 0.99,
+      "lsd_db": 6.47,
+      "mcd_db": 6.4
+    },
+    {
+      "model_id": "vocos_mel_24khz",
+      "model_name": "Vocos",
+      "dataset": "VCTK",
+      "pesq": 3.546,
+      "stoi": 0.953,
+      "lsd_db": 7.04,
+      "mcd_db": 8.36
+    },
+    {
+      "model_id": "bridgevoc",
+      "model_name": "BridgeVoC",
+      "dataset": "VCTK",
+      "pesq": 4.382,
+      "stoi": 0.984,
+      "lsd_db": 6.52,
+      "mcd_db": 7.91
+    },
+    {
+      "model_id": "periodwave_turbo",
+      "model_name": "PeriodWave-Turbo (4-step)",
+      "dataset": "VCTK",
+      "pesq": 4.354,
+      "stoi": 0.982,
+      "lsd_db": 6.89,
+      "mcd_db": 9.39
+    },
+    {
+      "model_id": "comvo_base",
+      "model_name": "ComVo-Base",
+      "dataset": "VCTK",
+      "pesq": 3.697,
+      "stoi": 0.961,
+      "lsd_db": 7.05,
+      "mcd_db": 8.28
     },
     {
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "dataset": "VCTK",
-      "pesq": 4.373,
-      "stoi": 0.98,
-      "lsd_db": 6.61,
-      "mcd_db": 21.47
+      "pesq": 4.375,
+      "stoi": 0.988,
+      "lsd_db": 6.53,
+      "mcd_db": 5.62
     },
     {
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "dataset": "VCTK",
-      "pesq": 3.853,
-      "stoi": 0.956,
-      "lsd_db": 7.03,
-      "mcd_db": 32.37
-    },
-    {
-      "model_id": "vocos_mel_24khz",
-      "model_name": "Vocos",
-      "dataset": "VCTK",
-      "pesq": 3.618,
-      "stoi": 0.945,
-      "lsd_db": 7.05,
-      "mcd_db": 33.26
+      "pesq": 3.845,
+      "stoi": 0.967,
+      "lsd_db": 6.96,
+      "mcd_db": 9.02
     },
     {
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "dataset": "VCTK",
-      "pesq": 4.02,
-      "stoi": 0.967,
-      "lsd_db": 6.93,
-      "mcd_db": 29.81
-    },
-    {
-      "model_id": "comvo_base",
-      "model_name": "ComVo-Base",
-      "dataset": "VCTK",
-      "pesq": 3.819,
-      "stoi": 0.953,
-      "lsd_db": 7.09,
-      "mcd_db": 40.45
-    },
-    {
-      "model_id": "periodwave_turbo",
-      "model_name": "PeriodWave-Turbo (4-step)",
-      "dataset": "VCTK",
-      "pesq": 4.328,
-      "stoi": 0.966,
-      "lsd_db": 6.99,
-      "mcd_db": 30.45
-    },
-    {
-      "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (30-step)",
-      "dataset": "VCTK",
-      "pesq": 4.193,
-      "stoi": 0.899,
-      "lsd_db": 10.83,
-      "mcd_db": 97.39
-    },
-    {
-      "model_id": "flow2gan",
-      "model_name": "Flow2GAN (4-step)",
-      "dataset": "VCTK",
-      "pesq": 4.459,
-      "stoi": 0.983,
-      "lsd_db": 6.55,
-      "mcd_db": 19.1
-    },
-    {
-      "model_id": "bridgevoc",
-      "model_name": "BridgeVoC",
-      "dataset": "VCTK",
-      "pesq": 4.368,
-      "stoi": 0.975,
-      "lsd_db": 6.61,
-      "mcd_db": 31.96
-    },
-    {
-      "model_id": "rfwave_libritts_24k",
-      "model_name": "RFWave",
-      "dataset": "VCTK",
-      "pesq": 3.746,
-      "stoi": 0.823,
-      "lsd_db": 9.29,
-      "mcd_db": 116.1
+      "pesq": 3.9,
+      "stoi": 0.974,
+      "lsd_db": 6.87,
+      "mcd_db": 6.15
     },
     {
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "dataset": "VCTK",
-      "pesq": 3.637,
-      "stoi": 0.926,
-      "lsd_db": 7.96,
-      "mcd_db": 41.15
-    },
-    {
-      "model_id": "rndvoc",
-      "model_name": "RNDVoC",
-      "dataset": "VCTK",
-      "pesq": 4.11,
-      "stoi": 0.964,
-      "lsd_db": 6.51,
-      "mcd_db": 30.97
-    },
-    {
-      "model_id": "freev",
-      "model_name": "FreeV",
-      "dataset": "VCTK",
-      "pesq": 2.585,
-      "stoi": 0.898,
-      "lsd_db": 7.16,
-      "mcd_db": 65.83
+      "pesq": 3.573,
+      "stoi": 0.955,
+      "lsd_db": 7.17,
+      "mcd_db": 15.68
     },
     {
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "dataset": "VCTK",
-      "pesq": 2.893,
-      "stoi": 0.903,
-      "lsd_db": 7.62,
-      "mcd_db": 64.67
+      "pesq": 2.94,
+      "stoi": 0.919,
+      "lsd_db": 7.55,
+      "mcd_db": 16.38
+    },
+    {
+      "model_id": "freev",
+      "model_name": "FreeV",
+      "dataset": "VCTK",
+      "pesq": 2.443,
+      "stoi": 0.904,
+      "lsd_db": 7.2,
+      "mcd_db": 18.15
+    },
+    {
+      "model_id": "rfwave_libritts_24k",
+      "model_name": "RFWave",
+      "dataset": "VCTK",
+      "pesq": 3.692,
+      "stoi": 0.878,
+      "lsd_db": 9.23,
+      "mcd_db": 47.48
+    },
+    {
+      "model_id": "periodwave_24k",
+      "model_name": "PeriodWave (16-step)",
+      "dataset": "VCTK",
+      "pesq": 4.187,
+      "stoi": 0.936,
+      "lsd_db": 11.49,
+      "mcd_db": 45.06
     },
     {
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
-      "dataset": "VCTK",
-      "pesq": 3.94,
-      "stoi": 0.987,
-      "lsd_db": 3.0,
-      "mcd_db": 16.44
+      "dataset": "Free_ST",
+      "pesq": 3.875,
+      "stoi": 0.996,
+      "lsd_db": 3.2,
+      "mcd_db": 3.63
     },
     {
-      "model_id": "bigvgan_v2_24khz_100band_256x",
-      "model_name": "BigVGAN-v2 (112M)",
+      "model_id": "rndvoc",
+      "model_name": "RNDVoC",
+      "dataset": "Free_ST",
+      "pesq": 4.265,
+      "stoi": 0.992,
+      "lsd_db": 6.71,
+      "mcd_db": 7.84
+    },
+    {
+      "model_id": "flow2gan",
+      "model_name": "Flow2GAN (4-step)",
+      "dataset": "Free_ST",
+      "pesq": 4.486,
+      "stoi": 0.997,
+      "lsd_db": 6.59,
+      "mcd_db": 6.36
+    },
+    {
+      "model_id": "vocos_mel_24khz",
+      "model_name": "Vocos",
+      "dataset": "Free_ST",
+      "pesq": 3.634,
+      "stoi": 0.976,
+      "lsd_db": 7.12,
+      "mcd_db": 7.74
+    },
+    {
+      "model_id": "bridgevoc",
+      "model_name": "BridgeVoC",
       "dataset": "Free_ST",
       "pesq": 4.395,
-      "stoi": 0.996,
-      "lsd_db": 6.54,
-      "mcd_db": 25.55
-    },
-    {
-      "model_id": "bigvgan_base_24khz_100band",
-      "model_name": "BigVGAN-Base (14M)",
-      "dataset": "Free_ST",
-      "pesq": 3.641,
-      "stoi": 0.982,
-      "lsd_db": 6.94,
-      "mcd_db": 40.84
-    },
-    {
-      "model_id": "vocos_mel_24khz",
-      "model_name": "Vocos",
-      "dataset": "Free_ST",
-      "pesq": 3.597,
-      "stoi": 0.973,
-      "lsd_db": 6.93,
-      "mcd_db": 34.54
-    },
-    {
-      "model_id": "comvo_large",
-      "model_name": "ComVo-Large",
-      "dataset": "Free_ST",
-      "pesq": 3.906,
-      "stoi": 0.986,
-      "lsd_db": 6.82,
-      "mcd_db": 25.84
-    },
-    {
-      "model_id": "comvo_base",
-      "model_name": "ComVo-Base",
-      "dataset": "Free_ST",
-      "pesq": 3.693,
-      "stoi": 0.98,
-      "lsd_db": 6.94,
-      "mcd_db": 32.59
+      "stoi": 0.995,
+      "lsd_db": 6.7,
+      "mcd_db": 7.32
     },
     {
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "dataset": "Free_ST",
-      "pesq": 4.379,
-      "stoi": 0.995,
-      "lsd_db": 6.85,
-      "mcd_db": 44.67
+      "pesq": 4.407,
+      "stoi": 0.996,
+      "lsd_db": 7.0,
+      "mcd_db": 9.54
     },
     {
-      "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (30-step)",
+      "model_id": "comvo_base",
+      "model_name": "ComVo-Base",
       "dataset": "Free_ST",
-      "pesq": 3.983,
+      "pesq": 3.779,
       "stoi": 0.981,
-      "lsd_db": 12.32,
-      "mcd_db": 178.46
+      "lsd_db": 7.1,
+      "mcd_db": 7.26
     },
     {
-      "model_id": "flow2gan",
-      "model_name": "Flow2GAN (4-step)",
+      "model_id": "bigvgan_v2_24khz_100band_256x",
+      "model_name": "BigVGAN-v2 (112M)",
       "dataset": "Free_ST",
-      "pesq": 4.466,
-      "stoi": 0.997,
-      "lsd_db": 6.45,
-      "mcd_db": 28.7
+      "pesq": 4.386,
+      "stoi": 0.996,
+      "lsd_db": 6.74,
+      "mcd_db": 5.3
     },
     {
-      "model_id": "bridgevoc",
-      "model_name": "BridgeVoC",
+      "model_id": "bigvgan_base_24khz_100band",
+      "model_name": "BigVGAN-Base (14M)",
       "dataset": "Free_ST",
-      "pesq": 4.315,
-      "stoi": 0.995,
-      "lsd_db": 6.56,
-      "mcd_db": 34.88
+      "pesq": 3.851,
+      "stoi": 0.983,
+      "lsd_db": 7.08,
+      "mcd_db": 8.49
     },
     {
-      "model_id": "rfwave_libritts_24k",
-      "model_name": "RFWave",
+      "model_id": "comvo_large",
+      "model_name": "ComVo-Large",
       "dataset": "Free_ST",
-      "pesq": 3.373,
-      "stoi": 0.963,
-      "lsd_db": 8.77,
-      "mcd_db": 212.31
+      "pesq": 3.971,
+      "stoi": 0.987,
+      "lsd_db": 6.94,
+      "mcd_db": 5.39
     },
     {
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "dataset": "Free_ST",
-      "pesq": 3.629,
-      "stoi": 0.976,
-      "lsd_db": 6.88,
-      "mcd_db": 44.52
-    },
-    {
-      "model_id": "rndvoc",
-      "model_name": "RNDVoC",
-      "dataset": "Free_ST",
-      "pesq": 4.223,
-      "stoi": 0.992,
-      "lsd_db": 6.58,
-      "mcd_db": 35.47
-    },
-    {
-      "model_id": "freev",
-      "model_name": "FreeV",
-      "dataset": "Free_ST",
-      "pesq": 3.032,
-      "stoi": 0.957,
-      "lsd_db": 7.09,
-      "mcd_db": 64.54
+      "pesq": 3.696,
+      "stoi": 0.974,
+      "lsd_db": 7.05,
+      "mcd_db": 9.54
     },
     {
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "dataset": "Free_ST",
-      "pesq": 2.851,
-      "stoi": 0.952,
-      "lsd_db": 7.79,
-      "mcd_db": 65.85
+      "pesq": 3.048,
+      "stoi": 0.954,
+      "lsd_db": 7.96,
+      "mcd_db": 16.14
     },
     {
-      "model_id": "griffin_lim",
-      "model_name": "Griffin-Lim STFT",
+      "model_id": "freev",
+      "model_name": "FreeV",
       "dataset": "Free_ST",
-      "pesq": 4.173,
-      "stoi": 0.996,
-      "lsd_db": 2.92,
-      "mcd_db": 16.52
+      "pesq": 3.065,
+      "stoi": 0.948,
+      "lsd_db": 7.36,
+      "mcd_db": 13.88
+    },
+    {
+      "model_id": "rfwave_libritts_24k",
+      "model_name": "RFWave",
+      "dataset": "Free_ST",
+      "pesq": 3.458,
+      "stoi": 0.979,
+      "lsd_db": 9.87,
+      "mcd_db": 52.28
+    },
+    {
+      "model_id": "periodwave_24k",
+      "model_name": "PeriodWave (16-step)",
+      "dataset": "Free_ST",
+      "pesq": 4.052,
+      "stoi": 0.985,
+      "lsd_db": 13.02,
+      "mcd_db": 52.44
     }
   ],
   "phoneme_diagnostics": [
@@ -2388,7 +2388,7 @@
     },
     {
       "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (30-step)",
+      "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
       "phonetic_class": "Vowels",
       "lsd_db": 8.625,
@@ -2397,7 +2397,7 @@
     },
     {
       "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (30-step)",
+      "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
       "phonetic_class": "Stops / Plosives",
       "lsd_db": 9.304,
@@ -2406,7 +2406,7 @@
     },
     {
       "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (30-step)",
+      "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
       "phonetic_class": "Fricatives",
       "lsd_db": 8.594,
@@ -2415,7 +2415,7 @@
     },
     {
       "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (30-step)",
+      "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
       "phonetic_class": "Affricates",
       "lsd_db": 8.145,
@@ -2424,7 +2424,7 @@
     },
     {
       "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (30-step)",
+      "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
       "phonetic_class": "Nasals",
       "lsd_db": 9.546,
@@ -2433,7 +2433,7 @@
     },
     {
       "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (30-step)",
+      "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
       "phonetic_class": "Liquids",
       "lsd_db": 9.122,
@@ -2442,7 +2442,7 @@
     },
     {
       "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (30-step)",
+      "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
       "phonetic_class": "Glides",
       "lsd_db": 9.793,

@@ -327,19 +327,23 @@
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
-  function formatRankBadge(rank, score) {
+  function formatRankBadge(rank, score, isFeasible = true) {
     let medal = '';
     let cls = 'rank-regular';
     if (rank === 1) { medal = '🥇'; cls = 'rank-gold'; }
     else if (rank === 2) { medal = '🥈'; cls = 'rank-silver'; }
     else if (rank === 3) { medal = '🥉'; cls = 'rank-bronze'; }
 
+    const isGated = !isFeasible || score <= 1.0;
+    const scoreText = isGated ? `${score.toFixed(1)}†` : score.toFixed(1);
+    const titleAttr = isGated ? ' title="Hardware feasibility constraint violated (RTF > 1.0 on GTX 1650 FP32 profile); composite score floored to 1.00"' : '';
+
     return `
-      <div class="rank-score-pill ${cls}">
+      <div class="rank-score-pill ${cls}"${titleAttr}>
         ${medal ? `<span class="rank-medal">${medal}</span>` : ''}
         <span class="rank-num">#${rank}</span>
         <span class="text-xs opacity-50">·</span>
-        <span class="rank-score">${score.toFixed(1)}</span>
+        <span class="rank-score">${scoreText}</span>
       </div>
     `;
   }
@@ -716,7 +720,7 @@
 
     tbody.innerHTML = list.map((m, idx) => {
       const rankNum = idx + 1;
-      const rankBadge = formatRankBadge(rankNum, m.display_score);
+      const rankBadge = formatRankBadge(rankNum, m.display_score, m.edge_feasible === 'Yes');
 
       return `
         <tr>
