@@ -443,21 +443,9 @@
         </details>
       </div>
 
-      <!-- Column Category Legend Bar -->
-      <div class="flex flex-wrap items-center justify-center gap-2 text-xs">
-        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-bold">
-          🏆 Rank &amp; <span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> (1–100)
-        </div>
-        <div class="col-legend-item col-legend-obj">📐 Objective Metrics (Blue)</div>
-        <div class="col-legend-item col-legend-subj">👂 Perceptual / Subjective (Violet)</div>
-        <div class="col-legend-item col-legend-perf">⚡ Efficiency &amp; Edge (Amber)</div>
-        <div class="col-legend-item col-legend-rob">🛡️ Robustness / Per-Corpus (Green)</div>
-        <div class="px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold">
-          ✅ Code Open-Source
-        </div>
-        <div class="px-2.5 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-semibold">
-          ⭐ Pareto Optimal
-        </div>
+      <!-- Benchmark Description Single Line -->
+      <div class="text-center text-xs sm:text-sm text-slate-300 dark:text-slate-400 font-medium py-2.5 px-4 rounded-xl bg-slate-900/60 border border-slate-800/80 mb-4 max-w-4xl mx-auto">
+        The <span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Leaderboard evaluates open-source and pretrained neural vocoders on English speech across diverse acoustic conditions, generative architectures, and edge deployment profiles.
       </div>
 
       <!-- Interactive Leaderboard Table -->
@@ -660,6 +648,7 @@
           <table class="prism-table w-full">
             <thead class="bg-slate-800 sticky top-0">
               <tr>
+                <th class="p-3">ID</th>
                 <th class="p-3">Model</th>
                 <th class="p-3">Corpus</th>
                 <th class="p-3">PESQ ↑</th>
@@ -691,6 +680,7 @@
           <table class="prism-table w-full">
             <thead class="bg-slate-800">
               <tr>
+                <th class="p-3">ID</th>
                 <th class="p-3">Model</th>
                 <th class="p-3">Architecture</th>
                 <th class="p-3">RTF ↓</th>
@@ -722,6 +712,7 @@
           <table class="prism-table w-full">
             <thead class="bg-slate-800">
               <tr>
+                <th class="p-3">ID</th>
                 <th class="p-3">Model</th>
                 <th class="p-3">Category</th>
                 <th class="p-3">Family</th>
@@ -769,6 +760,7 @@
           <table class="prism-table w-full">
             <thead class="bg-slate-800 sticky top-0">
               <tr>
+                <th class="p-3">ID</th>
                 <th class="p-3">Model</th>
                 <th class="p-3">Phonetic Class</th>
                 <th class="p-3">LSD (dB) ↓</th>
@@ -833,18 +825,18 @@
             <tbody>
               <tr>
                 <td class="p-3 font-bold text-indigo-400">Edge / Mobile / Embedded</td>
-                <td class="p-3 font-semibold">Vocos, FreeV, ComVo-Base</td>
-                <td class="p-3 text-slate-300">RTF &lt; 0.015 (66×+ real-time), VRAM &lt; 650 MB. Fits smartphone GPU &amp; NPU envelopes.</td>
+                <td class="p-3 font-semibold"><span class="text-indigo-400 font-mono">[M3]</span> Vocos, <span class="text-indigo-400 font-mono">[M12]</span> FreeV, <span class="text-indigo-400 font-mono">[M6]</span> ComVo-Base</td>
+                <td class="p-3 text-slate-300">RTF &lt; 0.016 (63×+ real-time), VRAM &lt; 480 MB. Fits smartphone GPU &amp; NPU edge envelopes.</td>
               </tr>
               <tr>
                 <td class="p-3 font-bold text-cyan-400">Mid-Range GPU Server</td>
-                <td class="p-3 font-semibold">Flow2GAN, ComVo-Large</td>
-                <td class="p-3 text-slate-300">SOTA fidelity (PESQ &gt; 4.4) with 12–19× real-time throughput. Ideal for interactive TTS streaming APIs.</td>
+                <td class="p-3 font-semibold"><span class="text-cyan-400 font-mono">[M2]</span> Flow2GAN, <span class="text-cyan-400 font-mono">[M1]</span> RNDVoC, <span class="text-cyan-400 font-mono">[M9]</span> ComVo-Large</td>
+                <td class="p-3 text-slate-300">SOTA fidelity (PESQ &gt; 4.2) with 8–46× real-time throughput. Ideal for interactive speech streaming APIs.</td>
               </tr>
               <tr>
                 <td class="p-3 font-bold text-amber-400">High-End Cloud / Studio Offline</td>
-                <td class="p-3 font-semibold">BigVGAN-v2 (112M), PeriodWave</td>
-                <td class="p-3 text-slate-300">Uncompromised acoustic reconstruction quality, anti-aliased snake activations, fine spectral envelope detail.</td>
+                <td class="p-3 font-semibold"><span class="text-amber-400 font-mono">[M7]</span> BigVGAN-v2 (112M), <span class="text-amber-400 font-mono">[M5]</span> PeriodWave-Turbo</td>
+                <td class="p-3 text-slate-300">Uncompromised acoustic reconstruction quality (PESQ ~4.4), anti-aliased activations, and rich harmonic details.</td>
               </tr>
             </tbody>
           </table>

@@ -81,6 +81,26 @@ ARCH_FAMILY_TO_CATEGORY = {
     "Algorithmic DSP Baseline": "Algorithmic DSP",
 }
 
+# ── System IDs ────────────────────────────────────────────────────────────────
+# Baseline for algorithmic reference, M1 to M14 for benchmarked neural vocoders
+MODEL_SYSTEM_ID = {
+    "griffin_lim":                   "Baseline",
+    "rndvoc":                        "M1",
+    "flow2gan":                      "M2",
+    "vocos_mel_24khz":               "M3",
+    "bridgevoc":                     "M4",
+    "periodwave_turbo":              "M5",
+    "comvo_base":                    "M6",
+    "bigvgan_v2_24khz_100band_256x": "M7",
+    "bigvgan_base_24khz_100band":    "M8",
+    "comvo_large":                   "M9",
+    "wavefm":                        "M10",
+    "hifigan_universal_v1":          "M11",
+    "freev":                         "M12",
+    "rfwave_libritts_24k":           "M13",
+    "periodwave_24k":                "M14",
+}
+
 # ── Open-Source Status ────────────────────────────────────────────────────────
 #  code_open: Is the training/inference code publicly available?
 #  ckpt_open: Is the pretrained checkpoint freely downloadable?
@@ -400,5 +420,4 @@ CHANGELOG_MD = """
 |---|---|---|
 | **v1.0.0** | September 10, 2026 | Initial public release of the open vocoder benchmark evaluating 15 pretrained neural vocoders across 4 diverse English speech corpora |
 | **v1.0.1** | September 12, 2026 | Interactive A/B audio listening explorer with synchronized waveforms, customizable multidimensional weighting calculator, standardized PRISM-V color palette, and accessibility controls |
-| **v2.0.0** | September 16, 2026 | Official release of certified PRISM-V-v2 evaluation data: axiomatic multi-dimensional geometric scoring (P, R, I, S, M), calibrated edge GTX 1650 FP32 profiling, per-corpus reconstruction and intelligibility diagnostics across LJSpeech, LibriTTS, VCTK, and Free_ST, and certified leaderboard rankings |
 """

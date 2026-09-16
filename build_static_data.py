@@ -21,9 +21,12 @@ df_phone = pd.read_csv(os.path.join(DATA_DIR, "phoneme_diagnostics.csv"))
 with open(os.path.join(DATA_DIR, "arena_manifest.json")) as f:
     arena_manifest = json.load(f)
 
-# Sort leaderboard by overall_score descending
-df_lb = df_lb.sort_values("overall_score", ascending=False).reset_index(drop=True)
-df_lb["rank"] = range(1, len(df_lb) + 1)
+# Separate baseline and neural models: neural models ranked 1 to 14
+df_baseline = df_lb[df_lb["model_id"] == "griffin_lim"].copy()
+df_neural = df_lb[df_lb["model_id"] != "griffin_lim"].sort_values("overall_score", ascending=False).reset_index(drop=True)
+df_neural["rank"] = range(1, len(df_neural) + 1)
+df_baseline["rank"] = 0
+df_lb = pd.concat([df_baseline, df_neural]).reset_index(drop=True)
 
 # Enrich leaderboard models
 leaderboard_models = []
@@ -58,7 +61,12 @@ for _, r in df_lb.iterrows():
             ds_pesqs[d] = None
             ds_metrics[d] = None
 
+    sys_id = str(r.get("system_id", "")) if pd.notna(r.get("system_id")) else constants.MODEL_SYSTEM_ID.get(mid, "")
+    is_base = (mid == "griffin_lim")
+
     model_dict = {
+        "system_id": sys_id,
+        "is_baseline": is_base,
         "model_id": mid,
         "model_name": r["model_name"],
         "architecture_family": r["architecture_family"],
@@ -110,6 +118,7 @@ full_data = {
     "model_arch_tags": {k: list(v) for k, v in constants.MODEL_ARCH_TAGS.items()},
     "model_arch_category": constants.MODEL_ARCH_CATEGORY,
     "arch_family_to_category": constants.ARCH_FAMILY_TO_CATEGORY,
+    "model_system_id": constants.MODEL_SYSTEM_ID,
     "model_os_status": constants.MODEL_OS_STATUS,
     "model_links": constants.MODEL_LINKS,
     "datasets": constants.DATASETS,

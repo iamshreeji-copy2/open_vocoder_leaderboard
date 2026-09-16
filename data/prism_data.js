@@ -19,24 +19,24 @@ window.PRISM_DATA = {
   ],
   "model_arch_tags": {
     "hifigan_universal_v1": [
-      "GAN-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "GAN-based"
     ],
     "bigvgan_base_24khz_100band": [
-      "GAN-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "GAN-based"
     ],
     "bigvgan_v2_24khz_100band_256x": [
-      "GAN-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "GAN-based"
     ],
     "freev": [
-      "GAN-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "GAN-based"
     ],
     "rndvoc": [
-      "GAN-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "GAN-based"
     ],
     "vocos_mel_24khz": [
       "Non-Autoregressive",
@@ -59,21 +59,21 @@ window.PRISM_DATA = {
       "Flow-based"
     ],
     "flow2gan": [
-      "GAN-based",
       "Non-Autoregressive",
-      "Flow-based"
+      "Flow-based",
+      "GAN-based"
     ],
     "bridgevoc": [
-      "Diffusion-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Diffusion-based"
     ],
     "periodwave_turbo": [
-      "Diffusion-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Diffusion-based"
     ],
     "periodwave_24k": [
-      "Diffusion-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Diffusion-based"
     ],
     "griffin_lim": [
       "Algorithmic DSP"
@@ -110,6 +110,23 @@ window.PRISM_DATA = {
     "Pseudo-Inverse Mel GAN": "GAN-based",
     "Random Distortion GAN": "GAN-based",
     "Algorithmic DSP Baseline": "Algorithmic DSP"
+  },
+  "model_system_id": {
+    "griffin_lim": "Baseline",
+    "rndvoc": "M1",
+    "flow2gan": "M2",
+    "vocos_mel_24khz": "M3",
+    "bridgevoc": "M4",
+    "periodwave_turbo": "M5",
+    "comvo_base": "M6",
+    "bigvgan_v2_24khz_100band_256x": "M7",
+    "bigvgan_base_24khz_100band": "M8",
+    "comvo_large": "M9",
+    "wavefm": "M10",
+    "hifigan_universal_v1": "M11",
+    "freev": "M12",
+    "rfwave_libritts_24k": "M13",
+    "periodwave_24k": "M14"
   },
   "model_os_status": {
     "hifigan_universal_v1": {
@@ -458,9 +475,11 @@ window.PRISM_DATA = {
   },
   "bibtex": "@misc{purohit2026prismv,\n  author       = {Ravindrakumar M. Purohit and Hemant A. Patil},\n  title        = {{PRISM-V}: A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis},\n  year         = {2026},\n  howpublished = {\\url{https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/}},\n  note         = {Open neural vocoder evaluation leaderboard}\n}",
   "methodology_md": "\n## 🧪 Benchmark Protocol\n\n> **Note on Theory & Formal Formulations:**  \n> The comprehensive theoretical foundation, axiomatic mathematical formulations, and geometric scoring derivations are presented in the companion paper (see BibTeX citation). This evaluation leaderboard focuses on empirical benchmarking, model comparisons, checkpoint provenance, and interactive audio inspection.\n\n### Design Principles\n**PRISM-V** is a **training-free, zero-shot evaluation** of publicly released pretrained checkpoints.\nModels are evaluated exactly as practitioners deploy them — no fine-tuning, no cherry-picked test sets.\n\n---\n\n### The Five PRISM-V Dimensions\n\nPRISM-V evaluates **P**erceptual · **R**econstruction · **I**ntelligibility · **S**peaker · **M**odel Efficiency (Vocoders).\n\n| Dimension | Evaluation Focus | Key Empirical Measures |\n|---|---|---|\n| **P — Perceptual** | Naturalness & listening perception | UTMOS (neural MOS), NISQA-TTS naturalness |\n| **R — Reconstruction** | Waveform fidelity against reference | PESQ (wideband), MCD (cepstral), LSD (spectral) |\n| **I — Intelligibility** | Speech intelligibility & ASR content preservation | STOI (intelligibility), ΔWER (ASR degradation) |\n| **S — Speaker** | Speaker identity & acoustic consistency | Speaker embedding cosine similarity |\n| **M — Model Efficiency** | Real-world execution efficiency on edge hardware | RTF (throughput), Peak VRAM, Parameter count |\n\nThe **PRISM-V Score (1–100)** provides a holistic aggregate ranking across all five core dimensions, highlighting models that balance high acoustic fidelity with edge efficiency.\n\n---\n\n### Evaluation Corpora\n\n| Corpus | Acoustic Condition | Utterances | Notes |\n|---|---|---|---|\n| **LJSpeech** | Clean studio | 2,000 | Single speaker, minimal room acoustics |\n| **LibriTTS** | Audiobook | 2,000 | Multi-speaker, test-clean + test-other |\n| **VCTK** | Accented | 2,000 | 109 speakers, British/Scottish/Irish accents |\n| **Free_ST** | Mobile / Noisy | ~1,980 | Real-world device noise, reverb, varied SNR |\n\n---\n\n### Inference Protocol\n\n| Parameter | Specification |\n|---|---|\n| **Batch size** | 1 (deployment-realistic stream inference) |\n| **Precision** | FP32 |\n| **Device Target** | Edge Profiling |\n| **Timing** | Warmup runs + measured iterations with CUDA synchronization fences |\n| **RTF scope** | Generator-only (excludes mel-spectrogram extraction) |\n| **Seed** | Fixed deterministic seed `20260909` where supported |\n\n---\n\n### Coverage and Reliability\n\nThe PRISM-V evaluation accounts for synthesis coverage — what fraction of expected utterances were successfully generated.\nEvery synthesis failure is counted and disclosed. No utterance is silently excluded.\n\n---\n\n### Phoneme-Level Diagnostics\n\nMontreal Forced Aligner (MFA v3) alignments provide phoneme-level boundaries across evaluated utterances.\nSpectral distance, F0 pitch deviation, and boundary precision are analyzed per phonetic class:\n**Vowels, Stops, Fricatives, Affricates, Nasals, Liquids, and Glides**.\n\n---\n\n### What PRISM-V does NOT do\n\n- ❌ Re-train or fine-tune any model\n- ❌ Use unofficial community checkpoints\n- ❌ Report metrics only on successful utterances (failures counted in denominators)\n- ❌ Mix 22kHz model outputs into the 24kHz primary ranking without notation\n- ❌ Score both RTF and xRT simultaneously (they contain identical information)\n",
-  "changelog_md": "\n## 📋 Release Notes & Changelog\n\n### 📜 Version History\n\n| Version | Release Date | Key Updates |\n|---|---|---|\n| **v1.0.0** | September 10, 2026 | Initial public release of the open vocoder benchmark evaluating 15 pretrained neural vocoders across 4 diverse English speech corpora |\n| **v1.0.1** | September 12, 2026 | Interactive A/B audio listening explorer with synchronized waveforms, customizable multidimensional weighting calculator, standardized PRISM-V color palette, and accessibility controls |\n| **v2.0.0** | September 16, 2026 | Official release of certified PRISM-V-v2 evaluation data: axiomatic multi-dimensional geometric scoring (P, R, I, S, M), calibrated edge GTX 1650 FP32 profiling, per-corpus reconstruction and intelligibility diagnostics across LJSpeech, LibriTTS, VCTK, and Free_ST, and certified leaderboard rankings |\n",
+  "changelog_md": "\n## 📋 Release Notes & Changelog\n\n### 📜 Version History\n\n| Version | Release Date | Key Updates |\n|---|---|---|\n| **v1.0.0** | September 10, 2026 | Initial public release of the open vocoder benchmark evaluating 15 pretrained neural vocoders across 4 diverse English speech corpora |\n| **v1.0.1** | September 12, 2026 | Interactive A/B audio listening explorer with synchronized waveforms, customizable multidimensional weighting calculator, standardized PRISM-V color palette, and accessibility controls |\n",
   "leaderboard": [
     {
+      "system_id": "Baseline",
+      "is_baseline": true,
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
       "architecture_family": "Algorithmic DSP Baseline",
@@ -490,7 +509,7 @@ window.PRISM_DATA = {
       "license": "Public Domain",
       "author": "Griffin & Lim",
       "year": 1984,
-      "rank": 1,
+      "rank": 0,
       "code_open": true,
       "ckpt_open": false,
       "dataset_pesqs": {
@@ -527,13 +546,15 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M1",
+      "is_baseline": false,
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "architecture_family": "Random Distortion GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "GAN-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "GAN-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -557,7 +578,7 @@ window.PRISM_DATA = {
       "license": "MIT",
       "author": "CAS / Li et al.",
       "year": 2024,
-      "rank": 2,
+      "rank": 1,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -594,14 +615,16 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M2",
+      "is_baseline": false,
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "architecture_family": "Flow Matching + GAN",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "GAN-based",
         "Non-Autoregressive",
-        "Flow-based"
+        "Flow-based",
+        "GAN-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -625,7 +648,7 @@ window.PRISM_DATA = {
       "license": "Apache-2.0",
       "author": "K2-FSA",
       "year": 2024,
-      "rank": 3,
+      "rank": 2,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -662,6 +685,8 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M3",
+      "is_baseline": false,
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
       "architecture_family": "Fourier / iSTFT ConvNeXt",
@@ -692,7 +717,7 @@ window.PRISM_DATA = {
       "license": "MIT",
       "author": "Charactr Inc.",
       "year": 2023,
-      "rank": 4,
+      "rank": 3,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -729,13 +754,15 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M4",
+      "is_baseline": false,
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "architecture_family": "Brownian Bridge SDE",
       "arch_category": "Diffusion-based",
       "arch_tags": [
-        "Diffusion-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Diffusion-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -759,7 +786,7 @@ window.PRISM_DATA = {
       "license": "MIT",
       "author": "CAS / Li et al.",
       "year": 2024,
-      "rank": 5,
+      "rank": 4,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -796,13 +823,15 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M5",
+      "is_baseline": false,
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "architecture_family": "Diffusion / Turbo SDE",
       "arch_category": "Diffusion-based",
       "arch_tags": [
-        "Diffusion-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Diffusion-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -826,7 +855,7 @@ window.PRISM_DATA = {
       "license": "MIT",
       "author": "KAIST",
       "year": 2024,
-      "rank": 6,
+      "rank": 5,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -863,6 +892,8 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M6",
+      "is_baseline": false,
       "model_id": "comvo_base",
       "model_name": "ComVo-Base",
       "architecture_family": "Complex-Valued Fourier",
@@ -893,7 +924,7 @@ window.PRISM_DATA = {
       "license": "Apache-2.0",
       "author": "Seoul National Univ.",
       "year": 2024,
-      "rank": 7,
+      "rank": 6,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -930,13 +961,15 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M7",
+      "is_baseline": false,
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "architecture_family": "Anti-Aliased Snake GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "GAN-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "GAN-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -960,7 +993,7 @@ window.PRISM_DATA = {
       "license": "MIT",
       "author": "NVIDIA",
       "year": 2024,
-      "rank": 8,
+      "rank": 7,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -997,13 +1030,15 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M8",
+      "is_baseline": false,
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "architecture_family": "Anti-Aliased Snake GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "GAN-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "GAN-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1027,7 +1062,7 @@ window.PRISM_DATA = {
       "license": "MIT",
       "author": "NVIDIA",
       "year": 2022,
-      "rank": 9,
+      "rank": 8,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -1064,6 +1099,8 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M9",
+      "is_baseline": false,
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "architecture_family": "Complex-Valued Fourier",
@@ -1094,7 +1131,7 @@ window.PRISM_DATA = {
       "license": "Apache-2.0",
       "author": "Seoul National Univ.",
       "year": 2024,
-      "rank": 10,
+      "rank": 9,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -1131,6 +1168,8 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M10",
+      "is_baseline": false,
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "architecture_family": "Distilled Flow Matching",
@@ -1161,7 +1200,7 @@ window.PRISM_DATA = {
       "license": "MIT",
       "author": "Ma et al.",
       "year": 2024,
-      "rank": 11,
+      "rank": 10,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -1198,13 +1237,15 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M11",
+      "is_baseline": false,
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "architecture_family": "Time-domain MRF-GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "GAN-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "GAN-based"
       ],
       "track": "22.05kHz Legacy Track",
       "sampling_rate_hz": 22050,
@@ -1228,7 +1269,7 @@ window.PRISM_DATA = {
       "license": "MIT",
       "author": "Kakao Enterprise",
       "year": 2020,
-      "rank": 12,
+      "rank": 11,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -1265,13 +1306,15 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M12",
+      "is_baseline": false,
       "model_id": "freev",
       "model_name": "FreeV",
       "architecture_family": "Pseudo-Inverse Mel GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "GAN-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "GAN-based"
       ],
       "track": "22.05kHz Legacy Track",
       "sampling_rate_hz": 22050,
@@ -1295,7 +1338,7 @@ window.PRISM_DATA = {
       "license": "Apache-2.0",
       "author": "Baker et al.",
       "year": 2024,
-      "rank": 13,
+      "rank": 12,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -1332,6 +1375,8 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M13",
+      "is_baseline": false,
       "model_id": "rfwave_libritts_24k",
       "model_name": "RFWave",
       "architecture_family": "Rectified Flow Matching",
@@ -1362,7 +1407,7 @@ window.PRISM_DATA = {
       "license": "MIT",
       "author": "ByteDance / SJTU",
       "year": 2024,
-      "rank": 14,
+      "rank": 13,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -1399,13 +1444,15 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M14",
+      "is_baseline": false,
       "model_id": "periodwave_24k",
       "model_name": "PeriodWave (16-step)",
       "architecture_family": "Diffusion / Full SDE",
       "arch_category": "Diffusion-based",
       "arch_tags": [
-        "Diffusion-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Diffusion-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1429,7 +1476,7 @@ window.PRISM_DATA = {
       "license": "MIT",
       "author": "KAIST",
       "year": 2024,
-      "rank": 15,
+      "rank": 14,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -1468,6 +1515,7 @@ window.PRISM_DATA = {
   ],
   "dataset_breakdown": [
     {
+      "system_id": "Baseline",
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
       "dataset": "LJSpeech",
@@ -1477,6 +1525,7 @@ window.PRISM_DATA = {
       "mcd_db": 3.86
     },
     {
+      "system_id": "M1",
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "dataset": "LJSpeech",
@@ -1486,6 +1535,7 @@ window.PRISM_DATA = {
       "mcd_db": 9.86
     },
     {
+      "system_id": "M2",
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "dataset": "LJSpeech",
@@ -1495,6 +1545,7 @@ window.PRISM_DATA = {
       "mcd_db": 7.74
     },
     {
+      "system_id": "M3",
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
       "dataset": "LJSpeech",
@@ -1504,6 +1555,7 @@ window.PRISM_DATA = {
       "mcd_db": 9.22
     },
     {
+      "system_id": "M4",
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "dataset": "LJSpeech",
@@ -1513,6 +1565,7 @@ window.PRISM_DATA = {
       "mcd_db": 9.64
     },
     {
+      "system_id": "M5",
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "dataset": "LJSpeech",
@@ -1522,6 +1575,7 @@ window.PRISM_DATA = {
       "mcd_db": 11.26
     },
     {
+      "system_id": "M6",
       "model_id": "comvo_base",
       "model_name": "ComVo-Base",
       "dataset": "LJSpeech",
@@ -1531,6 +1585,7 @@ window.PRISM_DATA = {
       "mcd_db": 9.27
     },
     {
+      "system_id": "M7",
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "dataset": "LJSpeech",
@@ -1540,6 +1595,7 @@ window.PRISM_DATA = {
       "mcd_db": 6.44
     },
     {
+      "system_id": "M8",
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "dataset": "LJSpeech",
@@ -1549,6 +1605,7 @@ window.PRISM_DATA = {
       "mcd_db": 9.88
     },
     {
+      "system_id": "M9",
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "dataset": "LJSpeech",
@@ -1558,6 +1615,7 @@ window.PRISM_DATA = {
       "mcd_db": 7.01
     },
     {
+      "system_id": "M10",
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "dataset": "LJSpeech",
@@ -1567,6 +1625,7 @@ window.PRISM_DATA = {
       "mcd_db": 11.94
     },
     {
+      "system_id": "M11",
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "dataset": "LJSpeech",
@@ -1576,6 +1635,7 @@ window.PRISM_DATA = {
       "mcd_db": 18.81
     },
     {
+      "system_id": "M12",
       "model_id": "freev",
       "model_name": "FreeV",
       "dataset": "LJSpeech",
@@ -1585,6 +1645,7 @@ window.PRISM_DATA = {
       "mcd_db": 14.77
     },
     {
+      "system_id": "M13",
       "model_id": "rfwave_libritts_24k",
       "model_name": "RFWave",
       "dataset": "LJSpeech",
@@ -1594,6 +1655,7 @@ window.PRISM_DATA = {
       "mcd_db": 37.09
     },
     {
+      "system_id": "M14",
       "model_id": "periodwave_24k",
       "model_name": "PeriodWave (16-step)",
       "dataset": "LJSpeech",
@@ -1603,6 +1665,7 @@ window.PRISM_DATA = {
       "mcd_db": 40.58
     },
     {
+      "system_id": "Baseline",
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
       "dataset": "LibriTTS",
@@ -1612,6 +1675,7 @@ window.PRISM_DATA = {
       "mcd_db": 4.57
     },
     {
+      "system_id": "M1",
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "dataset": "LibriTTS",
@@ -1621,6 +1685,7 @@ window.PRISM_DATA = {
       "mcd_db": 9.07
     },
     {
+      "system_id": "M2",
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "dataset": "LibriTTS",
@@ -1630,6 +1695,7 @@ window.PRISM_DATA = {
       "mcd_db": 6.07
     },
     {
+      "system_id": "M3",
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
       "dataset": "LibriTTS",
@@ -1639,6 +1705,7 @@ window.PRISM_DATA = {
       "mcd_db": 8.95
     },
     {
+      "system_id": "M4",
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "dataset": "LibriTTS",
@@ -1648,6 +1715,7 @@ window.PRISM_DATA = {
       "mcd_db": 8.93
     },
     {
+      "system_id": "M5",
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "dataset": "LibriTTS",
@@ -1657,6 +1725,7 @@ window.PRISM_DATA = {
       "mcd_db": 9.02
     },
     {
+      "system_id": "M6",
       "model_id": "comvo_base",
       "model_name": "ComVo-Base",
       "dataset": "LibriTTS",
@@ -1666,6 +1735,7 @@ window.PRISM_DATA = {
       "mcd_db": 10.99
     },
     {
+      "system_id": "M7",
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "dataset": "LibriTTS",
@@ -1675,6 +1745,7 @@ window.PRISM_DATA = {
       "mcd_db": 5.91
     },
     {
+      "system_id": "M8",
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "dataset": "LibriTTS",
@@ -1684,6 +1755,7 @@ window.PRISM_DATA = {
       "mcd_db": 8.91
     },
     {
+      "system_id": "M9",
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "dataset": "LibriTTS",
@@ -1693,6 +1765,7 @@ window.PRISM_DATA = {
       "mcd_db": 7.78
     },
     {
+      "system_id": "M10",
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "dataset": "LibriTTS",
@@ -1702,6 +1775,7 @@ window.PRISM_DATA = {
       "mcd_db": 11.69
     },
     {
+      "system_id": "M11",
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "dataset": "LibriTTS",
@@ -1711,6 +1785,7 @@ window.PRISM_DATA = {
       "mcd_db": 16.77
     },
     {
+      "system_id": "M12",
       "model_id": "freev",
       "model_name": "FreeV",
       "dataset": "LibriTTS",
@@ -1720,6 +1795,7 @@ window.PRISM_DATA = {
       "mcd_db": 17.49
     },
     {
+      "system_id": "M13",
       "model_id": "rfwave_libritts_24k",
       "model_name": "RFWave",
       "dataset": "LibriTTS",
@@ -1729,6 +1805,7 @@ window.PRISM_DATA = {
       "mcd_db": 34.08
     },
     {
+      "system_id": "M14",
       "model_id": "periodwave_24k",
       "model_name": "PeriodWave (16-step)",
       "dataset": "LibriTTS",
@@ -1738,6 +1815,7 @@ window.PRISM_DATA = {
       "mcd_db": 37.22
     },
     {
+      "system_id": "Baseline",
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
       "dataset": "VCTK",
@@ -1747,6 +1825,7 @@ window.PRISM_DATA = {
       "mcd_db": 4.63
     },
     {
+      "system_id": "M1",
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "dataset": "VCTK",
@@ -1756,6 +1835,7 @@ window.PRISM_DATA = {
       "mcd_db": 8.67
     },
     {
+      "system_id": "M2",
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "dataset": "VCTK",
@@ -1765,6 +1845,7 @@ window.PRISM_DATA = {
       "mcd_db": 6.4
     },
     {
+      "system_id": "M3",
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
       "dataset": "VCTK",
@@ -1774,6 +1855,7 @@ window.PRISM_DATA = {
       "mcd_db": 8.36
     },
     {
+      "system_id": "M4",
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "dataset": "VCTK",
@@ -1783,6 +1865,7 @@ window.PRISM_DATA = {
       "mcd_db": 7.91
     },
     {
+      "system_id": "M5",
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "dataset": "VCTK",
@@ -1792,6 +1875,7 @@ window.PRISM_DATA = {
       "mcd_db": 9.39
     },
     {
+      "system_id": "M6",
       "model_id": "comvo_base",
       "model_name": "ComVo-Base",
       "dataset": "VCTK",
@@ -1801,6 +1885,7 @@ window.PRISM_DATA = {
       "mcd_db": 8.28
     },
     {
+      "system_id": "M7",
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "dataset": "VCTK",
@@ -1810,6 +1895,7 @@ window.PRISM_DATA = {
       "mcd_db": 5.62
     },
     {
+      "system_id": "M8",
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "dataset": "VCTK",
@@ -1819,6 +1905,7 @@ window.PRISM_DATA = {
       "mcd_db": 9.02
     },
     {
+      "system_id": "M9",
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "dataset": "VCTK",
@@ -1828,6 +1915,7 @@ window.PRISM_DATA = {
       "mcd_db": 6.15
     },
     {
+      "system_id": "M10",
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "dataset": "VCTK",
@@ -1837,6 +1925,7 @@ window.PRISM_DATA = {
       "mcd_db": 15.68
     },
     {
+      "system_id": "M11",
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "dataset": "VCTK",
@@ -1846,6 +1935,7 @@ window.PRISM_DATA = {
       "mcd_db": 16.38
     },
     {
+      "system_id": "M12",
       "model_id": "freev",
       "model_name": "FreeV",
       "dataset": "VCTK",
@@ -1855,6 +1945,7 @@ window.PRISM_DATA = {
       "mcd_db": 18.15
     },
     {
+      "system_id": "M13",
       "model_id": "rfwave_libritts_24k",
       "model_name": "RFWave",
       "dataset": "VCTK",
@@ -1864,6 +1955,7 @@ window.PRISM_DATA = {
       "mcd_db": 47.48
     },
     {
+      "system_id": "M14",
       "model_id": "periodwave_24k",
       "model_name": "PeriodWave (16-step)",
       "dataset": "VCTK",
@@ -1873,6 +1965,7 @@ window.PRISM_DATA = {
       "mcd_db": 45.06
     },
     {
+      "system_id": "Baseline",
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
       "dataset": "Free_ST",
@@ -1882,6 +1975,7 @@ window.PRISM_DATA = {
       "mcd_db": 3.63
     },
     {
+      "system_id": "M1",
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "dataset": "Free_ST",
@@ -1891,6 +1985,7 @@ window.PRISM_DATA = {
       "mcd_db": 7.84
     },
     {
+      "system_id": "M2",
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "dataset": "Free_ST",
@@ -1900,6 +1995,7 @@ window.PRISM_DATA = {
       "mcd_db": 6.36
     },
     {
+      "system_id": "M3",
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
       "dataset": "Free_ST",
@@ -1909,6 +2005,7 @@ window.PRISM_DATA = {
       "mcd_db": 7.74
     },
     {
+      "system_id": "M4",
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "dataset": "Free_ST",
@@ -1918,6 +2015,7 @@ window.PRISM_DATA = {
       "mcd_db": 7.32
     },
     {
+      "system_id": "M5",
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "dataset": "Free_ST",
@@ -1927,6 +2025,7 @@ window.PRISM_DATA = {
       "mcd_db": 9.54
     },
     {
+      "system_id": "M6",
       "model_id": "comvo_base",
       "model_name": "ComVo-Base",
       "dataset": "Free_ST",
@@ -1936,6 +2035,7 @@ window.PRISM_DATA = {
       "mcd_db": 7.26
     },
     {
+      "system_id": "M7",
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "dataset": "Free_ST",
@@ -1945,6 +2045,7 @@ window.PRISM_DATA = {
       "mcd_db": 5.3
     },
     {
+      "system_id": "M8",
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "dataset": "Free_ST",
@@ -1954,6 +2055,7 @@ window.PRISM_DATA = {
       "mcd_db": 8.49
     },
     {
+      "system_id": "M9",
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "dataset": "Free_ST",
@@ -1963,6 +2065,7 @@ window.PRISM_DATA = {
       "mcd_db": 5.39
     },
     {
+      "system_id": "M10",
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "dataset": "Free_ST",
@@ -1972,6 +2075,7 @@ window.PRISM_DATA = {
       "mcd_db": 9.54
     },
     {
+      "system_id": "M11",
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "dataset": "Free_ST",
@@ -1981,6 +2085,7 @@ window.PRISM_DATA = {
       "mcd_db": 16.14
     },
     {
+      "system_id": "M12",
       "model_id": "freev",
       "model_name": "FreeV",
       "dataset": "Free_ST",
@@ -1990,6 +2095,7 @@ window.PRISM_DATA = {
       "mcd_db": 13.88
     },
     {
+      "system_id": "M13",
       "model_id": "rfwave_libritts_24k",
       "model_name": "RFWave",
       "dataset": "Free_ST",
@@ -1999,6 +2105,7 @@ window.PRISM_DATA = {
       "mcd_db": 52.28
     },
     {
+      "system_id": "M14",
       "model_id": "periodwave_24k",
       "model_name": "PeriodWave (16-step)",
       "dataset": "Free_ST",
@@ -2010,6 +2117,7 @@ window.PRISM_DATA = {
   ],
   "phoneme_diagnostics": [
     {
+      "system_id": "M7",
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2019,6 +2127,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 5.34
     },
     {
+      "system_id": "M7",
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2028,6 +2137,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.81
     },
     {
+      "system_id": "M7",
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2037,6 +2147,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.57
     },
     {
+      "system_id": "M7",
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2046,6 +2157,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.68
     },
     {
+      "system_id": "M7",
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2055,6 +2167,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.22
     },
     {
+      "system_id": "M7",
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2064,6 +2177,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.04
     },
     {
+      "system_id": "M7",
       "model_id": "bigvgan_v2_24khz_100band_256x",
       "model_name": "BigVGAN-v2 (112M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2073,6 +2187,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.13
     },
     {
+      "system_id": "M8",
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2082,6 +2197,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.1
     },
     {
+      "system_id": "M8",
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2091,6 +2207,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.67
     },
     {
+      "system_id": "M8",
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2100,6 +2217,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.28
     },
     {
+      "system_id": "M8",
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2109,6 +2227,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.08
     },
     {
+      "system_id": "M8",
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2118,6 +2237,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.07
     },
     {
+      "system_id": "M8",
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2127,6 +2247,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.04
     },
     {
+      "system_id": "M8",
       "model_id": "bigvgan_base_24khz_100band",
       "model_name": "BigVGAN-Base (14M)",
       "family": "Anti-Aliased Snake GAN",
@@ -2136,6 +2257,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.13
     },
     {
+      "system_id": "M3",
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
       "family": "Fourier / iSTFT ConvNeXt",
@@ -2145,6 +2267,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.19
     },
     {
+      "system_id": "M3",
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
       "family": "Fourier / iSTFT ConvNeXt",
@@ -2154,6 +2277,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.81
     },
     {
+      "system_id": "M3",
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
       "family": "Fourier / iSTFT ConvNeXt",
@@ -2163,6 +2287,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.29
     },
     {
+      "system_id": "M3",
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
       "family": "Fourier / iSTFT ConvNeXt",
@@ -2172,6 +2297,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.44
     },
     {
+      "system_id": "M3",
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
       "family": "Fourier / iSTFT ConvNeXt",
@@ -2181,6 +2307,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.14
     },
     {
+      "system_id": "M3",
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
       "family": "Fourier / iSTFT ConvNeXt",
@@ -2190,6 +2317,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.16
     },
     {
+      "system_id": "M3",
       "model_id": "vocos_mel_24khz",
       "model_name": "Vocos",
       "family": "Fourier / iSTFT ConvNeXt",
@@ -2199,6 +2327,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.0
     },
     {
+      "system_id": "M9",
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "family": "Complex-Valued Fourier",
@@ -2208,6 +2337,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 5.97
     },
     {
+      "system_id": "M9",
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "family": "Complex-Valued Fourier",
@@ -2217,6 +2347,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.59
     },
     {
+      "system_id": "M9",
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "family": "Complex-Valued Fourier",
@@ -2226,6 +2357,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.05
     },
     {
+      "system_id": "M9",
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "family": "Complex-Valued Fourier",
@@ -2235,6 +2367,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.0
     },
     {
+      "system_id": "M9",
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "family": "Complex-Valued Fourier",
@@ -2244,6 +2377,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.03
     },
     {
+      "system_id": "M9",
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "family": "Complex-Valued Fourier",
@@ -2253,6 +2387,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.07
     },
     {
+      "system_id": "M9",
       "model_id": "comvo_large",
       "model_name": "ComVo-Large",
       "family": "Complex-Valued Fourier",
@@ -2262,6 +2397,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.0
     },
     {
+      "system_id": "M6",
       "model_id": "comvo_base",
       "model_name": "ComVo-Base",
       "family": "Complex-Valued Fourier",
@@ -2271,6 +2407,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.16
     },
     {
+      "system_id": "M6",
       "model_id": "comvo_base",
       "model_name": "ComVo-Base",
       "family": "Complex-Valued Fourier",
@@ -2280,6 +2417,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.68
     },
     {
+      "system_id": "M6",
       "model_id": "comvo_base",
       "model_name": "ComVo-Base",
       "family": "Complex-Valued Fourier",
@@ -2289,6 +2427,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.21
     },
     {
+      "system_id": "M6",
       "model_id": "comvo_base",
       "model_name": "ComVo-Base",
       "family": "Complex-Valued Fourier",
@@ -2298,6 +2437,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.98
     },
     {
+      "system_id": "M6",
       "model_id": "comvo_base",
       "model_name": "ComVo-Base",
       "family": "Complex-Valued Fourier",
@@ -2307,6 +2447,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.25
     },
     {
+      "system_id": "M6",
       "model_id": "comvo_base",
       "model_name": "ComVo-Base",
       "family": "Complex-Valued Fourier",
@@ -2316,6 +2457,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.21
     },
     {
+      "system_id": "M6",
       "model_id": "comvo_base",
       "model_name": "ComVo-Base",
       "family": "Complex-Valued Fourier",
@@ -2325,6 +2467,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.97
     },
     {
+      "system_id": "M5",
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "family": "Diffusion / Turbo SDE",
@@ -2334,6 +2477,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 5.74
     },
     {
+      "system_id": "M5",
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "family": "Diffusion / Turbo SDE",
@@ -2343,6 +2487,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.43
     },
     {
+      "system_id": "M5",
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "family": "Diffusion / Turbo SDE",
@@ -2352,6 +2497,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.1
     },
     {
+      "system_id": "M5",
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "family": "Diffusion / Turbo SDE",
@@ -2361,6 +2507,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.06
     },
     {
+      "system_id": "M5",
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "family": "Diffusion / Turbo SDE",
@@ -2370,6 +2517,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.68
     },
     {
+      "system_id": "M5",
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "family": "Diffusion / Turbo SDE",
@@ -2379,6 +2527,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.55
     },
     {
+      "system_id": "M5",
       "model_id": "periodwave_turbo",
       "model_name": "PeriodWave-Turbo (4-step)",
       "family": "Diffusion / Turbo SDE",
@@ -2388,6 +2537,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.47
     },
     {
+      "system_id": "M14",
       "model_id": "periodwave_24k",
       "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
@@ -2397,6 +2547,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.33
     },
     {
+      "system_id": "M14",
       "model_id": "periodwave_24k",
       "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
@@ -2406,6 +2557,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 12.56
     },
     {
+      "system_id": "M14",
       "model_id": "periodwave_24k",
       "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
@@ -2415,6 +2567,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 11.0
     },
     {
+      "system_id": "M14",
       "model_id": "periodwave_24k",
       "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
@@ -2424,6 +2577,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 10.43
     },
     {
+      "system_id": "M14",
       "model_id": "periodwave_24k",
       "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
@@ -2433,6 +2587,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.07
     },
     {
+      "system_id": "M14",
       "model_id": "periodwave_24k",
       "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
@@ -2442,6 +2597,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.67
     },
     {
+      "system_id": "M14",
       "model_id": "periodwave_24k",
       "model_name": "PeriodWave (16-step)",
       "family": "Diffusion / Full SDE",
@@ -2451,6 +2607,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.3
     },
     {
+      "system_id": "M2",
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "family": "Flow Matching + GAN",
@@ -2460,6 +2617,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 5.12
     },
     {
+      "system_id": "M2",
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "family": "Flow Matching + GAN",
@@ -2469,6 +2627,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.45
     },
     {
+      "system_id": "M2",
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "family": "Flow Matching + GAN",
@@ -2478,6 +2637,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.3
     },
     {
+      "system_id": "M2",
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "family": "Flow Matching + GAN",
@@ -2487,6 +2647,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.31
     },
     {
+      "system_id": "M2",
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "family": "Flow Matching + GAN",
@@ -2496,6 +2657,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 5.93
     },
     {
+      "system_id": "M2",
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "family": "Flow Matching + GAN",
@@ -2505,6 +2667,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 5.84
     },
     {
+      "system_id": "M2",
       "model_id": "flow2gan",
       "model_name": "Flow2GAN (4-step)",
       "family": "Flow Matching + GAN",
@@ -2514,6 +2677,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 5.46
     },
     {
+      "system_id": "M4",
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "family": "Brownian Bridge SDE",
@@ -2523,6 +2687,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 5.56
     },
     {
+      "system_id": "M4",
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "family": "Brownian Bridge SDE",
@@ -2532,6 +2697,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.95
     },
     {
+      "system_id": "M4",
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "family": "Brownian Bridge SDE",
@@ -2541,6 +2707,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.83
     },
     {
+      "system_id": "M4",
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "family": "Brownian Bridge SDE",
@@ -2550,6 +2717,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.77
     },
     {
+      "system_id": "M4",
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "family": "Brownian Bridge SDE",
@@ -2559,6 +2727,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.53
     },
     {
+      "system_id": "M4",
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "family": "Brownian Bridge SDE",
@@ -2568,6 +2737,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.45
     },
     {
+      "system_id": "M4",
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
       "family": "Brownian Bridge SDE",
@@ -2577,6 +2747,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.26
     },
     {
+      "system_id": "M13",
       "model_id": "rfwave_libritts_24k",
       "model_name": "RFWave",
       "family": "Rectified Flow Matching",
@@ -2586,6 +2757,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.79
     },
     {
+      "system_id": "M13",
       "model_id": "rfwave_libritts_24k",
       "model_name": "RFWave",
       "family": "Rectified Flow Matching",
@@ -2595,6 +2767,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 11.04
     },
     {
+      "system_id": "M13",
       "model_id": "rfwave_libritts_24k",
       "model_name": "RFWave",
       "family": "Rectified Flow Matching",
@@ -2604,6 +2777,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 10.43
     },
     {
+      "system_id": "M13",
       "model_id": "rfwave_libritts_24k",
       "model_name": "RFWave",
       "family": "Rectified Flow Matching",
@@ -2613,6 +2787,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.82
     },
     {
+      "system_id": "M13",
       "model_id": "rfwave_libritts_24k",
       "model_name": "RFWave",
       "family": "Rectified Flow Matching",
@@ -2622,6 +2797,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.21
     },
     {
+      "system_id": "M13",
       "model_id": "rfwave_libritts_24k",
       "model_name": "RFWave",
       "family": "Rectified Flow Matching",
@@ -2631,6 +2807,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.1
     },
     {
+      "system_id": "M13",
       "model_id": "rfwave_libritts_24k",
       "model_name": "RFWave",
       "family": "Rectified Flow Matching",
@@ -2640,6 +2817,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.92
     },
     {
+      "system_id": "M10",
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "family": "Distilled Flow Matching",
@@ -2649,6 +2827,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.37
     },
     {
+      "system_id": "M10",
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "family": "Distilled Flow Matching",
@@ -2658,6 +2837,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.63
     },
     {
+      "system_id": "M10",
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "family": "Distilled Flow Matching",
@@ -2667,6 +2847,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.25
     },
     {
+      "system_id": "M10",
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "family": "Distilled Flow Matching",
@@ -2676,6 +2857,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.34
     },
     {
+      "system_id": "M10",
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "family": "Distilled Flow Matching",
@@ -2685,6 +2867,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.15
     },
     {
+      "system_id": "M10",
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "family": "Distilled Flow Matching",
@@ -2694,6 +2877,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.21
     },
     {
+      "system_id": "M10",
       "model_id": "wavefm",
       "model_name": "WaveFM (1-step)",
       "family": "Distilled Flow Matching",
@@ -2703,6 +2887,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.71
     },
     {
+      "system_id": "M1",
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "family": "Random Distortion GAN",
@@ -2712,6 +2897,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 5.67
     },
     {
+      "system_id": "M1",
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "family": "Random Distortion GAN",
@@ -2721,6 +2907,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.28
     },
     {
+      "system_id": "M1",
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "family": "Random Distortion GAN",
@@ -2730,6 +2917,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.79
     },
     {
+      "system_id": "M1",
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "family": "Random Distortion GAN",
@@ -2739,6 +2927,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 8.75
     },
     {
+      "system_id": "M1",
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "family": "Random Distortion GAN",
@@ -2748,6 +2937,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.8
     },
     {
+      "system_id": "M1",
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "family": "Random Distortion GAN",
@@ -2757,6 +2947,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.61
     },
     {
+      "system_id": "M1",
       "model_id": "rndvoc",
       "model_name": "RNDVoC",
       "family": "Random Distortion GAN",
@@ -2766,6 +2957,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.45
     },
     {
+      "system_id": "M12",
       "model_id": "freev",
       "model_name": "FreeV",
       "family": "Pseudo-Inverse Mel GAN",
@@ -2775,6 +2967,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.29
     },
     {
+      "system_id": "M12",
       "model_id": "freev",
       "model_name": "FreeV",
       "family": "Pseudo-Inverse Mel GAN",
@@ -2784,6 +2977,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 10.24
     },
     {
+      "system_id": "M12",
       "model_id": "freev",
       "model_name": "FreeV",
       "family": "Pseudo-Inverse Mel GAN",
@@ -2793,6 +2987,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.57
     },
     {
+      "system_id": "M12",
       "model_id": "freev",
       "model_name": "FreeV",
       "family": "Pseudo-Inverse Mel GAN",
@@ -2802,6 +2997,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.43
     },
     {
+      "system_id": "M12",
       "model_id": "freev",
       "model_name": "FreeV",
       "family": "Pseudo-Inverse Mel GAN",
@@ -2811,6 +3007,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.32
     },
     {
+      "system_id": "M12",
       "model_id": "freev",
       "model_name": "FreeV",
       "family": "Pseudo-Inverse Mel GAN",
@@ -2820,6 +3017,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.33
     },
     {
+      "system_id": "M12",
       "model_id": "freev",
       "model_name": "FreeV",
       "family": "Pseudo-Inverse Mel GAN",
@@ -2829,6 +3027,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.37
     },
     {
+      "system_id": "M11",
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "family": "Time-domain MRF-GAN",
@@ -2838,6 +3037,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.7
     },
     {
+      "system_id": "M11",
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "family": "Time-domain MRF-GAN",
@@ -2847,6 +3047,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 10.56
     },
     {
+      "system_id": "M11",
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "family": "Time-domain MRF-GAN",
@@ -2856,6 +3057,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.93
     },
     {
+      "system_id": "M11",
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "family": "Time-domain MRF-GAN",
@@ -2865,6 +3067,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 9.83
     },
     {
+      "system_id": "M11",
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "family": "Time-domain MRF-GAN",
@@ -2874,6 +3077,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.65
     },
     {
+      "system_id": "M11",
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "family": "Time-domain MRF-GAN",
@@ -2883,6 +3087,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.7
     },
     {
+      "system_id": "M11",
       "model_id": "hifigan_universal_v1",
       "model_name": "HiFi-GAN (Universal V1)",
       "family": "Time-domain MRF-GAN",
@@ -2892,6 +3097,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 7.38
     },
     {
+      "system_id": "Baseline",
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
       "family": "Algorithmic DSP Baseline",
@@ -2901,6 +3107,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 3.86
     },
     {
+      "system_id": "Baseline",
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
       "family": "Algorithmic DSP Baseline",
@@ -2910,6 +3117,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 6.43
     },
     {
+      "system_id": "Baseline",
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
       "family": "Algorithmic DSP Baseline",
@@ -2919,6 +3127,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 5.34
     },
     {
+      "system_id": "Baseline",
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
       "family": "Algorithmic DSP Baseline",
@@ -2928,6 +3137,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 5.24
     },
     {
+      "system_id": "Baseline",
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
       "family": "Algorithmic DSP Baseline",
@@ -2937,6 +3147,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 5.24
     },
     {
+      "system_id": "Baseline",
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
       "family": "Algorithmic DSP Baseline",
@@ -2946,6 +3157,7 @@ window.PRISM_DATA = {
       "boundary_error_db": 4.83
     },
     {
+      "system_id": "Baseline",
       "model_id": "griffin_lim",
       "model_name": "Griffin-Lim STFT",
       "family": "Algorithmic DSP Baseline",

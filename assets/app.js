@@ -327,7 +327,17 @@
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
-  function formatRankBadge(rank, score, isFeasible = true) {
+  function formatRankBadge(rank, score, isFeasible = true, isBaseline = false) {
+    if (isBaseline) {
+      return `
+        <div class="rank-score-pill rank-baseline" style="background-color: rgba(100, 116, 139, 0.35); border: 1px solid rgba(148, 163, 184, 0.4); color: #e2e8f0;" title="Algorithmic DSP Reference Baseline (Not ranked among neural vocoders)">
+          <span class="font-bold text-[11px] uppercase tracking-wider text-slate-200">Baseline</span>
+          <span class="text-xs opacity-50">·</span>
+          <span class="rank-score font-bold">${score.toFixed(1)}</span>
+        </div>
+      `;
+    }
+
     let medal = '';
     let cls = 'rank-regular';
     if (rank === 1) { medal = '🥇'; cls = 'rank-gold'; }
@@ -626,6 +636,13 @@
 
     // Sorting
     list.sort((a, b) => {
+      if (state.lb.sortCol === 'system_id') {
+        const order = { 'Baseline': 0, 'M1': 1, 'M2': 2, 'M3': 3, 'M4': 4, 'M5': 5, 'M6': 6, 'M7': 7, 'M8': 8, 'M9': 9, 'M10': 10, 'M11': 11, 'M12': 12, 'M13': 13, 'M14': 14 };
+        const aOrder = order[a.system_id] !== undefined ? order[a.system_id] : 999;
+        const bOrder = order[b.system_id] !== undefined ? order[b.system_id] : 999;
+        return state.lb.sortAsc ? aOrder - bOrder : bOrder - aOrder;
+      }
+
       let valA = a[state.lb.sortCol];
       let valB = b[state.lb.sortCol];
 
@@ -662,6 +679,7 @@
 
     // Define columns
     const columns = [
+      { id: 'system_id', label: 'ID', group: 'prism', sortKey: 'system_id', always: true, tip: 'System Identifier (Baseline / M1–M14)' },
       { id: 'rank', label: 'Rank & <span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Score', group: 'prism', sortKey: 'overall_score', always: true },
       { id: 'model_name', label: 'Model', group: 'prism', sortKey: 'model_name', always: true },
       { id: 'pesq', label: 'PESQ ↑', group: 'objective', sortKey: 'pesq', tip: 'Perceptual Evaluation of Speech Quality (ITU-T P.862)' },
@@ -718,14 +736,29 @@
       return;
     }
 
-    tbody.innerHTML = list.map((m, idx) => {
-      const rankNum = idx + 1;
-      const rankBadge = formatRankBadge(rankNum, m.display_score, m.edge_feasible === 'Yes');
+    let neuralRank = 0;
+    tbody.innerHTML = list.map((m) => {
+      const isBaseline = m.is_baseline || m.system_id === 'Baseline' || m.model_id === 'griffin_lim';
+      let rankNum = 0;
+      if (!isBaseline) {
+        neuralRank++;
+        rankNum = neuralRank;
+      }
+      const rankBadge = formatRankBadge(rankNum, m.display_score, m.edge_feasible === 'Yes', isBaseline);
+      const rowStyle = isBaseline ? 'style="background-color: rgba(148, 163, 184, 0.25); border-left: 3px solid #94a3b8;"' : '';
 
       return `
-        <tr>
+        <tr ${rowStyle}>
           ${activeCols.map(c => {
             switch (c.id) {
+              case 'system_id':
+                return `
+                  <td class="text-center font-mono font-bold">
+                    <span class="inline-block px-2 py-0.5 rounded text-xs border ${isBaseline ? 'bg-slate-700/80 text-slate-200 border-slate-600' : 'bg-indigo-950/80 text-indigo-300 border-indigo-700/60'}">
+                      ${m.system_id || '—'}
+                    </span>
+                  </td>
+                `;
               case 'rank':
                 return `<td>${rankBadge}</td>`;
               case 'model_name':
@@ -735,6 +768,10 @@
                       ${m.model_name}
                     </button>
                     <div class="text-[11px] text-slate-400 font-normal">${m.architecture_family}</div>
+                    <div class="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                      ${m.github_url ? `<a href="${m.github_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gh text-[10px] py-0.5 px-1.5 inline-flex items-center gap-1 hover:brightness-110" title="Source Code Repository">💻 Code</a>` : ''}
+                      ${m.checkpoint_url && !m.checkpoint_url.startsWith('N/A') ? `<a href="${m.checkpoint_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-ckpt text-[10px] py-0.5 px-1.5 inline-flex items-center gap-1 hover:brightness-110" title="Pretrained Checkpoint">📦 Checkpoint</a>` : (isBaseline ? '<span class="text-[10px] text-slate-400 italic">Algorithmic</span>' : '')}
+                    </div>
                   </td>
                 `;
               case 'pesq':
@@ -825,24 +862,36 @@
   function exportLeaderboardCSV() {
     const list = getFilteredLeaderboard();
     if (!list || list.length === 0) return;
-    const headers = ['rank', 'model_name', 'architecture_family', 'track', 'score', 'pesq', 'stoi', 'utmos', 'rtf', 'speedup_x', 'vram_mb', 'params_m', 'edge', 'pareto', 'license'];
-    const rows = list.map((m, idx) => [
-      idx + 1,
-      `"${m.model_name}"`,
-      `"${m.architecture_family}"`,
-      `"${m.track}"`,
-      m.display_score.toFixed(1),
-      m.computed_pesq.toFixed(3),
-      m.stoi.toFixed(3),
-      m.utmos.toFixed(2),
-      m.rtf.toFixed(4),
-      m.speedup_x.toFixed(0),
-      m.peak_vram_mb.toFixed(0),
-      m.params_m.toFixed(1),
-      m.edge_feasible,
-      m.is_pareto,
-      m.license
-    ]);
+    const headers = ['system_id', 'rank', 'model_name', 'architecture_family', 'track', 'score', 'pesq', 'stoi', 'utmos', 'rtf', 'speedup_x', 'vram_mb', 'params_m', 'edge', 'pareto', 'github_url', 'checkpoint_url', 'license'];
+    let neuralRank = 0;
+    const rows = list.map((m) => {
+      const isBaseline = m.is_baseline || m.system_id === 'Baseline';
+      let rankStr = 'Baseline';
+      if (!isBaseline) {
+        neuralRank++;
+        rankStr = neuralRank;
+      }
+      return [
+        m.system_id || '',
+        rankStr,
+        `"${m.model_name}"`,
+        `"${m.architecture_family}"`,
+        `"${m.track}"`,
+        m.display_score.toFixed(1),
+        m.computed_pesq.toFixed(3),
+        m.stoi.toFixed(3),
+        m.utmos.toFixed(2),
+        m.rtf.toFixed(4),
+        m.speedup_x.toFixed(0),
+        m.peak_vram_mb.toFixed(0),
+        m.params_m.toFixed(1),
+        m.edge_feasible,
+        m.is_pareto,
+        `"${m.github_url || ''}"`,
+        `"${m.checkpoint_url || ''}"`,
+        m.license
+      ];
+    });
 
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
@@ -880,6 +929,7 @@
       return `
         <label class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-xs font-semibold cursor-pointer select-none hover:border-indigo-500 transition">
           <input type="checkbox" value="${m.model_name}" class="compare-model-chk text-indigo-600 rounded" ${isChecked ? 'checked' : ''} />
+          <span class="font-mono text-slate-400 font-bold">[${m.system_id || '—'}]</span>
           <span>${m.model_name}</span>
         </label>
       `;
@@ -920,6 +970,13 @@
     ).filter(Boolean);
 
     const rows = [
+      { 
+        label: 'System ID', 
+        get: m => {
+          const isBase = m.is_baseline || m.system_id === 'Baseline';
+          return `<span class="px-2 py-0.5 rounded text-xs font-mono font-bold ${isBase ? 'bg-slate-700 text-slate-200 border border-slate-600' : 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50'}">${m.system_id || '—'}</span>`;
+        } 
+      },
       { label: '🏆 <span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Score (1–100) ↑', get: m => m.overall_score.toFixed(1) },
       { label: 'Wideband PESQ ↑', get: m => m.pesq.toFixed(3) },
       { label: 'STOI Intelligibility ↑', get: m => m.stoi.toFixed(3) },
@@ -935,6 +992,8 @@
       { label: 'Architecture Family', get: m => m.architecture_family },
       { label: 'Edge Feasible Profile', get: m => m.edge_feasible === 'Yes' ? '✅ Feasible' : '❌ Infeasible' },
       { label: 'Pareto Optimal ⭐', get: m => m.is_pareto ? '⭐ Yes' : '—' },
+      { label: 'Code Repository', get: m => m.github_url ? `<a href="${m.github_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gh text-[11px] inline-flex items-center gap-1">💻 GitHub</a>` : '—' },
+      { label: 'Model Checkpoint', get: m => m.checkpoint_url && !m.checkpoint_url.startsWith('N/A') ? `<a href="${m.checkpoint_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-ckpt text-[11px] inline-flex items-center gap-1">📦 Checkpoint</a>` : (m.is_baseline ? '<span class="text-xs text-slate-400 italic">Algorithmic</span>' : '—') },
       { label: 'License', get: m => m.license }
     ];
 
@@ -942,14 +1001,27 @@
       <thead>
         <tr>
           <th class="p-3 bg-slate-100 dark:bg-slate-800 text-left font-bold text-xs uppercase">Metric / Dimension</th>
-          ${models.map(m => `<th class="p-3 bg-slate-100 dark:bg-slate-800 text-left font-bold text-xs uppercase text-indigo-600 dark:text-indigo-400">${m.model_name}</th>`).join('')}
+          ${models.map(m => {
+            const isBase = m.is_baseline || m.system_id === 'Baseline';
+            const colStyle = isBase ? 'style="background-color: rgba(148, 163, 184, 0.25); border-top: 3px solid #94a3b8;"' : '';
+            return `
+              <th class="p-3 text-left font-bold text-xs uppercase text-indigo-600 dark:text-indigo-400" ${colStyle}>
+                <div class="font-mono text-xs text-slate-400 font-normal mb-0.5">[${m.system_id || '—'}]</div>
+                <div>${m.model_name}</div>
+              </th>
+            `;
+          }).join('')}
         </tr>
       </thead>
       <tbody>
         ${rows.map(r => `
           <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50">
             <td class="p-3 font-semibold text-xs text-slate-700 dark:text-slate-300">${r.label}</td>
-            ${models.map(m => `<td class="p-3 font-mono text-xs font-bold">${r.get(m)}</td>`).join('')}
+            ${models.map(m => {
+              const isBase = m.is_baseline || m.system_id === 'Baseline';
+              const cellStyle = isBase ? 'style="background-color: rgba(148, 163, 184, 0.25);"' : '';
+              return `<td class="p-3 font-mono text-xs font-bold" ${cellStyle}>${r.get(m)}</td>`;
+            }).join('')}
           </tr>
         `).join('')}
       </tbody>
@@ -984,7 +1056,7 @@
         type: 'scatterpolar',
         r: vals,
         theta: [...categories, categories[0]],
-        name: m.model_name,
+        name: `[${m.system_id || '—'}] ${m.model_name}`,
         line: { color: color, width: 2.5 },
         fill: 'toself',
         fillcolor: color + '22'
@@ -1491,10 +1563,12 @@
         });
       });
 
+      const yLabels = state.data.leaderboard.map(m => `[${m.system_id || '—'}] ${m.model_name}`);
+
       const trace = {
         z: zValues,
         x: datasets,
-        y: models,
+        y: yLabels,
         type: 'heatmap',
         colorscale: ['pesq', 'stoi'].includes(metric) ? 'RdYlGn' : 'RdYlGn_r',
         hoverongaps: false,
@@ -1504,13 +1578,14 @@
       const layout = {
         ...pTheme,
         title: { text: `<b>Cross-Corpus Generalization Heatmap</b> — ${metric.toUpperCase()}`, font: { size: 14 } },
-        margin: { l: 180, r: 60, t: 50, b: 60 },
+        margin: { l: 200, r: 60, t: 50, b: 60 },
         height: 520
       };
 
       Plotly.newPlot(el, [trace], layout, { responsive: true, displayModeBar: false });
     } else {
       // Grouped Bar Chart
+      const xLabels = state.data.leaderboard.map(m => `[${m.system_id || '—'}] ${m.model_name}`);
       const traces = datasets.map(d => {
         const yVals = models.map(mName => {
           const m = state.data.leaderboard.find(x => x.model_name === mName);
@@ -1520,7 +1595,7 @@
 
         return {
           name: d,
-          x: models,
+          x: xLabels,
           y: yVals,
           type: 'bar'
         };
@@ -1544,16 +1619,21 @@
     const tbody = document.getElementById('robustness-table-body');
     if (!tbody || !state.data) return;
 
-    tbody.innerHTML = state.data.dataset_breakdown.map(r => `
-      <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50">
-        <td class="p-3 font-semibold text-xs">${r.model_name}</td>
-        <td class="p-3 text-xs text-indigo-500 font-semibold">${r.dataset}</td>
-        <td class="p-3 font-mono text-xs font-bold">${r.pesq.toFixed(3)}</td>
-        <td class="p-3 font-mono text-xs">${r.stoi.toFixed(3)}</td>
-        <td class="p-3 font-mono text-xs">${r.lsd_db.toFixed(2)}</td>
-        <td class="p-3 font-mono text-xs">${r.mcd_db.toFixed(2)}</td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = state.data.dataset_breakdown.map(r => {
+      const isBase = r.system_id === 'Baseline' || r.model_name.includes('Griffin-Lim');
+      const rowStyle = isBase ? 'style="background-color: rgba(148, 163, 184, 0.25);"' : '';
+      return `
+        <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50" ${rowStyle}>
+          <td class="p-3 font-mono font-bold text-xs"><span class="px-1.5 py-0.5 rounded text-[11px] ${isBase ? 'bg-slate-700 text-slate-200 border border-slate-600' : 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50'}">${r.system_id || '—'}</span></td>
+          <td class="p-3 font-semibold text-xs">${r.model_name}</td>
+          <td class="p-3 text-xs text-indigo-500 font-semibold">${r.dataset}</td>
+          <td class="p-3 font-mono text-xs font-bold">${r.pesq.toFixed(3)}</td>
+          <td class="p-3 font-mono text-xs">${r.stoi.toFixed(3)}</td>
+          <td class="p-3 font-mono text-xs">${r.lsd_db.toFixed(2)}</td>
+          <td class="p-3 font-mono text-xs">${r.mcd_db.toFixed(2)}</td>
+        </tr>
+      `;
+    }).join('');
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1574,7 +1654,7 @@
     const trace = {
       type: 'bar',
       orientation: 'h',
-      y: sorted.map(m => m.model_name),
+      y: sorted.map(m => `[${m.system_id || '—'}] ${m.model_name}`),
       x: sorted.map(m => m.speedup_x),
       marker: { color: colors },
       text: sorted.map(m => `${m.speedup_x.toFixed(0)}×`),
@@ -1588,7 +1668,7 @@
       ...pTheme,
       title: { text: '<b>Throughput (xRT = 1/RTF) — Edge Profiling</b>', font: { size: 14 } },
       xaxis: { title: 'Throughput ×RT (higher = faster)', ...pTheme.xaxis },
-      margin: { l: 180, r: 80, t: 50, b: 60 },
+      margin: { l: 200, r: 80, t: 50, b: 60 },
       height: 520,
       shapes: [
         {
@@ -1614,19 +1694,24 @@
     const tbody = document.getElementById('efficiency-table-body');
     if (!tbody || !state.data) return;
 
-    tbody.innerHTML = state.data.leaderboard.map(m => `
-      <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50">
-        <td class="p-3 font-semibold text-xs">${m.model_name}</td>
-        <td class="p-3 text-xs text-slate-400">${m.architecture_family}</td>
-        <td class="p-3 font-mono text-xs font-bold text-amber-500">${m.rtf.toFixed(4)}</td>
-        <td class="p-3 font-mono text-xs font-bold text-amber-500">${m.speedup_x.toFixed(0)}×</td>
-        <td class="p-3 font-mono text-xs">${m.peak_vram_mb.toFixed(0)} MB</td>
-        <td class="p-3 font-mono text-xs">${m.params_m.toFixed(1)} M</td>
-        <td class="p-3 text-xs">${m.edge_feasible === 'Yes' ? '✅ Ready' : '❌ High-VRAM'}</td>
-        <td class="p-3 text-xs">${m.code_open ? '✅ Open' : '❌ Closed'}</td>
-        <td class="p-3 text-xs">${m.ckpt_open ? '✅ Open' : '❌ Closed'}</td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = state.data.leaderboard.map(m => {
+      const isBase = m.is_baseline || m.system_id === 'Baseline';
+      const rowStyle = isBase ? 'style="background-color: rgba(148, 163, 184, 0.25);"' : '';
+      return `
+        <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50" ${rowStyle}>
+          <td class="p-3 font-mono font-bold text-xs"><span class="px-1.5 py-0.5 rounded text-[11px] ${isBase ? 'bg-slate-700 text-slate-200 border border-slate-600' : 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50'}">${m.system_id || '—'}</span></td>
+          <td class="p-3 font-semibold text-xs">${m.model_name}</td>
+          <td class="p-3 text-xs text-slate-400">${m.architecture_family}</td>
+          <td class="p-3 font-mono text-xs font-bold text-amber-500">${m.rtf.toFixed(4)}</td>
+          <td class="p-3 font-mono text-xs font-bold text-amber-500">${m.speedup_x.toFixed(0)}×</td>
+          <td class="p-3 font-mono text-xs">${m.peak_vram_mb.toFixed(0)} MB</td>
+          <td class="p-3 font-mono text-xs">${m.params_m.toFixed(1)} M</td>
+          <td class="p-3 text-xs">${m.edge_feasible === 'Yes' ? '✅ Ready' : '❌ High-VRAM'}</td>
+          <td class="p-3 text-xs">${m.github_url ? `<a href="${m.github_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gh text-[10px] inline-flex items-center gap-1">💻 Code</a>` : '—'}</td>
+          <td class="p-3 text-xs">${m.checkpoint_url && !m.checkpoint_url.startsWith('N/A') ? `<a href="${m.checkpoint_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-ckpt text-[10px] inline-flex items-center gap-1">📦 Checkpoint</a>` : (isBase ? '<span class="text-[10px] text-slate-400 italic">Algorithmic</span>' : '—')}</td>
+        </tr>
+      `;
+    }).join('');
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1641,23 +1726,28 @@
     const tbody = document.getElementById('arch-table-body');
     if (!tbody || !state.data) return;
 
-    tbody.innerHTML = state.data.leaderboard.map(m => `
-      <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50">
-        <td class="p-3 font-semibold text-xs">${m.model_name}</td>
-        <td class="p-3 text-xs text-indigo-400 font-semibold">${m.arch_category}</td>
-        <td class="p-3 text-xs text-slate-400">${m.architecture_family}</td>
-        <td class="p-3 font-mono text-xs">${m.params_m.toFixed(1)} M</td>
-        <td class="p-3 text-xs text-slate-400">${m.track}</td>
-        <td class="p-3 font-mono text-xs">${m.year}</td>
-        <td class="p-3 font-mono text-xs">${m.license}</td>
-        <td class="p-3 font-mono text-xs font-bold">${m.pesq.toFixed(3)}</td>
-        <td class="p-3 font-mono text-xs">${m.utmos.toFixed(2)}</td>
-        <td class="p-3 font-mono text-xs">${m.rtf.toFixed(4)}</td>
-        <td class="p-3 font-mono text-xs">${m.speedup_x.toFixed(0)}×</td>
-        <td class="p-3 font-mono text-xs">${m.peak_vram_mb.toFixed(0)}</td>
-        <td class="p-3 font-mono text-xs font-bold text-indigo-500">${m.overall_score.toFixed(1)}</td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = state.data.leaderboard.map(m => {
+      const isBase = m.is_baseline || m.system_id === 'Baseline';
+      const rowStyle = isBase ? 'style="background-color: rgba(148, 163, 184, 0.25);"' : '';
+      return `
+        <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50" ${rowStyle}>
+          <td class="p-3 font-mono font-bold text-xs"><span class="px-1.5 py-0.5 rounded text-[11px] ${isBase ? 'bg-slate-700 text-slate-200 border border-slate-600' : 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50'}">${m.system_id || '—'}</span></td>
+          <td class="p-3 font-semibold text-xs">${m.model_name}</td>
+          <td class="p-3 text-xs text-indigo-400 font-semibold">${m.arch_category}</td>
+          <td class="p-3 text-xs text-slate-400">${m.architecture_family}</td>
+          <td class="p-3 font-mono text-xs">${m.params_m.toFixed(1)} M</td>
+          <td class="p-3 text-xs text-slate-400">${m.track}</td>
+          <td class="p-3 font-mono text-xs">${m.year}</td>
+          <td class="p-3 font-mono text-xs">${m.license}</td>
+          <td class="p-3 font-mono text-xs font-bold">${m.pesq.toFixed(3)}</td>
+          <td class="p-3 font-mono text-xs">${m.utmos.toFixed(2)}</td>
+          <td class="p-3 font-mono text-xs">${m.rtf.toFixed(4)}</td>
+          <td class="p-3 font-mono text-xs">${m.speedup_x.toFixed(0)}×</td>
+          <td class="p-3 font-mono text-xs">${m.peak_vram_mb.toFixed(0)}</td>
+          <td class="p-3 font-mono text-xs font-bold text-indigo-500">${m.overall_score.toFixed(1)}</td>
+        </tr>
+      `;
+    }).join('');
   }
 
   function renderArchBar() {
@@ -1797,15 +1887,20 @@
     const tbody = document.getElementById('diag-table-body');
     if (!tbody || !state.data) return;
 
-    tbody.innerHTML = state.data.phoneme_diagnostics.map(r => `
-      <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50">
-        <td class="p-3 font-semibold text-xs">${r.model_name}</td>
-        <td class="p-3 text-xs text-indigo-400">${r.phonetic_class}</td>
-        <td class="p-3 font-mono text-xs font-bold">${r.lsd_db.toFixed(3)}</td>
-        <td class="p-3 font-mono text-xs">${r.f0_error_cents.toFixed(1)}</td>
-        <td class="p-3 font-mono text-xs">${r.boundary_error_db.toFixed(2)}</td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = state.data.phoneme_diagnostics.map(r => {
+      const isBase = r.system_id === 'Baseline' || r.model_name.includes('Griffin-Lim');
+      const rowStyle = isBase ? 'style="background-color: rgba(148, 163, 184, 0.25);"' : '';
+      return `
+        <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50" ${rowStyle}>
+          <td class="p-3 font-mono font-bold text-xs"><span class="px-1.5 py-0.5 rounded text-[11px] ${isBase ? 'bg-slate-700 text-slate-200 border border-slate-600' : 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50'}">${r.system_id || '—'}</span></td>
+          <td class="p-3 font-semibold text-xs">${r.model_name}</td>
+          <td class="p-3 text-xs text-indigo-400">${r.phonetic_class}</td>
+          <td class="p-3 font-mono text-xs font-bold">${r.lsd_db.toFixed(3)}</td>
+          <td class="p-3 font-mono text-xs">${r.f0_error_cents.toFixed(1)}</td>
+          <td class="p-3 font-mono text-xs">${r.boundary_error_db.toFixed(2)}</td>
+        </tr>
+      `;
+    }).join('');
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1854,7 +1949,7 @@
         name: fam,
         x: sub.map(m => m[xCol]),
         y: sub.map(m => m[yCol]),
-        text: sub.map(m => m.model_name),
+        text: sub.map(m => `[${m.system_id || '—'}] ${m.model_name}`),
         textposition: 'top center',
         textfont: { size: 9, family: 'Inter, sans-serif' },
         marker: {
@@ -1865,7 +1960,7 @@
         },
         hoverinfo: 'text',
         hovertext: sub.map(m => `
-          <b>${m.model_name}</b><br>
+          <b>[${m.system_id || '—'}] ${m.model_name}</b><br>
           ${xCol.toUpperCase()}: ${m[xCol]} · ${yCol.toUpperCase()}: ${m[yCol]}<br>
           Speedup: ${m.speedup_x}× · VRAM: ${m.peak_vram_mb} MB
         `)
@@ -1914,7 +2009,7 @@
     if (!select || !container || !state.data) return;
 
     select.innerHTML = state.data.leaderboard.map(m => `
-      <option value="${m.model_name}">${m.model_name}</option>
+      <option value="${m.model_name}">[${m.system_id || '—'}] ${m.model_name}</option>
     `).join('');
     select.value = state.modelCard.selectedModel;
 
@@ -1933,6 +2028,9 @@
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">
           <div>
             <div class="flex items-center gap-3">
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono font-bold ${m.is_baseline ? 'bg-slate-700 text-slate-200 border border-slate-600' : 'bg-indigo-900/80 text-indigo-300 border border-indigo-700/60'}">
+                ${m.system_id || '—'}
+              </span>
               <h2 class="text-2xl font-bold text-slate-900 dark:text-white">${m.model_name}</h2>
               <span class="px-2.5 py-1 rounded-md text-xs font-mono font-semibold bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
                 ${m.model_id}
@@ -1953,6 +2051,7 @@
           <div class="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4">
             <h3 class="font-bold text-xs uppercase text-slate-400 tracking-wider mb-3">Model Specifications</h3>
             <div class="space-y-2 text-xs">
+              <div class="flex justify-between"><span>System ID:</span><span class="font-mono font-bold text-indigo-400">${m.system_id || '—'}</span></div>
               <div class="flex justify-between"><span>Code License:</span><span class="font-mono font-bold">${m.license}</span></div>
               <div class="flex justify-between"><span>Sampling Rate:</span><span class="font-mono">${m.sampling_rate_hz} Hz</span></div>
               <div class="flex justify-between"><span>Parameters:</span><span class="font-mono font-bold">${m.params_m.toFixed(1)} M</span></div>
