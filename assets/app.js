@@ -106,6 +106,7 @@
 
     // Architectures state
     arch: {
+      selectedCategory: 'all',
       selectedCategories: [
         'GAN-based', 'Fourier / Transformer-based', 'Flow-based',
         'Diffusion-based', 'Non-Autoregressive', 'Algorithmic DSP'
@@ -1793,15 +1794,60 @@
   // TAB 7 — ARCHITECTURES
   // ═══════════════════════════════════════════════════════════════════════════
   function renderArchitectures() {
+    initArchControls();
     renderArchTable();
     renderArchBar();
   }
 
+  function initArchControls() {
+    const select = document.getElementById('arch-category-select');
+    if (!select || !state.data) return;
+
+    if (!select.dataset.initialized) {
+      const allModels = state.data.leaderboard || [];
+      const categories = ['Algorithmic DSP', 'GAN-based', 'Flow-based', 'Fourier / Transformer-based', 'Diffusion-based'];
+
+      select.innerHTML = `
+        <option value="all">All Architecture Categories (${allModels.length} Models)</option>
+        ${categories.map(cat => {
+          const count = allModels.filter(m => m.arch_category === cat).length;
+          return `<option value="${cat}">${cat} (${count} Model${count === 1 ? '' : 's'})</option>`;
+        }).join('')}
+      `;
+      select.value = state.arch.selectedCategory || 'all';
+
+      select.addEventListener('change', (e) => {
+        state.arch.selectedCategory = e.target.value;
+        renderArchTable();
+        renderArchBar();
+      });
+
+      select.dataset.initialized = 'true';
+    }
+  }
+
   function renderArchTable() {
     const tbody = document.getElementById('arch-table-body');
+    const countEl = document.getElementById('arch-category-count');
     if (!tbody || !state.data) return;
 
-    tbody.innerHTML = state.data.leaderboard.map(m => {
+    const selectedCat = state.arch.selectedCategory || 'all';
+    const allModels = state.data.leaderboard || [];
+    const models = allModels.filter(m => {
+      if (selectedCat === 'all') return true;
+      return m.arch_category === selectedCat;
+    });
+
+    if (countEl) {
+      countEl.textContent = `Showing ${models.length} of ${allModels.length} models`;
+    }
+
+    if (models.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="14" class="p-6 text-center text-slate-400">No models found for category "${selectedCat}"</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = models.map(m => {
       const isBase = m.is_baseline || m.system_id === 'Baseline';
       const rowStyle = isBase ? 'style="background-color: rgba(148, 163, 184, 0.25);"' : '';
       return `
@@ -1829,41 +1875,74 @@
     const el = document.getElementById('arch-pesq-bar');
     if (!el || !state.data) return;
 
-    const catMap = {};
-    state.data.leaderboard.forEach(m => {
-      const cat = m.arch_category;
-      if (!catMap[cat]) catMap[cat] = [];
-      catMap[cat].push(m.pesq);
-    });
-
-    const xCats = Object.keys(catMap).sort();
-    const yPesqs = xCats.map(c => {
-      const arr = catMap[c];
-      return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(3);
-    });
-    const colors = xCats.map(c => state.data.arch_cat_colors[c] || '#4F46E5');
-
-    const trace = {
-      x: xCats,
-      y: yPesqs,
-      type: 'bar',
-      marker: { color: colors, borderRadius: 6 },
-      text: yPesqs,
-      textposition: 'outside',
-      cliponaxis: false
-    };
-
+    const selectedCat = state.arch.selectedCategory || 'all';
     const pTheme = getPlotlyTheme();
-    const layout = {
-      ...pTheme,
-      title: { text: '<b>Mean Wideband PESQ by Architecture Category</b>', font: { size: 14 } },
-      yaxis: { title: 'Mean PESQ ↑', ...pTheme.yaxis },
-      margin: { l: 50, r: 20, t: 50, b: 70 },
-      height: 380,
-      showlegend: false
-    };
 
-    Plotly.newPlot(el, [trace], layout, { responsive: true, displayModeBar: false });
+    if (selectedCat === 'all') {
+      const catMap = {};
+      state.data.leaderboard.forEach(m => {
+        const cat = m.arch_category;
+        if (!catMap[cat]) catMap[cat] = [];
+        catMap[cat].push(m.pesq);
+      });
+
+      const xCats = Object.keys(catMap).sort();
+      const yPesqs = xCats.map(c => {
+        const arr = catMap[c];
+        return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(3);
+      });
+      const colors = xCats.map(c => state.data.arch_cat_colors[c] || '#4F46E5');
+
+      const trace = {
+        x: xCats,
+        y: yPesqs,
+        type: 'bar',
+        marker: { color: colors, borderRadius: 6 },
+        text: yPesqs,
+        textposition: 'outside',
+        cliponaxis: false
+      };
+
+      const layout = {
+        ...pTheme,
+        title: { text: '<b>Mean Wideband PESQ by Architecture Category</b>', font: { size: 14 } },
+        yaxis: { title: 'Mean PESQ ↑', ...pTheme.yaxis },
+        margin: { l: 50, r: 20, t: 50, b: 70 },
+        height: 380,
+        showlegend: false
+      };
+
+      Plotly.newPlot(el, [trace], layout, { responsive: true, displayModeBar: false });
+    } else {
+      const catModels = state.data.leaderboard
+        .filter(m => m.arch_category === selectedCat)
+        .sort((a, b) => b.pesq - a.pesq);
+
+      const xNames = catModels.map(m => `[${m.system_id || '—'}] ${m.model_name}`);
+      const yPesqs = catModels.map(m => m.pesq.toFixed(3));
+      const barColor = state.data.arch_cat_colors[selectedCat] || '#4F46E5';
+
+      const trace = {
+        x: xNames,
+        y: yPesqs,
+        type: 'bar',
+        marker: { color: barColor, borderRadius: 6 },
+        text: yPesqs,
+        textposition: 'outside',
+        cliponaxis: false
+      };
+
+      const layout = {
+        ...pTheme,
+        title: { text: `<b>Wideband PESQ for ${selectedCat} Models (${catModels.length} models)</b>`, font: { size: 14 } },
+        yaxis: { title: 'PESQ ↑', ...pTheme.yaxis },
+        margin: { l: 50, r: 20, t: 50, b: 90 },
+        height: 380,
+        showlegend: false
+      };
+
+      Plotly.newPlot(el, [trace], layout, { responsive: true, displayModeBar: false });
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════════════════

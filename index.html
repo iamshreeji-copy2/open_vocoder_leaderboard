@@ -605,26 +605,6 @@
 
         <div id="efficiency-bar-chart" class="w-full"></div>
 
-        <h3 class="text-sm font-bold text-slate-100 mt-8 mb-3">Computational Profile</h3>
-        <div class="overflow-x-auto border border-slate-800 rounded-xl">
-          <table class="prism-table w-full">
-            <thead class="bg-slate-800">
-              <tr>
-                <th class="p-3">ID</th>
-                <th class="p-3">Model</th>
-                <th class="p-3">Architecture</th>
-                <th class="p-3">RTF ↓</th>
-                <th class="p-3">xRT ↑</th>
-                <th class="p-3">Peak VRAM ↓</th>
-                <th class="p-3">Params (M)</th>
-                <th class="p-3">Edge Ready</th>
-                <th class="p-3">Code OS</th>
-                <th class="p-3">Ckpt OS</th>
-              </tr>
-            </thead>
-            <tbody id="efficiency-table-body"></tbody>
-          </table>
-        </div>
       </div>
     </section>
 
@@ -637,6 +617,24 @@
         <p class="text-xs text-slate-400 mb-4">
           Examine generative paradigms: GAN, Flow Matching, Fourier / Transformer, Diffusion SDE, and Algorithmic baselines.
         </p>
+
+        <!-- Architecture Category Filter Dropdown -->
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4 p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs">
+          <div class="flex items-center gap-3">
+            <label for="arch-category-select" class="font-bold text-slate-300">Category Filter:</label>
+            <select id="arch-category-select" class="bg-slate-800 border border-slate-700 text-slate-100 text-xs font-semibold rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="all">All Categories (15 Models)</option>
+              <option value="Algorithmic DSP">Algorithmic DSP (1 Model)</option>
+              <option value="GAN-based">GAN-based (5 Models)</option>
+              <option value="Flow-based">Flow-based (3 Models)</option>
+              <option value="Fourier / Transformer-based">Fourier / Transformer-based (3 Models)</option>
+              <option value="Diffusion-based">Diffusion-based (3 Models)</option>
+            </select>
+          </div>
+          <div id="arch-category-count" class="text-xs text-slate-400 font-mono">
+            Showing 15 of 15 models
+          </div>
+        </div>
 
         <div class="overflow-x-auto border border-slate-800 rounded-xl mb-6">
           <table class="prism-table w-full">
