@@ -93,10 +93,6 @@
         <span class="prism-dim-pill prism-dim-m" title="Model efficiency (RTF + VRAM + Params)"><b>M</b> · Model Efficiency</span>
       </div>
 
-      <p class="text-sm sm:text-base font-semibold text-slate-300 dark:text-slate-300">
-        A Multidimensional Evaluation of Pretrained Neural Vocoders for Speech Synthesis · Ranked by
-        <span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V Score</span>
-      </p>
     </header>
 
     <!-- ── Sticky Navigation Bar ───────────────────────────────────────────── -->
@@ -158,9 +154,61 @@
         </div>
       </div>
 
-      <!-- Paradigm Overview Chart -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <!-- Architectural Paradigm Analysis & Multi-Metric Evaluation -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+          <div>
+            <h2 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+              <span>📊 Architectural Paradigm Analysis</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">
+              Select any benchmark evaluation measure to analyze and compare performance across generative paradigms
+            </p>
+          </div>
+
+          <!-- Evaluation Metric Selection Dropdown -->
+          <div class="flex flex-wrap items-center gap-2">
+            <label for="overview-metric-select" class="text-xs font-bold text-slate-300">Metric:</label>
+            <select id="overview-metric-select" class="bg-slate-800 border border-slate-700 text-slate-100 text-xs font-semibold rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <optgroup label="Core & Quality Dimensions">
+                <option value="overall_score" selected>PRISM-V Composite Score (0–100 ↑)</option>
+                <option value="pesq">Wideband PESQ (1.0–4.5 ↑)</option>
+                <option value="stoi">STOI Intelligibility (0.0–1.0 ↑)</option>
+                <option value="utmos">UTMOS Neural MOS (1.0–5.0 ↑)</option>
+                <option value="nisqa">NISQA Naturalness (1.0–5.0 ↑)</option>
+              </optgroup>
+              <optgroup label="Reconstruction & Phonetic">
+                <option value="lsd_db">Log-Spectral Distance LSD (dB ↓)</option>
+                <option value="mcd_db">Mel-Cepstral Distortion MCD (dB ↓)</option>
+                <option value="delta_wer_pct">ASR Degradation ΔWER (% ↓)</option>
+              </optgroup>
+              <optgroup label="Edge & Efficiency Profile">
+                <option value="speedup_x">Throughput Speedup xRT (↑)</option>
+                <option value="rtf">Real-Time Factor RTF (↓)</option>
+                <option value="peak_vram_mb">Peak VRAM Footprint (MB ↓)</option>
+                <option value="params_m">Model Parameter Count (M ↓)</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quick Select Buttons -->
+        <div class="flex flex-wrap items-center gap-1.5 text-xs" id="overview-metric-chips">
+          <span class="text-[11px] font-bold uppercase text-slate-400 mr-1">Quick Select:</span>
+          <button class="overview-chip active px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-semibold transition cursor-pointer" data-metric="overall_score">PRISM-V Score</button>
+          <button class="overview-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition cursor-pointer" data-metric="pesq">PESQ</button>
+          <button class="overview-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition cursor-pointer" data-metric="stoi">STOI</button>
+          <button class="overview-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition cursor-pointer" data-metric="utmos">UTMOS</button>
+          <button class="overview-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition cursor-pointer" data-metric="speedup_x">Throughput (xRT)</button>
+          <button class="overview-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition cursor-pointer" data-metric="rtf">RTF</button>
+          <button class="overview-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition cursor-pointer" data-metric="peak_vram_mb">Peak VRAM</button>
+        </div>
+
+        <!-- Bar Chart -->
         <div id="overview-arch-bar" class="w-full"></div>
+
+        <!-- Dynamic Architectural Analysis Box -->
+        <div id="overview-metric-analysis" class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2"></div>
       </div>
     </section>
 

@@ -28,6 +28,7 @@
     theme: localStorage.getItem('prism-theme') || 'dark',
     fontLevel: parseInt(localStorage.getItem('prism-font-level') || '3', 10),
     activeTab: 'overview',
+    overviewMetric: 'overall_score',
     data: window.PRISM_DATA || null,
 
     // Leaderboard state
@@ -383,37 +384,186 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // TAB 1 — OVERVIEW
+  // TAB 1 — OVERVIEW (Multi-Metric Paradigm Analysis)
   // ═══════════════════════════════════════════════════════════════════════════
+  const OVERVIEW_METRICS = {
+    overall_score: {
+      name: 'PRISM-V Score',
+      unit: '/ 100',
+      higherBetter: true,
+      decimals: 1,
+      insight: 'Algorithmic DSP and optimized GAN/Flow architectures achieve the highest composite scores by balancing high perceptual quality with low latency.'
+    },
+    pesq: {
+      name: 'Wideband PESQ',
+      unit: '',
+      higherBetter: true,
+      decimals: 3,
+      insight: 'Flow-based (Flow2GAN) and Diffusion SDE architectures lead speech reconstruction quality (>4.4 PESQ), outperforming legacy GANs.'
+    },
+    stoi: {
+      name: 'STOI Intelligibility',
+      unit: '',
+      higherBetter: true,
+      decimals: 3,
+      insight: 'All neural vocoders maintain strong speech intelligibility (>0.98 STOI), preserving consonant-vowel transitions with high temporal accuracy.'
+    },
+    utmos: {
+      name: 'UTMOS Neural MOS',
+      unit: '',
+      higherBetter: true,
+      decimals: 2,
+      insight: 'Flow Matching + GAN hybrids attain highest predicted mean opinion scores (>4.1 UTMOS), minimizing metallic artifacts.'
+    },
+    nisqa: {
+      name: 'NISQA Naturalness',
+      unit: '',
+      higherBetter: true,
+      decimals: 2,
+      insight: 'Neural MOS naturalness favors modern multi-scale architectures with high-order phase reconstruction.'
+    },
+    delta_wer_pct: {
+      name: 'ASR Degradation (ΔWER)',
+      unit: '%',
+      higherBetter: false,
+      decimals: 2,
+      insight: 'Diffusion and GAN models achieve sub-0.05% ΔWER degradation on Whisper ASR, preserving phonetic boundaries accurately.'
+    },
+    lsd_db: {
+      name: 'Log-Spectral Distance (LSD)',
+      unit: 'dB',
+      higherBetter: false,
+      decimals: 2,
+      insight: 'Algorithmic Griffin-Lim minimizes mathematical STFT error (3.15 dB), whereas diffusion models lead neural vocoders at ~6.5–6.6 dB.'
+    },
+    mcd_db: {
+      name: 'Mel-Cepstral Distortion (MCD)',
+      unit: 'dB',
+      higherBetter: false,
+      decimals: 2,
+      insight: 'Flow-based and GAN architectures minimize timbral distortion (3.80–3.95 dB MCD), retaining speaker identity.'
+    },
+    speedup_x: {
+      name: 'Throughput Speedup',
+      unit: '×',
+      higherBetter: true,
+      decimals: 0,
+      insight: 'Fourier / ConvNeXt (Vocos at 482×) and Algorithmic DSP (176×) provide extreme throughput, while diffusion requires multiple sampling steps.'
+    },
+    rtf: {
+      name: 'Real-Time Factor (RTF)',
+      unit: '',
+      higherBetter: false,
+      decimals: 4,
+      insight: 'Fourier / ConvNeXt achieves sub-millisecond RTF (0.0021), delivering 100× faster generation than full 16-step diffusion.'
+    },
+    peak_vram_mb: {
+      name: 'Peak GPU VRAM',
+      unit: 'MB',
+      higherBetter: false,
+      decimals: 0,
+      insight: 'Algorithmic DSP (72 MB) and Fourier ConvNeXt (112 MB) provide the lightest memory footprints, well below 1 GB edge limits.'
+    },
+    params_m: {
+      name: 'Model Parameters',
+      unit: 'M',
+      higherBetter: false,
+      decimals: 1,
+      insight: 'RNDVoC (3.9M) and BridgeVoC (7.9M) achieve exceptional parameter efficiency, contrasting with 115M large checkpoints.'
+    }
+  };
+
+  function initOverviewControls() {
+    const select = document.getElementById('overview-metric-select');
+    const chipContainer = document.getElementById('overview-metric-chips');
+    if (!select || select.dataset.initialized) return;
+
+    select.value = state.overviewMetric || 'overall_score';
+
+    select.addEventListener('change', (e) => {
+      state.overviewMetric = e.target.value;
+      syncOverviewChips(e.target.value);
+      renderOverviewCharts();
+    });
+
+    if (chipContainer) {
+      chipContainer.querySelectorAll('.overview-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const metric = btn.dataset.metric;
+          state.overviewMetric = metric;
+          select.value = metric;
+          syncOverviewChips(metric);
+          renderOverviewCharts();
+        });
+      });
+    }
+
+    select.dataset.initialized = 'true';
+  }
+
+  function syncOverviewChips(metric) {
+    const chips = document.querySelectorAll('.overview-chip');
+    chips.forEach(c => {
+      if (c.dataset.metric === metric) {
+        c.className = 'overview-chip active px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-semibold transition cursor-pointer';
+      } else {
+        c.className = 'overview-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition cursor-pointer';
+      }
+    });
+  }
+
   function renderOverview() {
+    initOverviewControls();
     renderOverviewCharts();
   }
 
   function renderOverviewCharts() {
     const el = document.getElementById('overview-arch-bar');
+    const analysisEl = document.getElementById('overview-metric-analysis');
     if (!el || !state.data) return;
+
+    const metric = state.overviewMetric || 'overall_score';
+    const meta = OVERVIEW_METRICS[metric] || OVERVIEW_METRICS['overall_score'];
 
     // Group models by arch_category
     const catMap = {};
+    const catModelsMap = {};
     state.data.leaderboard.forEach(m => {
       const cat = m.arch_category;
-      if (!catMap[cat]) catMap[cat] = [];
-      catMap[cat].push(m.pesq);
+      if (!catMap[cat]) {
+        catMap[cat] = [];
+        catModelsMap[cat] = [];
+      }
+      const val = typeof m[metric] === 'number' ? m[metric] : (parseFloat(m[metric]) || 0);
+      catMap[cat].push(val);
+      catModelsMap[cat].push(m);
     });
 
-    const xCats = Object.keys(catMap).sort();
-    const yPesqs = xCats.map(c => {
+    const cats = Object.keys(catMap);
+    const catMeans = cats.map(c => {
       const arr = catMap[c];
-      return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(3);
+      const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
+      return {
+        category: c,
+        mean: mean,
+        formatted: mean.toFixed(meta.decimals)
+      };
     });
+
+    // Sort according to higherBetter
+    catMeans.sort((a, b) => meta.higherBetter ? b.mean - a.mean : a.mean - b.mean);
+
+    const xCats = catMeans.map(c => c.category);
+    const yVals = catMeans.map(c => parseFloat(c.formatted));
+    const textLabels = catMeans.map(c => `${c.formatted} ${meta.unit}`.trim());
     const colors = xCats.map(c => state.data.arch_cat_colors[c] || '#4F46E5');
 
     const trace = {
       x: xCats,
-      y: yPesqs,
+      y: yVals,
       type: 'bar',
       marker: { color: colors, borderRadius: 6 },
-      text: yPesqs,
+      text: textLabels,
       textposition: 'outside',
       cliponaxis: false
     };
@@ -421,13 +571,72 @@
     const pTheme = getPlotlyTheme();
     const layout = {
       ...pTheme,
-      title: { text: '<b>Mean PESQ Across Architectural Paradigms</b>', font: { size: 14 } },
-      margin: { l: 50, r: 20, t: 40, b: 60 },
-      height: 300,
+      title: {
+        text: `<b>Mean ${meta.name} by Architectural Paradigm (${meta.higherBetter ? 'Higher is Better ↑' : 'Lower is Better ↓'})</b>`,
+        font: { size: 14 }
+      },
+      yaxis: {
+        title: `${meta.name} ${meta.unit ? `(${meta.unit})` : ''} ${meta.higherBetter ? '↑' : '↓'}`,
+        ...pTheme.yaxis
+      },
+      margin: { l: 60, r: 20, t: 50, b: 70 },
+      height: 340,
       showlegend: false
     };
 
     Plotly.newPlot(el, [trace], layout, { responsive: true, displayModeBar: false });
+
+    // Render Analysis cards
+    if (analysisEl) {
+      const topCat = catMeans[0];
+      const topCategoryModels = catModelsMap[topCat.category] || [];
+      const bestModel = [...topCategoryModels].sort((a, b) => {
+        const vA = typeof a[metric] === 'number' ? a[metric] : (parseFloat(a[metric]) || 0);
+        const vB = typeof b[metric] === 'number' ? b[metric] : (parseFloat(b[metric]) || 0);
+        return meta.higherBetter ? vB - vA : vA - vB;
+      })[0];
+
+      const bestModelVal = bestModel ? (typeof bestModel[metric] === 'number' ? bestModel[metric].toFixed(meta.decimals) : bestModel[metric]) : '—';
+
+      analysisEl.innerHTML = `
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 mb-1">🏆 Top Performing Paradigm</div>
+          <div class="text-base sm:text-lg font-bold text-slate-100 flex items-baseline gap-2">
+            <span>${topCat.category}</span>
+            <span class="text-sm font-mono text-indigo-400 font-bold">${topCat.formatted} ${meta.unit}</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1.5">
+            Top model: <strong class="text-slate-200">${bestModel ? `[${bestModel.system_id || '—'}] ${bestModel.model_name}` : '—'}</strong> (${bestModelVal} ${meta.unit})
+          </p>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-cyan-400 mb-1">📊 Paradigm Rankings (${meta.higherBetter ? 'Best to Worst ↑' : 'Best to Worst ↓'})</div>
+          <div class="space-y-1 mt-1 text-xs font-mono">
+            ${catMeans.map((cat, idx) => `
+              <div class="flex items-center justify-between py-0.5 border-b border-slate-900 last:border-0">
+                <span class="flex items-center gap-1.5">
+                  <span class="text-slate-500 font-bold w-4">#${idx + 1}</span>
+                  <span class="font-sans font-semibold text-slate-300 text-[11px]">${cat.category}</span>
+                </span>
+                <span class="font-bold ${idx === 0 ? 'text-cyan-400' : 'text-slate-400'}">${cat.formatted} ${meta.unit}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-amber-400 mb-1">💡 Paradigm Tradeoff Insight</div>
+          <p class="text-xs text-slate-300 leading-relaxed mt-1">
+            ${meta.insight}
+          </p>
+          <div class="mt-2 text-[11px] text-slate-400 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full ${meta.higherBetter ? 'bg-emerald-500' : 'bg-rose-500'}"></span>
+            <span>Criterion: <strong>${meta.higherBetter ? 'Higher score indicates better performance' : 'Lower value indicates lower distortion/latency'}</strong></span>
+          </div>
+        </div>
+      `;
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
