@@ -303,7 +303,8 @@
     const chartIds = [
       'overview-arch-bar', 'compare-radar', 'robustness-plot',
       'efficiency-bar-chart', 'arch-pesq-bar', 'diag-radar-chart',
-      'diag-bar-chart', 'pareto-scatter-chart'
+      'diag-bar-chart', 'pareto-scatter-chart', 'diag-plotly-table',
+      'diag-plotly-heatmap'
     ];
     chartIds.forEach(id => {
       const el = document.getElementById(id);
@@ -327,7 +328,12 @@
     else if (tabId === 'robustness') renderRobustnessPlot();
     else if (tabId === 'efficiency') renderEfficiencyBar();
     else if (tabId === 'architectures') renderArchBar();
-    else if (tabId === 'diagnostics') { renderDiagRadar(); renderDiagBar(); }
+    else if (tabId === 'diagnostics') {
+      renderDiagRadar();
+      renderDiagBar();
+      if (diagTableState && diagTableState.view === 'matrix') renderDiagHeatmap();
+      else if (diagTableState && diagTableState.view === 'table') renderDiagPlotlyTable();
+    }
     else if (tabId === 'pareto') renderParetoPlot();
   }
 
@@ -1132,9 +1138,61 @@
     `;
   }
 
+  const compareRadarState = {
+    rotation: 0,
+    maxR: 100
+  };
+
+  function initCompareRadarControls() {
+    const rotLeft = document.getElementById('compare-radar-rot-left');
+    const rotRight = document.getElementById('compare-radar-rot-right');
+    const zoomIn = document.getElementById('compare-radar-zoom-in');
+    const zoomOut = document.getElementById('compare-radar-zoom-out');
+    const resetBtn = document.getElementById('compare-radar-reset');
+    const badge = document.getElementById('compare-radar-badge');
+    const el = document.getElementById('compare-radar');
+
+    if (!rotLeft || rotLeft.dataset.initialized) return;
+
+    rotLeft.addEventListener('click', () => {
+      compareRadarState.rotation = (compareRadarState.rotation + 45) % 360;
+      if (badge) badge.textContent = `${compareRadarState.rotation}°`;
+      if (el && el.data) Plotly.relayout(el, { 'polar.angularaxis.rotation': compareRadarState.rotation });
+    });
+
+    rotRight.addEventListener('click', () => {
+      compareRadarState.rotation = (compareRadarState.rotation - 45 + 360) % 360;
+      if (badge) badge.textContent = `${compareRadarState.rotation}°`;
+      if (el && el.data) Plotly.relayout(el, { 'polar.angularaxis.rotation': compareRadarState.rotation });
+    });
+
+    zoomIn.addEventListener('click', () => {
+      compareRadarState.maxR = Math.max(30, Math.round(compareRadarState.maxR * 0.8));
+      if (el && el.data) Plotly.relayout(el, { 'polar.radialaxis.range': [0, compareRadarState.maxR] });
+    });
+
+    zoomOut.addEventListener('click', () => {
+      compareRadarState.maxR = Math.min(250, Math.round(compareRadarState.maxR * 1.25));
+      if (el && el.data) Plotly.relayout(el, { 'polar.radialaxis.range': [0, compareRadarState.maxR] });
+    });
+
+    resetBtn.addEventListener('click', () => {
+      compareRadarState.rotation = 0;
+      compareRadarState.maxR = 100;
+      if (badge) badge.textContent = '0°';
+      renderCompareRadar();
+    });
+
+    rotLeft.dataset.initialized = 'true';
+  }
+
   function renderCompareRadar() {
     const el = document.getElementById('compare-radar');
+    const badge = document.getElementById('compare-radar-badge');
     if (!el || !state.data) return;
+
+    initCompareRadarControls();
+    if (badge) badge.textContent = `${compareRadarState.rotation}°`;
 
     const models = state.compare.selectedModels.map(name =>
       state.data.leaderboard.find(m => m.model_name === name)
@@ -1171,8 +1229,8 @@
     const layout = {
       ...pTheme,
       polar: {
-        radialaxis: { visible: true, range: [0, 100], gridcolor: pTheme.xaxis.gridcolor },
-        angularaxis: { gridcolor: pTheme.xaxis.gridcolor }
+        radialaxis: { visible: true, range: [0, compareRadarState.maxR], gridcolor: pTheme.xaxis.gridcolor },
+        angularaxis: { rotation: compareRadarState.rotation, gridcolor: pTheme.xaxis.gridcolor }
       },
       title: { text: '<b>Normalized Multi-Dimensional Radar Comparison (0–100)</b>', font: { size: 14 } },
       margin: { l: 60, r: 60, t: 50, b: 60 },
@@ -1948,18 +2006,173 @@
   // ═══════════════════════════════════════════════════════════════════════════
   // TAB 8 — DIAGNOSTICS (MFA Phoneme QC)
   // ═══════════════════════════════════════════════════════════════════════════
+  const diagRadarState = {
+    rotation: 0,
+    maxR: 12,
+    batchIndex: 0,
+    batches: [
+      ['Vocos', 'Flow2GAN (4-step)', 'RNDVoC', 'BridgeVoC', 'BigVGAN-v2 (112M)'],
+      ['PeriodWave-Turbo (4-step)', 'ComVo-Base', 'BigVGAN-Base (14M)', 'ComVo-Large', 'WaveFM (1-step)'],
+      ['HiFi-GAN (Universal V1)', 'FreeV', 'RFWave', 'PeriodWave (16-step)', 'Griffin-Lim STFT']
+    ]
+  };
+
+  const diagTableState = {
+    view: 'table', // 'table' | 'matrix' | 'html'
+    modelFilter: 'all',
+    classFilter: 'all'
+  };
+
+  function initDiagRadarControls() {
+    const rotLeft = document.getElementById('diag-radar-rot-left');
+    const rotRight = document.getElementById('diag-radar-rot-right');
+    const zoomIn = document.getElementById('diag-radar-zoom-in');
+    const zoomOut = document.getElementById('diag-radar-zoom-out');
+    const resetBtn = document.getElementById('diag-radar-reset');
+    const prevModels = document.getElementById('diag-radar-prev-models');
+    const nextModels = document.getElementById('diag-radar-next-models');
+    const badge = document.getElementById('diag-radar-angle-badge');
+    const batchBadge = document.getElementById('diag-radar-batch-badge');
+    const el = document.getElementById('diag-radar-chart');
+
+    if (!rotLeft || rotLeft.dataset.initialized) return;
+
+    rotLeft.addEventListener('click', () => {
+      diagRadarState.rotation = (diagRadarState.rotation + 45) % 360;
+      if (badge) badge.textContent = `${diagRadarState.rotation}°`;
+      if (el && el.data) Plotly.relayout(el, { 'polar.angularaxis.rotation': diagRadarState.rotation });
+    });
+
+    rotRight.addEventListener('click', () => {
+      diagRadarState.rotation = (diagRadarState.rotation - 45 + 360) % 360;
+      if (badge) badge.textContent = `${diagRadarState.rotation}°`;
+      if (el && el.data) Plotly.relayout(el, { 'polar.angularaxis.rotation': diagRadarState.rotation });
+    });
+
+    zoomIn.addEventListener('click', () => {
+      diagRadarState.maxR = Math.max(3, Math.round(diagRadarState.maxR * 0.75));
+      if (el && el.data) Plotly.relayout(el, { 'polar.radialaxis.range': [0, diagRadarState.maxR] });
+    });
+
+    zoomOut.addEventListener('click', () => {
+      diagRadarState.maxR = Math.min(30, Math.round(diagRadarState.maxR * 1.33));
+      if (el && el.data) Plotly.relayout(el, { 'polar.radialaxis.range': [0, diagRadarState.maxR] });
+    });
+
+    if (prevModels) {
+      prevModels.addEventListener('click', () => {
+        diagRadarState.batchIndex = (diagRadarState.batchIndex - 1 + diagRadarState.batches.length) % diagRadarState.batches.length;
+        renderDiagRadar();
+      });
+    }
+
+    if (nextModels) {
+      nextModels.addEventListener('click', () => {
+        diagRadarState.batchIndex = (diagRadarState.batchIndex + 1) % diagRadarState.batches.length;
+        renderDiagRadar();
+      });
+    }
+
+    resetBtn.addEventListener('click', () => {
+      diagRadarState.rotation = 0;
+      diagRadarState.maxR = 12;
+      diagRadarState.batchIndex = 0;
+      renderDiagRadar();
+    });
+
+    rotLeft.dataset.initialized = 'true';
+  }
+
+  function initDiagTableControls() {
+    const modelSelect = document.getElementById('diag-model-filter');
+    const classSelect = document.getElementById('diag-class-filter');
+    const btnTable = document.getElementById('diag-view-btn-table');
+    const btnMatrix = document.getElementById('diag-view-btn-matrix');
+    const btnHtml = document.getElementById('diag-view-btn-html');
+
+    const tableContainer = document.getElementById('diag-plotly-table-container');
+    const matrixContainer = document.getElementById('diag-plotly-matrix-container');
+    const htmlContainer = document.getElementById('diag-html-table-container');
+
+    if (modelSelect && !modelSelect.dataset.initialized && state.data) {
+      const models = state.data.leaderboard.map(m => m.model_name);
+      modelSelect.innerHTML = `<option value="all">All 15 Models</option>` +
+        models.map(m => `<option value="${m}">${m}</option>`).join('');
+
+      modelSelect.addEventListener('change', (e) => {
+        diagTableState.modelFilter = e.target.value;
+        renderDiagPlotlyTable();
+        renderDiagTable();
+      });
+      modelSelect.dataset.initialized = 'true';
+    }
+
+    if (classSelect && !classSelect.dataset.initialized) {
+      classSelect.addEventListener('change', (e) => {
+        diagTableState.classFilter = e.target.value;
+        renderDiagPlotlyTable();
+        renderDiagTable();
+      });
+      classSelect.dataset.initialized = 'true';
+    }
+
+    function setView(view) {
+      diagTableState.view = view;
+      [btnTable, btnMatrix, btnHtml].forEach(b => {
+        if (!b) return;
+        b.className = 'px-2.5 py-1 rounded-md font-semibold text-slate-400 hover:text-slate-200 transition cursor-pointer';
+      });
+
+      if (view === 'table') {
+        if (btnTable) btnTable.className = 'px-2.5 py-1 rounded-md font-semibold bg-indigo-600 text-white transition cursor-pointer';
+        if (tableContainer) tableContainer.classList.remove('hidden');
+        if (matrixContainer) matrixContainer.classList.add('hidden');
+        if (htmlContainer) htmlContainer.classList.add('hidden');
+        renderDiagPlotlyTable();
+      } else if (view === 'matrix') {
+        if (btnMatrix) btnMatrix.className = 'px-2.5 py-1 rounded-md font-semibold bg-indigo-600 text-white transition cursor-pointer';
+        if (tableContainer) tableContainer.classList.add('hidden');
+        if (matrixContainer) matrixContainer.classList.remove('hidden');
+        if (htmlContainer) htmlContainer.classList.add('hidden');
+        renderDiagHeatmap();
+      } else {
+        if (btnHtml) btnHtml.className = 'px-2.5 py-1 rounded-md font-semibold bg-indigo-600 text-white transition cursor-pointer';
+        if (tableContainer) tableContainer.classList.add('hidden');
+        if (matrixContainer) matrixContainer.classList.add('hidden');
+        if (htmlContainer) htmlContainer.classList.remove('hidden');
+        renderDiagTable();
+      }
+    }
+
+    if (btnTable && !btnTable.dataset.initialized) {
+      btnTable.addEventListener('click', () => setView('table'));
+      btnMatrix.addEventListener('click', () => setView('matrix'));
+      btnHtml.addEventListener('click', () => setView('html'));
+      btnTable.dataset.initialized = 'true';
+    }
+  }
+
   function renderDiagnostics() {
+    initDiagRadarControls();
+    initDiagTableControls();
     renderDiagRadar();
     renderDiagBar();
+    renderDiagPlotlyTable();
+    renderDiagHeatmap();
     renderDiagTable();
   }
 
   function renderDiagRadar() {
     const el = document.getElementById('diag-radar-chart');
+    const badge = document.getElementById('diag-radar-angle-badge');
+    const batchBadge = document.getElementById('diag-radar-batch-badge');
     if (!el || !state.data) return;
 
+    if (badge) badge.textContent = `${diagRadarState.rotation}°`;
+    if (batchBadge) batchBadge.textContent = `Batch ${diagRadarState.batchIndex + 1}/${diagRadarState.batches.length}`;
+
     const cats = ['Vowels', 'Stops / Plosives', 'Fricatives', 'Affricates', 'Nasals', 'Liquids', 'Glides'];
-    const models = state.diagnostics.selectedModels;
+    const models = diagRadarState.batches[diagRadarState.batchIndex] || state.diagnostics.selectedModels;
 
     const traces = models.map((mName, i) => {
       const sub = state.data.phoneme_diagnostics.filter(r => r.model_name === mName);
@@ -1975,8 +2188,8 @@
         type: 'scatterpolar',
         r: rVals,
         theta: [...cats, cats[0]],
-        name: mName,
-        line: { color: color, width: 2 },
+        name: `[${m ? m.system_id : '—'}] ${mName}`,
+        line: { color: color, width: 2.2 },
         fill: 'toself',
         fillcolor: color + '15'
       };
@@ -1986,13 +2199,13 @@
     const layout = {
       ...pTheme,
       polar: {
-        radialaxis: { visible: true, range: [0, 12], gridcolor: pTheme.xaxis.gridcolor },
-        angularaxis: { gridcolor: pTheme.xaxis.gridcolor }
+        radialaxis: { visible: true, range: [0, diagRadarState.maxR], gridcolor: pTheme.xaxis.gridcolor },
+        angularaxis: { rotation: diagRadarState.rotation, gridcolor: pTheme.xaxis.gridcolor }
       },
-      title: { text: '<b>Phoneme-Resolved Log-Spectral Distance (dB) — lower is better</b>', font: { size: 14 } },
+      title: { text: `<b>Phoneme-Resolved Log-Spectral Distance (dB) — Batch ${diagRadarState.batchIndex + 1}</b>`, font: { size: 13 } },
       margin: { l: 60, r: 60, t: 50, b: 70 },
       height: 480,
-      legend: { orientation: 'h', y: -0.15, x: 0.5, xanchor: 'center' }
+      legend: { orientation: 'h', y: -0.15, x: 0.5, xanchor: 'center', font: { size: 10 } }
     };
 
     Plotly.newPlot(el, traces, layout, { responsive: true, displayModeBar: false });
@@ -2037,18 +2250,152 @@
     Plotly.newPlot(el, traces, layout, { responsive: true, displayModeBar: false });
   }
 
+  function renderDiagPlotlyTable() {
+    const el = document.getElementById('diag-plotly-table');
+    if (!el || !state.data) return;
+
+    let data = state.data.phoneme_diagnostics || [];
+    if (diagTableState.modelFilter !== 'all') {
+      data = data.filter(r => r.model_name === diagTableState.modelFilter);
+    }
+    if (diagTableState.classFilter !== 'all') {
+      data = data.filter(r => r.phonetic_class === diagTableState.classFilter);
+    }
+
+    const isDark = state.theme === 'dark';
+
+    function getLsdCellColor(val) {
+      if (val < 4.0) return isDark ? 'rgba(16, 185, 129, 0.28)' : 'rgba(16, 185, 129, 0.2)'; // Green
+      if (val < 6.5) return isDark ? 'rgba(6, 182, 212, 0.28)' : 'rgba(6, 182, 212, 0.2)'; // Cyan
+      if (val < 8.5) return isDark ? 'rgba(245, 158, 11, 0.28)' : 'rgba(245, 158, 11, 0.2)'; // Amber
+      return isDark ? 'rgba(244, 63, 94, 0.28)' : 'rgba(244, 63, 94, 0.2)'; // Rose/Red
+    }
+
+    const colSystemId = data.map(r => r.system_id || '—');
+    const colModelName = data.map(r => r.model_name);
+    const colClass = data.map(r => r.phonetic_class);
+    const colLsd = data.map(r => r.lsd_db.toFixed(3));
+    const colF0 = data.map(r => r.f0_error_cents.toFixed(1) + ' ¢');
+    const colBoundary = data.map(r => r.boundary_error_db.toFixed(2) + ' dB');
+
+    const defaultCellBg = data.map((r, i) => {
+      const isBase = r.system_id === 'Baseline' || r.model_name.includes('Griffin-Lim');
+      if (isBase) return isDark ? 'rgba(71, 85, 105, 0.35)' : 'rgba(203, 213, 225, 0.5)';
+      return i % 2 === 0
+        ? (isDark ? 'rgba(15, 23, 42, 0.75)' : 'rgba(255, 255, 255, 0.95)')
+        : (isDark ? 'rgba(30, 41, 59, 0.55)' : 'rgba(241, 245, 249, 0.85)');
+    });
+
+    const lsdCellBg = data.map(r => getLsdCellColor(r.lsd_db));
+
+    const trace = {
+      type: 'table',
+      columnwidth: [55, 160, 120, 95, 95, 110],
+      header: {
+        values: ['<b>ID</b>', '<b>Model Name</b>', '<b>Phonetic Class</b>', '<b>LSD (dB) ↓</b>', '<b>F0 Error (¢)</b>', '<b>Boundary Error (dB)</b>'],
+        align: ['center', 'left', 'left', 'right', 'right', 'right'],
+        fill: { color: isDark ? '#1e293b' : '#e2e8f0' },
+        font: { family: 'Inter, -apple-system, sans-serif', size: 12, color: isDark ? '#f8fafc' : '#0f172a' },
+        height: 34,
+        line: { color: isDark ? '#334155' : '#cbd5e1', width: 1 }
+      },
+      cells: {
+        values: [colSystemId, colModelName, colClass, colLsd, colF0, colBoundary],
+        align: ['center', 'left', 'left', 'right', 'right', 'right'],
+        fill: {
+          color: [
+            defaultCellBg,
+            defaultCellBg,
+            defaultCellBg,
+            lsdCellBg,
+            defaultCellBg,
+            defaultCellBg
+          ]
+        },
+        font: {
+          family: 'Inter, monospace, -apple-system, sans-serif',
+          size: 11,
+          color: isDark ? '#f1f5f9' : '#1e293b'
+        },
+        height: 28,
+        line: { color: isDark ? '#1e293b' : '#e2e8f0', width: 1 }
+      }
+    };
+
+    const pTheme = getPlotlyTheme();
+    const layout = {
+      ...pTheme,
+      title: { text: `<b>Phoneme Diagnostics Interactive Table (${data.length} records)</b>`, font: { size: 13 } },
+      margin: { l: 10, r: 10, t: 36, b: 10 },
+      height: Math.min(540, Math.max(260, data.length * 28 + 90))
+    };
+
+    Plotly.newPlot(el, [trace], layout, { responsive: true, displayModeBar: false });
+  }
+
+  function renderDiagHeatmap() {
+    const el = document.getElementById('diag-plotly-heatmap');
+    if (!el || !state.data) return;
+
+    const cats = ['Vowels', 'Stops / Plosives', 'Fricatives', 'Affricates', 'Nasals', 'Liquids', 'Glides'];
+    const models = state.data.leaderboard.map(m => m.model_name);
+
+    const zValues = models.map(mName => {
+      const sub = state.data.phoneme_diagnostics.filter(r => r.model_name === mName);
+      const valMap = {};
+      sub.forEach(r => { valMap[r.phonetic_class] = r.lsd_db; });
+      return cats.map(c => (valMap[c] !== undefined ? valMap[c] : null));
+    });
+
+    const isDark = state.theme === 'dark';
+    const trace = {
+      z: zValues,
+      x: cats,
+      y: models,
+      type: 'heatmap',
+      colorscale: [
+        [0.0, '#10B981'],
+        [0.35, '#06B6D4'],
+        [0.65, '#F59E0B'],
+        [1.0, '#EF4444']
+      ],
+      colorbar: { title: 'LSD (dB) ↓', titleside: 'right' },
+      hoverongaps: false
+    };
+
+    const pTheme = getPlotlyTheme();
+    const layout = {
+      ...pTheme,
+      title: { text: '<b>Phoneme-Resolved Log-Spectral Distance Matrix (dB)</b>', font: { size: 13 } },
+      margin: { l: 160, r: 50, t: 40, b: 60 },
+      height: 480,
+      xaxis: { title: 'Phonetic Class', ...pTheme.xaxis },
+      yaxis: { title: 'Model', autorange: 'reversed', ...pTheme.yaxis }
+    };
+
+    Plotly.newPlot(el, [trace], layout, { responsive: true, displayModeBar: false });
+  }
+
   function renderDiagTable() {
     const tbody = document.getElementById('diag-table-body');
     if (!tbody || !state.data) return;
 
-    tbody.innerHTML = state.data.phoneme_diagnostics.map(r => {
+    let data = state.data.phoneme_diagnostics || [];
+    if (diagTableState.modelFilter !== 'all') {
+      data = data.filter(r => r.model_name === diagTableState.modelFilter);
+    }
+    if (diagTableState.classFilter !== 'all') {
+      data = data.filter(r => r.phonetic_class === diagTableState.classFilter);
+    }
+
+    tbody.innerHTML = data.map(r => {
       const isBase = r.system_id === 'Baseline' || r.model_name.includes('Griffin-Lim');
       const rowStyle = isBase ? 'style="background-color: rgba(148, 163, 184, 0.25);"' : '';
       return `
         <tr class="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50" ${rowStyle}>
           <td class="p-3 font-mono font-bold text-xs"><span class="px-1.5 py-0.5 rounded text-[11px] ${isBase ? 'bg-slate-700 text-slate-200 border border-slate-600' : 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50'}">${r.system_id || '—'}</span></td>
           <td class="p-3 font-semibold text-xs">${r.model_name}</td>
-          <td class="p-3 text-xs text-indigo-400">${r.phonetic_class}</td>
+          <td class="p-3 text-xs text-indigo-400 font-semibold">${r.phonetic_class}</td>
           <td class="p-3 font-mono text-xs font-bold">${r.lsd_db.toFixed(3)}</td>
           <td class="p-3 font-mono text-xs">${r.f0_error_cents.toFixed(1)}</td>
           <td class="p-3 font-mono text-xs">${r.boundary_error_db.toFixed(2)}</td>

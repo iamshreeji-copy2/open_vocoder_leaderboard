@@ -440,7 +440,18 @@
               <table id="compare-matrix-table" class="w-full text-left"></table>
             </div>
           </div>
-          <div class="lg:col-span-5 bg-slate-950 border border-slate-800 rounded-xl p-4 flex items-center justify-center">
+          <div class="lg:col-span-5 bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col justify-start">
+            <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2 pb-2 border-b border-slate-800/80 w-full text-xs">
+              <div class="flex items-center gap-1">
+                <span class="text-[11px] font-bold uppercase text-indigo-400 mr-1">Nav:</span>
+                <button id="compare-radar-rot-left" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition cursor-pointer" title="Rotate Counter-Clockwise (45°)">◀ Left</button>
+                <button id="compare-radar-rot-right" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition cursor-pointer" title="Rotate Clockwise (45°)">Right ▶</button>
+                <button id="compare-radar-zoom-in" class="px-1.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition cursor-pointer" title="Zoom In Radial Axis">🔍+</button>
+                <button id="compare-radar-zoom-out" class="px-1.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition cursor-pointer" title="Zoom Out Radial Axis">🔍-</button>
+                <button id="compare-radar-reset" class="px-2 py-1 rounded bg-indigo-900/60 hover:bg-indigo-800/80 text-indigo-200 text-xs font-bold border border-indigo-700/60 transition cursor-pointer" title="Reset View to Default">↺ Reset</button>
+              </div>
+              <span id="compare-radar-badge" class="text-[11px] font-mono text-slate-400">0°</span>
+            </div>
             <div id="compare-radar" class="w-full"></div>
           </div>
         </div>
@@ -605,6 +616,27 @@
 
         <div id="efficiency-bar-chart" class="w-full"></div>
 
+        <h3 class="text-sm font-bold text-slate-100 mt-8 mb-3">Computational Profile</h3>
+        <div class="overflow-x-auto border border-slate-800 rounded-xl">
+          <table class="prism-table w-full">
+            <thead class="bg-slate-800">
+              <tr>
+                <th class="p-3">ID</th>
+                <th class="p-3">Model</th>
+                <th class="p-3">Architecture</th>
+                <th class="p-3">RTF ↓</th>
+                <th class="p-3">xRT ↑</th>
+                <th class="p-3">Peak VRAM ↓</th>
+                <th class="p-3">Params (M)</th>
+                <th class="p-3">Edge Ready</th>
+                <th class="p-3">Code OS</th>
+                <th class="p-3">Ckpt OS</th>
+              </tr>
+            </thead>
+            <tbody id="efficiency-table-body"></tbody>
+          </table>
+        </div>
+
       </div>
     </section>
 
@@ -675,7 +707,24 @@
         </p>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col justify-start">
+            <!-- Radar Navigation Toolbar -->
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-800/80 w-full text-xs">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-[11px] font-bold uppercase text-indigo-400 mr-1">Rotate / Zoom:</span>
+                <button id="diag-radar-rot-left" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition cursor-pointer" title="Rotate Radar Counter-Clockwise (45°)">◀ Rotate Left</button>
+                <button id="diag-radar-rot-right" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition cursor-pointer" title="Rotate Radar Clockwise (45°)">Rotate Right ▶</button>
+                <button id="diag-radar-zoom-in" class="px-1.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition cursor-pointer" title="Zoom In Radial Axis">🔍+ In</button>
+                <button id="diag-radar-zoom-out" class="px-1.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition cursor-pointer" title="Zoom Out Radial Axis">🔍- Out</button>
+                <button id="diag-radar-reset" class="px-2.5 py-1 rounded bg-indigo-900/60 hover:bg-indigo-800/80 text-indigo-200 text-xs font-bold border border-indigo-700/60 transition cursor-pointer" title="Reset View to Default">↺ Reset</button>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button id="diag-radar-prev-models" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition cursor-pointer" title="Previous 5 Models">◀ Prev Models</button>
+                <span id="diag-radar-batch-badge" class="text-[11px] font-mono text-slate-400">Batch 1/3</span>
+                <button id="diag-radar-next-models" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition cursor-pointer" title="Next 5 Models">Next Models ▶</button>
+                <span id="diag-radar-angle-badge" class="text-[11px] font-mono text-indigo-400 font-bold ml-1">0°</span>
+              </div>
+            </div>
             <div id="diag-radar-chart" class="w-full"></div>
           </div>
           <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
@@ -683,21 +732,72 @@
           </div>
         </div>
 
-        <h3 class="text-sm font-bold text-slate-100 mt-8 mb-3">Full Phoneme Diagnostics Data Table</h3>
-        <div class="overflow-x-auto border border-slate-800 rounded-xl max-h-96">
-          <table class="prism-table w-full">
-            <thead class="bg-slate-800 sticky top-0">
-              <tr>
-                <th class="p-3">ID</th>
-                <th class="p-3">Model</th>
-                <th class="p-3">Phonetic Class</th>
-                <th class="p-3">LSD (dB) ↓</th>
-                <th class="p-3">F0 Error (¢)</th>
-                <th class="p-3">Boundary Error (dB)</th>
-              </tr>
-            </thead>
-            <tbody id="diag-table-body"></tbody>
-          </table>
+        <!-- Montreal Forced Aligner Phoneme Diagnostics Table with Plotly -->
+        <div class="mt-8">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+            <div>
+              <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <span>🔬 Montreal Forced Aligner Phoneme Diagnostics</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-900/70 text-indigo-300 border border-indigo-700/50">Plotly Powered</span>
+              </h3>
+              <p class="text-xs text-slate-400">Decomposes fine-grained reconstruction quality across 7 phonetic classes for all 15 architectures</p>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="flex items-center gap-1.5">
+                <label for="diag-model-filter" class="text-xs font-semibold text-slate-400">Model:</label>
+                <select id="diag-model-filter" class="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 font-semibold focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                  <option value="all">All 15 Models</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <label for="diag-class-filter" class="text-xs font-semibold text-slate-400">Class:</label>
+                <select id="diag-class-filter" class="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 font-semibold focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                  <option value="all">All 7 Classes</option>
+                  <option value="Vowels">Vowels</option>
+                  <option value="Stops / Plosives">Stops / Plosives</option>
+                  <option value="Fricatives">Fricatives</option>
+                  <option value="Affricates">Affricates</option>
+                  <option value="Nasals">Nasals</option>
+                  <option value="Liquids">Liquids</option>
+                  <option value="Glides">Glides</option>
+                </select>
+              </div>
+
+              <div class="inline-flex rounded-lg border border-slate-800 bg-slate-950 p-0.5 text-xs">
+                <button id="diag-view-btn-table" class="px-2.5 py-1 rounded-md font-semibold bg-indigo-600 text-white transition cursor-pointer">📊 Plotly Table</button>
+                <button id="diag-view-btn-matrix" class="px-2.5 py-1 rounded-md font-semibold text-slate-400 hover:text-slate-200 transition cursor-pointer">🗺️ Heatmap Matrix</button>
+                <button id="diag-view-btn-html" class="px-2.5 py-1 rounded-md font-semibold text-slate-400 hover:text-slate-200 transition cursor-pointer">📄 Standard Table</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Plotly Table View -->
+          <div id="diag-plotly-table-container" class="bg-slate-950 border border-slate-800 rounded-xl p-3">
+            <div id="diag-plotly-table" class="w-full"></div>
+          </div>
+
+          <!-- Plotly Heatmap Matrix View -->
+          <div id="diag-plotly-matrix-container" class="bg-slate-950 border border-slate-800 rounded-xl p-4 hidden">
+            <div id="diag-plotly-heatmap" class="w-full"></div>
+          </div>
+
+          <!-- Standard HTML Table View -->
+          <div id="diag-html-table-container" class="overflow-x-auto border border-slate-800 rounded-xl max-h-96 hidden">
+            <table class="prism-table w-full">
+              <thead class="bg-slate-800 sticky top-0">
+                <tr>
+                  <th class="p-3">ID</th>
+                  <th class="p-3">Model</th>
+                  <th class="p-3">Phonetic Class</th>
+                  <th class="p-3">LSD (dB) ↓</th>
+                  <th class="p-3">F0 Error (¢)</th>
+                  <th class="p-3">Boundary Error (dB)</th>
+                </tr>
+              </thead>
+              <tbody id="diag-table-body"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
