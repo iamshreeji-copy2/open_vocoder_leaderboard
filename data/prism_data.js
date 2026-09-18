@@ -19,61 +19,61 @@ window.PRISM_DATA = {
   ],
   "model_arch_tags": {
     "hifigan_universal_v1": [
-      "Non-Autoregressive",
-      "GAN-based"
+      "GAN-based",
+      "Non-Autoregressive"
     ],
     "bigvgan_base_24khz_100band": [
-      "Non-Autoregressive",
-      "GAN-based"
+      "GAN-based",
+      "Non-Autoregressive"
     ],
     "bigvgan_v2_24khz_100band_256x": [
-      "Non-Autoregressive",
-      "GAN-based"
+      "GAN-based",
+      "Non-Autoregressive"
     ],
     "freev": [
-      "Non-Autoregressive",
-      "GAN-based"
+      "GAN-based",
+      "Non-Autoregressive"
     ],
     "rndvoc": [
-      "Non-Autoregressive",
-      "GAN-based"
+      "GAN-based",
+      "Non-Autoregressive"
     ],
     "vocos_mel_24khz": [
-      "Non-Autoregressive",
-      "Fourier / Transformer-based"
+      "Fourier / Transformer-based",
+      "Non-Autoregressive"
     ],
     "comvo_base": [
-      "Non-Autoregressive",
-      "Fourier / Transformer-based"
+      "Fourier / Transformer-based",
+      "Non-Autoregressive"
     ],
     "comvo_large": [
-      "Non-Autoregressive",
-      "Fourier / Transformer-based"
+      "Fourier / Transformer-based",
+      "Non-Autoregressive"
     ],
     "rfwave_libritts_24k": [
-      "Non-Autoregressive",
-      "Flow-based"
+      "Flow-based",
+      "Non-Autoregressive"
     ],
     "wavefm": [
-      "Non-Autoregressive",
-      "Flow-based"
+      "Flow-based",
+      "Non-Autoregressive"
     ],
     "flow2gan": [
-      "Non-Autoregressive",
       "Flow-based",
-      "GAN-based"
+      "GAN-based",
+      "Non-Autoregressive"
     ],
     "bridgevoc": [
-      "Non-Autoregressive",
-      "Diffusion-based"
+      "Diffusion-based",
+      "Non-Autoregressive"
     ],
     "periodwave_turbo": [
-      "Non-Autoregressive",
-      "Diffusion-based"
+      "Diffusion-based",
+      "Non-Autoregressive"
     ],
     "periodwave_24k": [
-      "Non-Autoregressive",
-      "Diffusion-based"
+      "Diffusion-based",
+      "Non-Autoregressive"
     ],
     "griffin_lim": [
       "Algorithmic DSP"
@@ -191,80 +191,80 @@ window.PRISM_DATA = {
     }
   },
   "model_links": {
-    "hifigan_universal_v1": {
-      "checkpoint": "https://github.com/jik876/hifi-gan",
-      "paper": "https://arxiv.org/abs/2010.05646",
-      "github": "https://github.com/jik876/hifi-gan"
+    "griffin_lim": {
+      "checkpoint": "N/A (Algorithmic — no learnable parameters)",
+      "paper": "https://ieeexplore.ieee.org/document/1172092",
+      "github": "https://github.com/librosa/librosa"
     },
-    "bigvgan_base_24khz_100band": {
-      "checkpoint": "https://huggingface.co/nvidia/bigvgan_base_24khz_100band",
-      "paper": "https://arxiv.org/abs/2206.04658",
-      "github": "https://github.com/NVIDIA/BigVGAN"
+    "rndvoc": {
+      "checkpoint": "https://huggingface.co/AndongLi/RNDVoC/blob/main/best_g_libritts",
+      "paper": "https://arxiv.org/abs/2406.01257",
+      "github": "https://github.com/Andong-Li-speech/RNDVoC"
+    },
+    "flow2gan": {
+      "checkpoint": "https://huggingface.co/k2-fsa/Flow2GAN",
+      "paper": "https://arxiv.org/abs/2405.08819",
+      "github": "https://github.com/k2-fsa/Flow2GAN"
+    },
+    "vocos_mel_24khz": {
+      "checkpoint": "https://huggingface.co/charactr/vocos-mel-24khz",
+      "paper": "https://arxiv.org/abs/2306.00814",
+      "github": "https://github.com/gemelo-ai/vocos"
+    },
+    "bridgevoc": {
+      "checkpoint": "https://huggingface.co/AndongLi/BridgeVoC/blob/main/ckpt/Libritts/pretrained/bridgevoc_bcd_libritts_24k_fmax12k_nmel100.pt",
+      "paper": "https://arxiv.org/abs/2406.01258",
+      "github": "https://github.com/Andong-Li-speech/BridgeVoC"
+    },
+    "periodwave_turbo": {
+      "checkpoint": "https://drive.google.com/drive/folders/1uUlfiSHFL9xNAZKp6-a584cW9nG7wDK7",
+      "paper": "https://arxiv.org/abs/2408.06945",
+      "github": "https://github.com/sh-lee-prml/PeriodWave"
+    },
+    "comvo_base": {
+      "checkpoint": "https://huggingface.co/hsoh/ComVo-base",
+      "paper": "https://arxiv.org/abs/2406.19794",
+      "github": "https://github.com/hs-oh-prml/ComVo"
     },
     "bigvgan_v2_24khz_100band_256x": {
       "checkpoint": "https://huggingface.co/nvidia/bigvgan_v2_24khz_100band_256x",
       "paper": "https://arxiv.org/abs/2206.04658",
       "github": "https://github.com/NVIDIA/BigVGAN"
     },
-    "vocos_mel_24khz": {
-      "checkpoint": "https://huggingface.co/charactr/vocos-mel-24khz",
-      "paper": "https://arxiv.org/abs/2306.00814",
-      "github": "https://github.com/hubert-siuzdak/vocos"
-    },
-    "rfwave_libritts_24k": {
-      "checkpoint": "https://github.com/RF-Wave/RFWave",
-      "paper": "https://arxiv.org/abs/2406.18567",
-      "github": "https://github.com/RF-Wave/RFWave"
-    },
-    "griffin_lim": {
-      "checkpoint": "N/A (Algorithmic — no learnable parameters)",
-      "paper": "https://ieeexplore.ieee.org/document/1172092",
-      "github": "https://github.com/librosa/librosa"
-    },
-    "flow2gan": {
-      "checkpoint": "https://huggingface.co/k2-fsa/Flow2GAN",
-      "paper": "https://arxiv.org/abs/2405.08819",
-      "github": "https://github.com/k2-fsa/lhotse"
-    },
-    "comvo_base": {
-      "checkpoint": "https://huggingface.co/hsoh/ComVo-base",
-      "paper": "https://arxiv.org/abs/2406.19794",
-      "github": "https://github.com/hsoh0306/ComVo"
+    "bigvgan_base_24khz_100band": {
+      "checkpoint": "https://huggingface.co/nvidia/bigvgan_base_24khz_100band",
+      "paper": "https://arxiv.org/abs/2206.04658",
+      "github": "https://github.com/NVIDIA/BigVGAN"
     },
     "comvo_large": {
       "checkpoint": "https://huggingface.co/hsoh/ComVo-large",
       "paper": "https://arxiv.org/abs/2406.19794",
-      "github": "https://github.com/hsoh0306/ComVo"
+      "github": "https://github.com/hs-oh-prml/ComVo"
     },
     "wavefm": {
-      "checkpoint": "https://github.com/lucas-ma/WaveFM",
+      "checkpoint": "https://github.com/luotianze666/WaveFM/blob/main/checkpoints/Distilled_WaveFM_25000",
       "paper": "https://arxiv.org/abs/2406.00287",
-      "github": "https://github.com/lucas-ma/WaveFM"
+      "github": "https://github.com/luotianze666/WaveFM"
     },
-    "rndvoc": {
-      "checkpoint": "https://huggingface.co/AndongLi/RNDVoC",
-      "paper": "https://arxiv.org/abs/2406.01257",
-      "github": "https://github.com/AndongLi/RNDVoC"
-    },
-    "bridgevoc": {
-      "checkpoint": "https://huggingface.co/AndongLi/BridgeVoC",
-      "paper": "https://arxiv.org/abs/2406.01258",
-      "github": "https://github.com/AndongLi/BridgeVoC"
+    "hifigan_universal_v1": {
+      "checkpoint": "https://drive.google.com/drive/folders/1-eEYTB5Av9jNql0WGBlRoi-WH2J7bp5Y",
+      "paper": "https://arxiv.org/abs/2010.05646",
+      "github": "https://github.com/jik876/hifi-gan"
     },
     "freev": {
       "checkpoint": "https://huggingface.co/Bakerbunker/FreeV_Model_Logs",
       "paper": "https://arxiv.org/abs/2405.15842",
-      "github": "https://github.com/bakerbunker/FreeV"
+      "github": "https://github.com/BakerBunker/FreeV"
     },
-    "periodwave_turbo": {
-      "checkpoint": "https://github.com/kaist-dsp/PeriodWave",
-      "paper": "https://arxiv.org/abs/2408.06945",
-      "github": "https://github.com/kaist-dsp/PeriodWave"
+    "rfwave_libritts_24k": {
+      "checkpoint": "https://drive.google.com/file/d/1IQNXAAVRTtr9P8Gc-CoPeRIJ_l_O4y38/view",
+      "paper": "https://arxiv.org/abs/2406.18567",
+      "github": "https://github.com/bfs18/rfwave"
     },
     "periodwave_24k": {
-      "checkpoint": "https://github.com/kaist-dsp/PeriodWave",
+      "checkpoint": "https://drive.google.com/drive/folders/1uUlfiSHFL9xNAZKp6-a584cW9nG7wDK7",
       "paper": "https://arxiv.org/abs/2408.06945",
-      "github": "https://github.com/kaist-dsp/PeriodWave"
+      "github": "https://github.com/sh-lee-prml/PeriodWave"
     }
   },
   "datasets": {
@@ -553,8 +553,8 @@ window.PRISM_DATA = {
       "architecture_family": "Random Distortion GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "GAN-based"
+        "GAN-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -572,9 +572,9 @@ window.PRISM_DATA = {
       "peak_vram_mb": 570.0,
       "edge_feasible": "Yes",
       "is_pareto": true,
-      "checkpoint_url": "https://huggingface.co/AndongLi/RNDVoC",
+      "checkpoint_url": "https://huggingface.co/AndongLi/RNDVoC/blob/main/best_g_libritts",
       "paper_url": "https://arxiv.org/abs/2406.01257",
-      "github_url": "https://github.com/AndongLi/RNDVoC",
+      "github_url": "https://github.com/Andong-Li-speech/RNDVoC",
       "license": "MIT",
       "author": "CAS / Li et al.",
       "year": 2024,
@@ -622,9 +622,9 @@ window.PRISM_DATA = {
       "architecture_family": "Flow Matching + GAN",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "Non-Autoregressive",
         "Flow-based",
-        "GAN-based"
+        "GAN-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -644,7 +644,7 @@ window.PRISM_DATA = {
       "is_pareto": true,
       "checkpoint_url": "https://huggingface.co/k2-fsa/Flow2GAN",
       "paper_url": "https://arxiv.org/abs/2405.08819",
-      "github_url": "https://github.com/k2-fsa/lhotse",
+      "github_url": "https://github.com/k2-fsa/Flow2GAN",
       "license": "Apache-2.0",
       "author": "K2-FSA",
       "year": 2024,
@@ -692,8 +692,8 @@ window.PRISM_DATA = {
       "architecture_family": "Fourier / iSTFT ConvNeXt",
       "arch_category": "Fourier / Transformer-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "Fourier / Transformer-based"
+        "Fourier / Transformer-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -713,7 +713,7 @@ window.PRISM_DATA = {
       "is_pareto": true,
       "checkpoint_url": "https://huggingface.co/charactr/vocos-mel-24khz",
       "paper_url": "https://arxiv.org/abs/2306.00814",
-      "github_url": "https://github.com/hubert-siuzdak/vocos",
+      "github_url": "https://github.com/gemelo-ai/vocos",
       "license": "MIT",
       "author": "Charactr Inc.",
       "year": 2023,
@@ -761,8 +761,8 @@ window.PRISM_DATA = {
       "architecture_family": "Brownian Bridge SDE",
       "arch_category": "Diffusion-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "Diffusion-based"
+        "Diffusion-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -780,9 +780,9 @@ window.PRISM_DATA = {
       "peak_vram_mb": 474.0,
       "edge_feasible": "Yes",
       "is_pareto": false,
-      "checkpoint_url": "https://huggingface.co/AndongLi/BridgeVoC",
+      "checkpoint_url": "https://huggingface.co/AndongLi/BridgeVoC/blob/main/ckpt/Libritts/pretrained/bridgevoc_bcd_libritts_24k_fmax12k_nmel100.pt",
       "paper_url": "https://arxiv.org/abs/2406.01258",
-      "github_url": "https://github.com/AndongLi/BridgeVoC",
+      "github_url": "https://github.com/Andong-Li-speech/BridgeVoC",
       "license": "MIT",
       "author": "CAS / Li et al.",
       "year": 2024,
@@ -830,8 +830,8 @@ window.PRISM_DATA = {
       "architecture_family": "Diffusion / Turbo SDE",
       "arch_category": "Diffusion-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "Diffusion-based"
+        "Diffusion-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -849,9 +849,9 @@ window.PRISM_DATA = {
       "peak_vram_mb": 1038.0,
       "edge_feasible": "Yes",
       "is_pareto": false,
-      "checkpoint_url": "https://github.com/kaist-dsp/PeriodWave",
+      "checkpoint_url": "https://drive.google.com/drive/folders/1uUlfiSHFL9xNAZKp6-a584cW9nG7wDK7",
       "paper_url": "https://arxiv.org/abs/2408.06945",
-      "github_url": "https://github.com/kaist-dsp/PeriodWave",
+      "github_url": "https://github.com/sh-lee-prml/PeriodWave",
       "license": "MIT",
       "author": "KAIST",
       "year": 2024,
@@ -899,8 +899,8 @@ window.PRISM_DATA = {
       "architecture_family": "Complex-Valued Fourier",
       "arch_category": "Fourier / Transformer-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "Fourier / Transformer-based"
+        "Fourier / Transformer-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -920,7 +920,7 @@ window.PRISM_DATA = {
       "is_pareto": false,
       "checkpoint_url": "https://huggingface.co/hsoh/ComVo-base",
       "paper_url": "https://arxiv.org/abs/2406.19794",
-      "github_url": "https://github.com/hsoh0306/ComVo",
+      "github_url": "https://github.com/hs-oh-prml/ComVo",
       "license": "Apache-2.0",
       "author": "Seoul National Univ.",
       "year": 2024,
@@ -968,8 +968,8 @@ window.PRISM_DATA = {
       "architecture_family": "Anti-Aliased Snake GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "GAN-based"
+        "GAN-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1037,8 +1037,8 @@ window.PRISM_DATA = {
       "architecture_family": "Anti-Aliased Snake GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "GAN-based"
+        "GAN-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1106,8 +1106,8 @@ window.PRISM_DATA = {
       "architecture_family": "Complex-Valued Fourier",
       "arch_category": "Fourier / Transformer-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "Fourier / Transformer-based"
+        "Fourier / Transformer-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1127,7 +1127,7 @@ window.PRISM_DATA = {
       "is_pareto": false,
       "checkpoint_url": "https://huggingface.co/hsoh/ComVo-large",
       "paper_url": "https://arxiv.org/abs/2406.19794",
-      "github_url": "https://github.com/hsoh0306/ComVo",
+      "github_url": "https://github.com/hs-oh-prml/ComVo",
       "license": "Apache-2.0",
       "author": "Seoul National Univ.",
       "year": 2024,
@@ -1175,8 +1175,8 @@ window.PRISM_DATA = {
       "architecture_family": "Distilled Flow Matching",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "Flow-based"
+        "Flow-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1194,9 +1194,9 @@ window.PRISM_DATA = {
       "peak_vram_mb": 328.0,
       "edge_feasible": "Yes",
       "is_pareto": false,
-      "checkpoint_url": "https://github.com/lucas-ma/WaveFM",
+      "checkpoint_url": "https://github.com/luotianze666/WaveFM/blob/main/checkpoints/Distilled_WaveFM_25000",
       "paper_url": "https://arxiv.org/abs/2406.00287",
-      "github_url": "https://github.com/lucas-ma/WaveFM",
+      "github_url": "https://github.com/luotianze666/WaveFM",
       "license": "MIT",
       "author": "Ma et al.",
       "year": 2024,
@@ -1244,8 +1244,8 @@ window.PRISM_DATA = {
       "architecture_family": "Time-domain MRF-GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "GAN-based"
+        "GAN-based",
+        "Non-Autoregressive"
       ],
       "track": "22.05kHz Legacy Track",
       "sampling_rate_hz": 22050,
@@ -1263,7 +1263,7 @@ window.PRISM_DATA = {
       "peak_vram_mb": 500.0,
       "edge_feasible": "Yes",
       "is_pareto": false,
-      "checkpoint_url": "https://github.com/jik876/hifi-gan",
+      "checkpoint_url": "https://drive.google.com/drive/folders/1-eEYTB5Av9jNql0WGBlRoi-WH2J7bp5Y",
       "paper_url": "https://arxiv.org/abs/2010.05646",
       "github_url": "https://github.com/jik876/hifi-gan",
       "license": "MIT",
@@ -1313,8 +1313,8 @@ window.PRISM_DATA = {
       "architecture_family": "Pseudo-Inverse Mel GAN",
       "arch_category": "GAN-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "GAN-based"
+        "GAN-based",
+        "Non-Autoregressive"
       ],
       "track": "22.05kHz Legacy Track",
       "sampling_rate_hz": 22050,
@@ -1334,7 +1334,7 @@ window.PRISM_DATA = {
       "is_pareto": false,
       "checkpoint_url": "https://huggingface.co/Bakerbunker/FreeV_Model_Logs",
       "paper_url": "https://arxiv.org/abs/2405.15842",
-      "github_url": "https://github.com/bakerbunker/FreeV",
+      "github_url": "https://github.com/BakerBunker/FreeV",
       "license": "Apache-2.0",
       "author": "Baker et al.",
       "year": 2024,
@@ -1382,8 +1382,8 @@ window.PRISM_DATA = {
       "architecture_family": "Rectified Flow Matching",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "Flow-based"
+        "Flow-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1401,9 +1401,9 @@ window.PRISM_DATA = {
       "peak_vram_mb": 1408.0,
       "edge_feasible": "Yes",
       "is_pareto": false,
-      "checkpoint_url": "https://github.com/RF-Wave/RFWave",
+      "checkpoint_url": "https://drive.google.com/file/d/1IQNXAAVRTtr9P8Gc-CoPeRIJ_l_O4y38/view",
       "paper_url": "https://arxiv.org/abs/2406.18567",
-      "github_url": "https://github.com/RF-Wave/RFWave",
+      "github_url": "https://github.com/bfs18/rfwave",
       "license": "MIT",
       "author": "ByteDance / SJTU",
       "year": 2024,
@@ -1451,8 +1451,8 @@ window.PRISM_DATA = {
       "architecture_family": "Diffusion / Full SDE",
       "arch_category": "Diffusion-based",
       "arch_tags": [
-        "Non-Autoregressive",
-        "Diffusion-based"
+        "Diffusion-based",
+        "Non-Autoregressive"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
@@ -1470,9 +1470,9 @@ window.PRISM_DATA = {
       "peak_vram_mb": 1052.0,
       "edge_feasible": "No",
       "is_pareto": false,
-      "checkpoint_url": "https://github.com/kaist-dsp/PeriodWave",
+      "checkpoint_url": "https://drive.google.com/drive/folders/1uUlfiSHFL9xNAZKp6-a584cW9nG7wDK7",
       "paper_url": "https://arxiv.org/abs/2408.06945",
-      "github_url": "https://github.com/kaist-dsp/PeriodWave",
+      "github_url": "https://github.com/sh-lee-prml/PeriodWave",
       "license": "MIT",
       "author": "KAIST",
       "year": 2024,

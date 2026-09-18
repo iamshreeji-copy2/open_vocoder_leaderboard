@@ -268,8 +268,6 @@
     renderArchitectures();
     renderDiagnostics();
     renderPareto();
-    renderModelCard();
-    renderMethodology();
     renderChangelog();
   }
 
@@ -931,6 +929,7 @@
       { id: 'Free_ST', label: 'Free_ST', rawLabel: 'Free_ST PESQ', group: 'robustness', sortKey: 'Free_ST', tip: 'Real-world Mobile Noisy PESQ' },
       { id: 'code', label: 'Code', rawLabel: 'Code URL', group: 'info', tip: 'Public Code Availability' },
       { id: 'checkpoint', label: 'Checkpoint', rawLabel: 'Checkpoint URL', group: 'info', tip: 'Pretrained Checkpoint Availability' },
+      { id: 'paper', label: 'Paper', rawLabel: 'Paper URL', group: 'info', tip: 'Scientific Research Paper' },
       { id: 'is_pareto', label: 'Pareto ⭐', rawLabel: 'Pareto Optimal', group: 'info', sortKey: 'is_pareto', tip: 'Non-dominated Pareto Optimal Checkpoint' },
       { id: 'license', label: 'License', rawLabel: 'License', group: 'info', sortKey: 'license', tip: 'Open License' },
       { id: 'architecture_family', label: 'Architecture', rawLabel: 'Architecture Family', group: 'info', sortKey: 'architecture_family', tip: 'Architecture Family' },
@@ -1068,6 +1067,14 @@
                       : '<span class="text-xs text-slate-400 italic">Algorithmic</span>'}
                   </td>
                 `;
+              case 'paper':
+                return `
+                  <td>
+                    ${m.paper_url
+                      ? `<a href="${m.paper_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-paper text-[11px] inline-flex items-center gap-1">📄 Paper</a>`
+                      : '<span class="text-xs text-slate-400">—</span>'}
+                  </td>
+                `;
               case 'is_pareto':
                 return `<td class="text-center">${m.is_pareto ? '⭐' : '—'}</td>`;
               case 'license':
@@ -1098,11 +1105,11 @@
   };
 
   window.viewSpecificModel = function (modelName) {
-    state.modelCard.selectedModel = modelName;
-    const dd = document.getElementById('model-card-select');
-    if (dd) dd.value = modelName;
-    renderModelCard();
-    switchTab('models');
+    if (state.audio) {
+      state.audio.modelA = modelName;
+      renderAudioExplorer();
+    }
+    switchTab('audio-explorer');
   };
 
   function exportLeaderboardCSV() {
@@ -1195,6 +1202,9 @@
             break;
           case 'checkpoint':
             val = m.checkpoint_url || '';
+            break;
+          case 'paper':
+            val = m.paper_url || '';
             break;
           case 'is_pareto':
             val = m.is_pareto ? 'Yes' : 'No';
@@ -2052,6 +2062,7 @@
           <td class="p-3 text-xs">${m.edge_feasible === 'Yes' ? '✅ Ready' : '❌ High-VRAM'}</td>
           <td class="p-3 text-xs">${m.github_url ? `<a href="${m.github_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gh text-[10px] inline-flex items-center gap-1">💻 Code</a>` : '—'}</td>
           <td class="p-3 text-xs">${m.checkpoint_url && !m.checkpoint_url.startsWith('N/A') ? `<a href="${m.checkpoint_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-ckpt text-[10px] inline-flex items-center gap-1">📦 Checkpoint</a>` : (isBase ? '<span class="text-[10px] text-slate-400 italic">Algorithmic</span>' : '—')}</td>
+          <td class="p-3 text-xs">${m.paper_url ? `<a href="${m.paper_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-paper text-[10px] inline-flex items-center gap-1">📄 Paper</a>` : '—'}</td>
         </tr>
       `;
     }).join('');
@@ -2110,7 +2121,7 @@
     }
 
     if (models.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="14" class="p-6 text-center text-slate-400">No models found for category "${selectedCat}"</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="15" class="p-6 text-center text-slate-400">No models found for category "${selectedCat}"</td></tr>`;
       return;
     }
 
@@ -2133,6 +2144,13 @@
           <td class="p-3 font-mono text-xs">${m.speedup_x.toFixed(0)}×</td>
           <td class="p-3 font-mono text-xs">${m.peak_vram_mb.toFixed(0)}</td>
           <td class="p-3 font-mono text-xs font-bold text-indigo-500">${m.overall_score.toFixed(1)}</td>
+          <td class="p-3 text-xs">
+            <div class="flex items-center gap-1">
+              ${m.github_url ? `<a href="${m.github_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gh text-[10px] inline-flex items-center gap-0.5 px-1.5 py-0.5">💻 Code</a>` : ''}
+              ${m.checkpoint_url && !m.checkpoint_url.startsWith('N/A') ? `<a href="${m.checkpoint_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-ckpt text-[10px] inline-flex items-center gap-0.5 px-1.5 py-0.5">📦 Ckpt</a>` : ''}
+              ${m.paper_url ? `<a href="${m.paper_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-paper text-[10px] inline-flex items-center gap-0.5 px-1.5 py-0.5">📄 Paper</a>` : ''}
+            </div>
+          </td>
         </tr>
       `;
     }).join('');
@@ -2649,6 +2667,12 @@
     const xCol = state.pareto.xCol;
     const yCol = state.pareto.yCol;
 
+    const isYOverall = yCol === 'overall_score';
+    const yDisplayName = isYOverall ? 'PRISM-V Score' : yCol.toUpperCase();
+    const yRainbowHtml = isYOverall
+      ? '<span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V Score'
+      : yCol.toUpperCase();
+
     const families = [...new Set(state.data.leaderboard.map(m => m.architecture_family))].sort();
 
     const traces = families.map(fam => {
@@ -2671,7 +2695,7 @@
         hoverinfo: 'text',
         hovertext: sub.map(m => `
           <b>[${m.system_id || '—'}] ${m.model_name}</b><br>
-          ${xCol.toUpperCase()}: ${m[xCol]} · ${yCol.toUpperCase()}: ${m[yCol]}<br>
+          ${xCol.toUpperCase()}: ${m[xCol]} · ${yDisplayName}: ${m[yCol]}<br>
           Speedup: ${m.speedup_x}× · VRAM: ${m.peak_vram_mb} MB
         `)
       };
@@ -2695,13 +2719,13 @@
     const pTheme = getPlotlyTheme();
     const layout = {
       ...pTheme,
-      title: { text: `<b>${yCol.toUpperCase()} vs ${xCol.toUpperCase()} — Multi-Objective Tradeoff</b>`, font: { size: 14 } },
+      title: { text: `<b>${yRainbowHtml} vs ${xCol.toUpperCase()} — Multi-Objective Tradeoff</b>`, font: { size: 14 } },
       xaxis: {
         title: xCol.toUpperCase(),
         type: state.pareto.logX && ['rtf', 'params_m'].includes(xCol) ? 'log' : 'linear',
         ...pTheme.xaxis
       },
-      yaxis: { title: yCol.toUpperCase(), ...pTheme.yaxis },
+      yaxis: { title: yRainbowHtml, ...pTheme.yaxis },
       margin: { l: 60, r: 40, t: 50, b: 120 },
       height: 540,
       legend: { orientation: 'h', y: -0.28, x: 0.5, xanchor: 'center', font: { size: 10 } }

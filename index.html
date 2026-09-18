@@ -107,8 +107,6 @@
         <button class="nav-tab-btn" data-tab="architectures" onclick="switchTab('architectures')">🧠 Architectures</button>
         <button class="nav-tab-btn" data-tab="diagnostics" onclick="switchTab('diagnostics')">🔬 Diagnostics</button>
         <button class="nav-tab-btn" data-tab="pareto" onclick="switchTab('pareto')">📈 Pareto Frontier</button>
-        <button class="nav-tab-btn" data-tab="models" onclick="switchTab('models')">📦 Models</button>
-        <button class="nav-tab-btn" data-tab="methodology" onclick="switchTab('methodology')">🧪 Methodology</button>
         <button class="nav-tab-btn" data-tab="submit" onclick="switchTab('submit')">➕ Submit Model</button>
         <button class="nav-tab-btn" data-tab="changelog" onclick="switchTab('changelog')">📜 Changelog</button>
       </div>
@@ -677,8 +675,9 @@
                 <th class="p-3">Peak VRAM ↓</th>
                 <th class="p-3">Params (M)</th>
                 <th class="p-3">Edge Ready</th>
-                <th class="p-3">Code OS</th>
-                <th class="p-3">Ckpt OS</th>
+                <th class="p-3">Code</th>
+                <th class="p-3">Checkpoint</th>
+                <th class="p-3">Paper</th>
               </tr>
             </thead>
             <tbody id="efficiency-table-body"></tbody>
@@ -734,6 +733,7 @@
                 <th class="p-3">xRT</th>
                 <th class="p-3">VRAM</th>
                 <th class="p-3"><span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Score</th>
+                <th class="p-3">Resources</th>
               </tr>
             </thead>
             <tbody id="arch-table-body"></tbody>
@@ -887,148 +887,6 @@
 
         <div id="pareto-scatter-chart" class="w-full"></div>
 
-        <!-- Deployment recommendations table -->
-        <h3 class="text-sm font-bold text-slate-100 mt-8 mb-3">Deployment Recommendations Guide</h3>
-        <div class="overflow-x-auto border border-slate-800 rounded-xl">
-          <table class="prism-table w-full">
-            <thead class="bg-slate-800">
-              <tr>
-                <th class="p-3">🖥️ Deployment Target</th>
-                <th class="p-3">✅ Recommended Checkpoints</th>
-                <th class="p-3">💡 Engineering Rationale</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="p-3 font-bold text-indigo-400">Edge / Mobile / Embedded</td>
-                <td class="p-3 font-semibold"><span class="text-indigo-400 font-mono">[M3]</span> Vocos, <span class="text-indigo-400 font-mono">[M12]</span> FreeV, <span class="text-indigo-400 font-mono">[M6]</span> ComVo-Base</td>
-                <td class="p-3 text-slate-300">RTF &lt; 0.016 (63×+ real-time), VRAM &lt; 480 MB. Fits smartphone GPU &amp; NPU edge envelopes.</td>
-              </tr>
-              <tr>
-                <td class="p-3 font-bold text-cyan-400">Mid-Range GPU Server</td>
-                <td class="p-3 font-semibold"><span class="text-cyan-400 font-mono">[M2]</span> Flow2GAN, <span class="text-cyan-400 font-mono">[M1]</span> RNDVoC, <span class="text-cyan-400 font-mono">[M9]</span> ComVo-Large</td>
-                <td class="p-3 text-slate-300">SOTA fidelity (PESQ &gt; 4.2) with 8–46× real-time throughput. Ideal for interactive speech streaming APIs.</td>
-              </tr>
-              <tr>
-                <td class="p-3 font-bold text-amber-400">High-End Cloud / Studio Offline</td>
-                <td class="p-3 font-semibold"><span class="text-amber-400 font-mono">[M7]</span> BigVGAN-v2 (112M), <span class="text-amber-400 font-mono">[M5]</span> PeriodWave-Turbo</td>
-                <td class="p-3 text-slate-300">Uncompromised acoustic reconstruction quality (PESQ ~4.4), anti-aliased activations, and rich harmonic details.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    <!-- TAB 10: MODELS (Model Registry)                                         -->
-    <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    <section id="tab-panel-models" class="tab-panel hidden space-y-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-        <h2 class="text-xl font-bold text-slate-100 mb-1">📦 Model Registry, Provenance &amp; Checkpoint Cards</h2>
-        <p class="text-xs text-slate-400 mb-4">
-          Select a model to view full architectural details, official code links, checkpoint sources, and per-corpus breakdown.
-        </p>
-        <div class="mb-6 max-w-sm">
-          <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">Select Model:</label>
-          <select id="model-card-select" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-xs sm:text-sm text-slate-100 font-bold"></select>
-        </div>
-        <div id="model-card-details-container"></div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    <!-- TAB 11: METHODOLOGY                                                     -->
-    <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    <section id="tab-panel-methodology" class="tab-panel hidden space-y-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-8">
-        <div>
-          <h2 class="text-2xl font-bold text-slate-100 mb-2">🧪 Benchmark Protocol &amp; Metric Definitions</h2>
-          <p class="text-sm text-slate-400">
-            Comprehensive empirical benchmarking specification, dataset partitions, and hardware profiling details.
-          </p>
-        </div>
-
-        <!-- Figure 1 Taxonomy Diagram -->
-        <div class="text-center p-4 bg-slate-950 border border-slate-800 rounded-2xl">
-          <div class="bg-white p-3 sm:p-4 rounded-2xl inline-block w-full max-w-5xl mx-auto shadow-md border border-slate-700">
-            <img src="assets/Final_logo.png" alt="PRISM-V Evaluation Taxonomy" class="w-full h-auto object-contain" />
-          </div>
-          <p class="text-xs text-slate-400 mt-3 max-w-2xl mx-auto">
-            <strong>Figure 1: <span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Evaluation Taxonomy</strong> — Refracting neural vocoder synthesis across the 5 core PRISM dimensions: <b>P</b>erceptual, <b>R</b>econstruction, <b>I</b>ntelligibility, <b>S</b>peaker, and <b>M</b>odel Efficiency.
-          </p>
-        </div>
-
-        <!-- Design Principles -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-300">
-          <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-2">
-            <h3 class="font-bold text-sm text-slate-100 uppercase tracking-wider">Design Principles</h3>
-            <p><span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> is a strictly training-free, zero-shot evaluation of publicly released pretrained checkpoints.</p>
-            <p>Models are evaluated exactly as practitioners deploy them: no fine-tuning, no cherry-picked test sets, and fixed deterministic seeds.</p>
-          </div>
-          <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-2">
-            <h3 class="font-bold text-sm text-slate-100 uppercase tracking-wider">Inference Protocol</h3>
-            <p>• <strong>Batch size:</strong> 1 (realistic streaming inference)</p>
-            <p>• <strong>Precision:</strong> FP32 with generator-only timing (excludes frontend mel extraction)</p>
-            <p>• <strong>Hardware Profiling:</strong> Warmup iterations + measured loops with CUDA synchronization fences</p>
-          </div>
-        </div>
-
-        <!-- Evaluation Corpora Table -->
-        <div>
-          <h3 class="font-bold text-base text-slate-100 mb-3">Evaluation Corpora</h3>
-          <div class="overflow-x-auto border border-slate-800 rounded-xl">
-            <table class="prism-table w-full text-xs">
-              <thead class="bg-slate-800">
-                <tr>
-                  <th class="p-3">Corpus</th>
-                  <th class="p-3">Acoustic Condition</th>
-                  <th class="p-3">Characteristics</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="p-3 font-bold text-indigo-400">LJSpeech</td>
-                  <td class="p-3">Clean studio recording</td>
-                  <td class="p-3 text-slate-400">Single female speaker, professional recording booth, near-zero reverberation.</td>
-                </tr>
-                <tr>
-                  <td class="p-3 font-bold text-cyan-400">LibriTTS</td>
-                  <td class="p-3">Audiobook narrative</td>
-                  <td class="p-3 text-slate-400">Multi-speaker (test-clean + test-other), expressive reading variations.</td>
-                </tr>
-                <tr>
-                  <td class="p-3 font-bold text-amber-400">VCTK</td>
-                  <td class="p-3">Regional accented speech</td>
-                  <td class="p-3 text-slate-400">109 speakers with British, Scottish, Irish, and Commonwealth accents.</td>
-                </tr>
-                <tr>
-                  <td class="p-3 font-bold text-rose-400">Free_ST</td>
-                  <td class="p-3">Mobile microphone noisy</td>
-                  <td class="p-3 text-slate-400">Real-world acoustic environments, mobile devices, background reverberation.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Metric Definitions Table -->
-        <div>
-          <h3 class="font-bold text-base text-slate-100 mb-3">📐 Metric Definitions &amp; Qualitative Interpretations</h3>
-          <div class="overflow-x-auto border border-slate-800 rounded-xl">
-            <table class="prism-table w-full text-xs">
-              <thead class="bg-slate-800">
-                <tr>
-                  <th class="p-3">Metric</th>
-                  <th class="p-3">Formal Designation</th>
-                  <th class="p-3">Direction</th>
-                  <th class="p-3">Technical Description &amp; Range</th>
-                </tr>
-              </thead>
-              <tbody id="metric-defs-table-body"></tbody>
-            </table>
-          </div>
-        </div>
       </div>
     </section>
 

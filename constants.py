@@ -124,80 +124,80 @@ MODEL_OS_STATUS = {
 
 # ── Model Links ───────────────────────────────────────────────────────────────
 MODEL_LINKS = {
-    "hifigan_universal_v1":           {
-        "checkpoint": "https://github.com/jik876/hifi-gan",
-        "paper":      "https://arxiv.org/abs/2010.05646",
-        "github":     "https://github.com/jik876/hifi-gan",
-    },
-    "bigvgan_base_24khz_100band":     {
-        "checkpoint": "https://huggingface.co/nvidia/bigvgan_base_24khz_100band",
-        "paper":      "https://arxiv.org/abs/2206.04658",
-        "github":     "https://github.com/NVIDIA/BigVGAN",
-    },
-    "bigvgan_v2_24khz_100band_256x":  {
-        "checkpoint": "https://huggingface.co/nvidia/bigvgan_v2_24khz_100band_256x",
-        "paper":      "https://arxiv.org/abs/2206.04658",
-        "github":     "https://github.com/NVIDIA/BigVGAN",
-    },
-    "vocos_mel_24khz":                {
-        "checkpoint": "https://huggingface.co/charactr/vocos-mel-24khz",
-        "paper":      "https://arxiv.org/abs/2306.00814",
-        "github":     "https://github.com/hubert-siuzdak/vocos",
-    },
-    "rfwave_libritts_24k":            {
-        "checkpoint": "https://github.com/RF-Wave/RFWave",
-        "paper":      "https://arxiv.org/abs/2406.18567",
-        "github":     "https://github.com/RF-Wave/RFWave",
-    },
-    "griffin_lim":                    {
+    "griffin_lim": {
         "checkpoint": "N/A (Algorithmic — no learnable parameters)",
         "paper":      "https://ieeexplore.ieee.org/document/1172092",
         "github":     "https://github.com/librosa/librosa",
     },
-    "flow2gan":                       {
+    "rndvoc": {
+        "checkpoint": "https://huggingface.co/AndongLi/RNDVoC/blob/main/best_g_libritts",
+        "paper":      "https://arxiv.org/abs/2406.01257",
+        "github":     "https://github.com/Andong-Li-speech/RNDVoC",
+    },
+    "flow2gan": {
         "checkpoint": "https://huggingface.co/k2-fsa/Flow2GAN",
         "paper":      "https://arxiv.org/abs/2405.08819",
-        "github":     "https://github.com/k2-fsa/lhotse",
+        "github":     "https://github.com/k2-fsa/Flow2GAN",
     },
-    "comvo_base":                     {
+    "vocos_mel_24khz": {
+        "checkpoint": "https://huggingface.co/charactr/vocos-mel-24khz",
+        "paper":      "https://arxiv.org/abs/2306.00814",
+        "github":     "https://github.com/gemelo-ai/vocos",
+    },
+    "bridgevoc": {
+        "checkpoint": "https://huggingface.co/AndongLi/BridgeVoC/blob/main/ckpt/Libritts/pretrained/bridgevoc_bcd_libritts_24k_fmax12k_nmel100.pt",
+        "paper":      "https://arxiv.org/abs/2406.01258",
+        "github":     "https://github.com/Andong-Li-speech/BridgeVoC",
+    },
+    "periodwave_turbo": {
+        "checkpoint": "https://drive.google.com/drive/folders/1uUlfiSHFL9xNAZKp6-a584cW9nG7wDK7",
+        "paper":      "https://arxiv.org/abs/2408.06945",
+        "github":     "https://github.com/sh-lee-prml/PeriodWave",
+    },
+    "comvo_base": {
         "checkpoint": "https://huggingface.co/hsoh/ComVo-base",
         "paper":      "https://arxiv.org/abs/2406.19794",
-        "github":     "https://github.com/hsoh0306/ComVo",
+        "github":     "https://github.com/hs-oh-prml/ComVo",
     },
-    "comvo_large":                    {
+    "bigvgan_v2_24khz_100band_256x": {
+        "checkpoint": "https://huggingface.co/nvidia/bigvgan_v2_24khz_100band_256x",
+        "paper":      "https://arxiv.org/abs/2206.04658",
+        "github":     "https://github.com/NVIDIA/BigVGAN",
+    },
+    "bigvgan_base_24khz_100band": {
+        "checkpoint": "https://huggingface.co/nvidia/bigvgan_base_24khz_100band",
+        "paper":      "https://arxiv.org/abs/2206.04658",
+        "github":     "https://github.com/NVIDIA/BigVGAN",
+    },
+    "comvo_large": {
         "checkpoint": "https://huggingface.co/hsoh/ComVo-large",
         "paper":      "https://arxiv.org/abs/2406.19794",
-        "github":     "https://github.com/hsoh0306/ComVo",
+        "github":     "https://github.com/hs-oh-prml/ComVo",
     },
-    "wavefm":                         {
-        "checkpoint": "https://github.com/lucas-ma/WaveFM",
+    "wavefm": {
+        "checkpoint": "https://github.com/luotianze666/WaveFM/blob/main/checkpoints/Distilled_WaveFM_25000",
         "paper":      "https://arxiv.org/abs/2406.00287",
-        "github":     "https://github.com/lucas-ma/WaveFM",
+        "github":     "https://github.com/luotianze666/WaveFM",
     },
-    "rndvoc":                         {
-        "checkpoint": "https://huggingface.co/AndongLi/RNDVoC",
-        "paper":      "https://arxiv.org/abs/2406.01257",
-        "github":     "https://github.com/AndongLi/RNDVoC",
+    "hifigan_universal_v1": {
+        "checkpoint": "https://drive.google.com/drive/folders/1-eEYTB5Av9jNql0WGBlRoi-WH2J7bp5Y",
+        "paper":      "https://arxiv.org/abs/2010.05646",
+        "github":     "https://github.com/jik876/hifi-gan",
     },
-    "bridgevoc":                      {
-        "checkpoint": "https://huggingface.co/AndongLi/BridgeVoC",
-        "paper":      "https://arxiv.org/abs/2406.01258",
-        "github":     "https://github.com/AndongLi/BridgeVoC",
-    },
-    "freev":                          {
+    "freev": {
         "checkpoint": "https://huggingface.co/Bakerbunker/FreeV_Model_Logs",
         "paper":      "https://arxiv.org/abs/2405.15842",
-        "github":     "https://github.com/bakerbunker/FreeV",
+        "github":     "https://github.com/BakerBunker/FreeV",
     },
-    "periodwave_turbo":               {
-        "checkpoint": "https://github.com/kaist-dsp/PeriodWave",
-        "paper":      "https://arxiv.org/abs/2408.06945",
-        "github":     "https://github.com/kaist-dsp/PeriodWave",
+    "rfwave_libritts_24k": {
+        "checkpoint": "https://drive.google.com/file/d/1IQNXAAVRTtr9P8Gc-CoPeRIJ_l_O4y38/view",
+        "paper":      "https://arxiv.org/abs/2406.18567",
+        "github":     "https://github.com/bfs18/rfwave",
     },
-    "periodwave_24k":                 {
-        "checkpoint": "https://github.com/kaist-dsp/PeriodWave",
+    "periodwave_24k": {
+        "checkpoint": "https://drive.google.com/drive/folders/1uUlfiSHFL9xNAZKp6-a584cW9nG7wDK7",
         "paper":      "https://arxiv.org/abs/2408.06945",
-        "github":     "https://github.com/kaist-dsp/PeriodWave",
+        "github":     "https://github.com/sh-lee-prml/PeriodWave",
     },
 }
 
