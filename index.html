@@ -46,7 +46,7 @@
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
   <!-- Custom PRISM-V Styles -->
-  <link rel="stylesheet" href="assets/custom.css" />
+  <link rel="stylesheet" href="assets/custom.css?v=20260918_v3" />
 </head>
 <body class="antialiased selection:bg-indigo-500 selection:text-white">
 
@@ -149,6 +149,241 @@
             <div class="text-2xl sm:text-3xl font-extrabold font-mono kpi-val">100%</div>
             <div class="text-[11px] mt-1 kpi-sub">Open data &amp; checkpoints</div>
           </div>
+        </div>
+      </div>
+
+      <!-- ── Pretrained Vocoder Checkpoints & Configurations Table (Paper Appendix / Table 1) ── -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4" id="overview-checkpoints-card">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+          <div>
+            <h2 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+              <span>📦 Pretrained Vocoder Checkpoints &amp; Configurations</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">
+              Evaluated checkpoints, source repositories, training configurations, and inference protocols in PRISM-V.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-lg bg-indigo-950/60 border border-indigo-700/50 font-mono text-xs text-indigo-300 font-semibold">
+              15 Models Evaluated
+            </span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-800 rounded-xl">
+          <table class="prism-table w-full text-left text-xs">
+            <thead class="bg-slate-800/90 text-slate-200">
+              <tr>
+                <th class="p-3 font-bold text-center">ID</th>
+                <th class="p-3 font-bold">Model</th>
+                <th class="p-3 font-bold">Checkpoint</th>
+                <th class="p-3 font-bold">GitHub</th>
+                <th class="p-3 font-bold">Architecture</th>
+                <th class="p-3 font-bold">Training Data</th>
+                <th class="p-3 font-bold">Sampling Rate</th>
+                <th class="p-3 font-bold">Mel Bins</th>
+                <th class="p-3 font-bold">Hop Size</th>
+                <th class="p-3 font-bold">Inference</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 font-sans" id="overview-models-tbody">
+              <!-- Baseline: Griffin-Lim -->
+              <tr class="hover:bg-slate-800/40 transition-colors" style="background-color: rgba(148, 163, 184, 0.15); border-left: 3px solid #94a3b8;">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-slate-700 text-slate-200 border border-slate-600">Baseline</span></td>
+                <td class="p-3 font-bold text-slate-200">Griffin–Lim</td>
+                <td class="p-3 text-slate-400 italic">—</td>
+                <td class="p-3"><a href="https://github.com/librosa/librosa" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">Iterative phase reconstruction</td>
+                <td class="p-3 text-slate-400">—</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-400">—</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">32 iterations</td>
+              </tr>
+              <!-- M1: RNDVoC -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M1</span></td>
+                <td class="p-3 font-bold text-slate-100">RNDVoC</td>
+                <td class="p-3"><a href="https://huggingface.co/AndongLi/RNDVoC/blob/main/best_g_libritts" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-hf">🤗 Hugging Face</a></td>
+                <td class="p-3"><a href="https://github.com/Andong-Li-speech/RNDVoC" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">Range–null T–F network</td>
+                <td class="p-3 text-slate-300">LibriTTS</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-300">100</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">1 pass</td>
+              </tr>
+              <!-- M2: Flow2GAN -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M2</span></td>
+                <td class="p-3 font-bold text-slate-100">Flow2GAN</td>
+                <td class="p-3"><a href="https://huggingface.co/k2-fsa/Flow2GAN" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-hf">🤗 Hugging Face</a></td>
+                <td class="p-3"><a href="https://github.com/k2-fsa/Flow2GAN" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">Flow matching and GAN</td>
+                <td class="p-3 text-slate-300">LibriTTS</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-300">100</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">4 NFEs</td>
+              </tr>
+              <!-- M3: Vocos -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M3</span></td>
+                <td class="p-3 font-bold text-slate-100">Vocos</td>
+                <td class="p-3"><a href="https://huggingface.co/charactr/vocos-mel-24khz" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-hf">🤗 Hugging Face</a></td>
+                <td class="p-3"><a href="https://github.com/gemelo-ai/vocos" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">ConvNeXt iSTFT GAN</td>
+                <td class="p-3 text-slate-300">LibriTTS</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-300">100</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">1 pass</td>
+              </tr>
+              <!-- M4: BridgeVoC -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M4</span></td>
+                <td class="p-3 font-bold text-slate-100">BridgeVoC</td>
+                <td class="p-3"><a href="https://huggingface.co/AndongLi/BridgeVoC/blob/main/ckpt/Libritts/pretrained/bridgevoc_bcd_libritts_24k_fmax12k_nmel100.pt" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-hf">🤗 Hugging Face</a></td>
+                <td class="p-3"><a href="https://github.com/Andong-Li-speech/BridgeVoC" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">Schrödinger bridge</td>
+                <td class="p-3 text-slate-300">LibriTTS</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-300">100</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">4 NFEs</td>
+              </tr>
+              <!-- M5: PeriodWave-Turbo -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M5</span></td>
+                <td class="p-3 font-bold text-slate-100">PeriodWave-Turbo</td>
+                <td class="p-3"><a href="https://drive.google.com/drive/folders/1uUlfiSHFL9xNAZKp6-a584cW9nG7wDK7" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gdrive">📁 Google Drive</a></td>
+                <td class="p-3"><a href="https://github.com/sh-lee-prml/PeriodWave" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">Adversarial flow matching</td>
+                <td class="p-3 text-slate-300">LibriTTS</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-300">100</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">4 NFEs</td>
+              </tr>
+              <!-- M6: ComVo-Base -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M6</span></td>
+                <td class="p-3 font-bold text-slate-100">ComVo-Base</td>
+                <td class="p-3"><a href="https://huggingface.co/hsoh/ComVo-base" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-hf">🤗 Hugging Face</a></td>
+                <td class="p-3"><a href="https://github.com/hs-oh-prml/ComVo" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">Complex-valued iSTFT GAN</td>
+                <td class="p-3 text-slate-300">LibriTTS</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-300">100</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">1 pass</td>
+              </tr>
+              <!-- M7: BigVGAN-v2 -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M7</span></td>
+                <td class="p-3 font-bold text-slate-100">BigVGAN-v2</td>
+                <td class="p-3"><a href="https://huggingface.co/nvidia/bigvgan_v2_24khz_100band_256x" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-hf">🤗 Hugging Face</a></td>
+                <td class="p-3"><a href="https://github.com/NVIDIA/BigVGAN" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">AMP-based GAN</td>
+                <td class="p-3 text-slate-300">Large-scale audio</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-300">100</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">1 pass</td>
+              </tr>
+              <!-- M8: BigVGAN-Base -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M8</span></td>
+                <td class="p-3 font-bold text-slate-100">BigVGAN-Base</td>
+                <td class="p-3"><a href="https://huggingface.co/nvidia/bigvgan_base_24khz_100band" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-hf">🤗 Hugging Face</a></td>
+                <td class="p-3"><a href="https://github.com/NVIDIA/BigVGAN" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">AMP-based GAN</td>
+                <td class="p-3 text-slate-300">LibriTTS</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-300">100</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">1 pass</td>
+              </tr>
+              <!-- M9: ComVo-Large -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M9</span></td>
+                <td class="p-3 font-bold text-slate-100">ComVo-Large</td>
+                <td class="p-3"><a href="https://huggingface.co/hsoh/ComVo-large" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-hf">🤗 Hugging Face</a></td>
+                <td class="p-3"><a href="https://github.com/hs-oh-prml/ComVo" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">Complex-valued iSTFT GAN</td>
+                <td class="p-3 text-slate-300">LibriTTS</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-300">100</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">1 pass</td>
+              </tr>
+              <!-- M10: WaveFM -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M10</span></td>
+                <td class="p-3 font-bold text-slate-100">WaveFM</td>
+                <td class="p-3"><a href="https://github.com/luotianze666/WaveFM/blob/main/checkpoints/Distilled_WaveFM_25000" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gh">💻 GitHub</a></td>
+                <td class="p-3"><a href="https://github.com/luotianze666/WaveFM" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">Consistency-distilled flow matching</td>
+                <td class="p-3 text-slate-300">LibriTTS</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-300">100</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">1 pass</td>
+              </tr>
+              <!-- M11: HiFi-GAN Universal V1 -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M11</span></td>
+                <td class="p-3 font-bold text-slate-100">HiFi-GAN Universal V1</td>
+                <td class="p-3"><a href="https://drive.google.com/drive/folders/1-eEYTB5Av9jNql0WGBlRoi-WH2J7bp5Y" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gdrive">📁 Google Drive</a></td>
+                <td class="p-3"><a href="https://github.com/jik876/hifi-gan" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">Time-domain GAN</td>
+                <td class="p-3 text-slate-300">Universal</td>
+                <td class="p-3 font-mono text-slate-300">22.05 kHz</td>
+                <td class="p-3 font-mono text-slate-300">80</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">1 pass</td>
+              </tr>
+              <!-- M12: FreeV -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M12</span></td>
+                <td class="p-3 font-bold text-slate-100">FreeV</td>
+                <td class="p-3"><a href="https://huggingface.co/Bakerbunker/FreeV_Model_Logs" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-hf">🤗 Hugging Face</a></td>
+                <td class="p-3"><a href="https://github.com/BakerBunker/FreeV" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">Pseudo-inverse iSTFT GAN</td>
+                <td class="p-3 text-slate-300">LJSpeech</td>
+                <td class="p-3 font-mono text-slate-300">22.05 kHz</td>
+                <td class="p-3 font-mono text-slate-300">80</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">1 pass</td>
+              </tr>
+              <!-- M13: RFWave -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M13</span></td>
+                <td class="p-3 font-bold text-slate-100">RFWave</td>
+                <td class="p-3"><a href="https://drive.google.com/file/d/1IQNXAAVRTtr9P8Gc-CoPeRIJ_l_O4y38/view" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gdrive">📁 Google Drive</a></td>
+                <td class="p-3"><a href="https://github.com/bfs18/rfwave" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">Multi-band rectified flow</td>
+                <td class="p-3 text-slate-300">LibriTTS</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-300">100</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">10 NFEs</td>
+              </tr>
+              <!-- M14: PeriodWave -->
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 text-center font-mono font-bold"><span class="px-2 py-0.5 rounded text-[11px] bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">M14</span></td>
+                <td class="p-3 font-bold text-slate-100">PeriodWave</td>
+                <td class="p-3"><a href="https://drive.google.com/drive/folders/1uUlfiSHFL9xNAZKp6-a584cW9nG7wDK7" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gdrive">📁 Google Drive</a></td>
+                <td class="p-3"><a href="https://github.com/sh-lee-prml/PeriodWave" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code">💻 Code</a></td>
+                <td class="p-3 text-slate-300">Multi-period flow matching</td>
+                <td class="p-3 text-slate-300">LibriTTS</td>
+                <td class="p-3 font-mono text-slate-300">24 kHz</td>
+                <td class="p-3 font-mono text-slate-300">100</td>
+                <td class="p-3 font-mono text-slate-300">256</td>
+                <td class="p-3 text-slate-300 font-mono">16 NFEs</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -1160,8 +1395,8 @@
   </div>
 
   <!-- Pre-bundled Data and Application Logic -->
-  <script src="data/waveform_data.js"></script>
-  <script src="data/prism_data.js"></script>
-  <script src="assets/app.js"></script>
+  <script src="data/waveform_data.js?v=20260918_v3"></script>
+  <script src="data/prism_data.js?v=20260918_v3"></script>
+  <script src="assets/app.js?v=20260918_v3"></script>
 </body>
 </html>

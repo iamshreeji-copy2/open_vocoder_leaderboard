@@ -938,6 +938,36 @@
     ];
   }
 
+  function formatCheckpointButton(url, isBase = false, compact = false) {
+    if (!url || url.startsWith('N/A')) {
+      return isBase ? '<span class="text-xs text-slate-400 italic">— Algorithmic</span>' : '—';
+    }
+    let icon = '📦';
+    let label = compact ? 'Ckpt' : 'Checkpoint';
+    let btnClass = 'tbl-btn-ckpt';
+    if (url.includes('huggingface.co')) {
+      icon = '🤗';
+      label = compact ? 'HF' : 'Hugging Face';
+      btnClass = 'tbl-btn-hf';
+    } else if (url.includes('drive.google.com')) {
+      icon = '📁';
+      label = compact ? 'Drive' : 'Google Drive';
+      btnClass = 'tbl-btn-gdrive';
+    } else if (url.includes('github.com')) {
+      icon = '💻';
+      label = compact ? 'GitHub' : 'GitHub';
+      btnClass = 'tbl-btn-gh';
+    }
+    const compactClass = compact ? 'text-[10px] inline-flex items-center gap-0.5 px-1.5 py-0.5' : '';
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="tbl-btn ${btnClass} ${compactClass}">${icon} ${label}</a>`;
+  }
+
+  function formatCodeButton(url, compact = false) {
+    if (!url) return '<span class="text-xs text-slate-400">—</span>';
+    const compactClass = compact ? 'text-[10px] inline-flex items-center gap-0.5 px-1.5 py-0.5' : '';
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code ${compactClass}">💻 Code</a>`;
+  }
+
   function updateLeaderboardTable() {
     const tbody = document.getElementById('lb-table-body');
     const thead = document.getElementById('lb-table-head');
@@ -1052,21 +1082,9 @@
               case 'Free_ST':
                 return `<td class="num-cell font-mono">${m.dataset_pesqs && m.dataset_pesqs.Free_ST ? m.dataset_pesqs.Free_ST.toFixed(3) : '—'}</td>`;
               case 'code':
-                return `
-                  <td>
-                    ${m.github_url
-                      ? `<a href="${m.github_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gh">💻 GitHub</a>`
-                      : '<span class="text-xs text-slate-400">—</span>'}
-                  </td>
-                `;
+                return `<td>${formatCodeButton(m.github_url)}</td>`;
               case 'checkpoint':
-                return `
-                  <td>
-                    ${m.checkpoint_url && !m.checkpoint_url.startsWith('N/A')
-                      ? `<a href="${m.checkpoint_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-ckpt">📦 Checkpoint</a>`
-                      : '<span class="text-xs text-slate-400 italic">Algorithmic</span>'}
-                  </td>
-                `;
+                return `<td>${formatCheckpointButton(m.checkpoint_url, isBaseline)}</td>`;
               case 'paper':
                 return `
                   <td>
@@ -2059,9 +2077,8 @@
           <td class="p-3 font-mono text-xs font-bold text-amber-500">${m.speedup_x.toFixed(0)}×</td>
           <td class="p-3 font-mono text-xs">${m.peak_vram_mb.toFixed(0)} MB</td>
           <td class="p-3 font-mono text-xs">${m.params_m.toFixed(1)} M</td>
-          <td class="p-3 text-xs">${m.edge_feasible === 'Yes' ? '✅ Ready' : '❌ High-VRAM'}</td>
-          <td class="p-3 text-xs">${m.github_url ? `<a href="${m.github_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gh text-[10px] inline-flex items-center gap-1">💻 Code</a>` : '—'}</td>
-          <td class="p-3 text-xs">${m.checkpoint_url && !m.checkpoint_url.startsWith('N/A') ? `<a href="${m.checkpoint_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-ckpt text-[10px] inline-flex items-center gap-1">📦 Checkpoint</a>` : (isBase ? '<span class="text-[10px] text-slate-400 italic">Algorithmic</span>' : '—')}</td>
+          <td class="p-3 text-xs">${formatCodeButton(m.github_url, true)}</td>
+          <td class="p-3 text-xs">${formatCheckpointButton(m.checkpoint_url, isBase, true)}</td>
           <td class="p-3 text-xs">${m.paper_url ? `<a href="${m.paper_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-paper text-[10px] inline-flex items-center gap-1">📄 Paper</a>` : '—'}</td>
         </tr>
       `;
@@ -2146,8 +2163,8 @@
           <td class="p-3 font-mono text-xs font-bold text-indigo-500">${m.overall_score.toFixed(1)}</td>
           <td class="p-3 text-xs">
             <div class="flex items-center gap-1">
-              ${m.github_url ? `<a href="${m.github_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gh text-[10px] inline-flex items-center gap-0.5 px-1.5 py-0.5">💻 Code</a>` : ''}
-              ${m.checkpoint_url && !m.checkpoint_url.startsWith('N/A') ? `<a href="${m.checkpoint_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-ckpt text-[10px] inline-flex items-center gap-0.5 px-1.5 py-0.5">📦 Ckpt</a>` : ''}
+              ${formatCodeButton(m.github_url, true)}
+              ${formatCheckpointButton(m.checkpoint_url, isBase, true)}
               ${m.paper_url ? `<a href="${m.paper_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-paper text-[10px] inline-flex items-center gap-0.5 px-1.5 py-0.5">📄 Paper</a>` : ''}
             </div>
           </td>
