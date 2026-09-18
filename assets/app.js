@@ -45,6 +45,10 @@
       sortCol: 'overall_score',
       sortAsc: false,
       visibleCols: {
+        // Core columns
+        'system_id': true,
+        'rank': true,
+        'model_name': true,
         // Default visible column names
         'pesq': true,
         'stoi': true,
@@ -521,6 +525,30 @@
       };
     });
 
+    const selectAllBtn = document.getElementById('lb-cols-select-all');
+    if (selectAllBtn) {
+      selectAllBtn.onclick = (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.lb-col-vis-chk').forEach(chk => {
+          chk.checked = true;
+          state.lb.visibleCols[chk.value] = true;
+        });
+        updateLeaderboardTable();
+      };
+    }
+
+    const deselectAllBtn = document.getElementById('lb-cols-deselect-all');
+    if (deselectAllBtn) {
+      deselectAllBtn.onclick = (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.lb-col-vis-chk').forEach(chk => {
+          chk.checked = false;
+          state.lb.visibleCols[chk.value] = false;
+        });
+        updateLeaderboardTable();
+      };
+    }
+
     // Custom Weights Sliders
     ['pesq', 'stoi', 'utmos', 'speed'].forEach(dim => {
       const slider = document.getElementById(`weight-${dim}`);
@@ -548,14 +576,10 @@
       };
     }
 
-    // Export CSV / JSON buttons
+    // Export CSV button
     const exportCsvBtn = document.getElementById('lb-export-csv-btn');
     if (exportCsvBtn) {
       exportCsvBtn.onclick = exportLeaderboardCSV;
-    }
-    const exportJsonBtn = document.getElementById('lb-export-json-btn');
-    if (exportJsonBtn) {
-      exportJsonBtn.onclick = exportLeaderboardJSON;
     }
   }
 
@@ -668,6 +692,37 @@
     return list;
   }
 
+  function getLeaderboardColumnDefinitions() {
+    return [
+      { id: 'system_id', label: 'ID', rawLabel: 'System ID', group: 'core', sortKey: 'system_id', tip: 'System Identifier (Baseline / M1–M14)' },
+      { id: 'rank', label: 'Rank & <span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Score', rawLabel: 'Rank', group: 'core', sortKey: 'overall_score' },
+      { id: 'model_name', label: 'Model', rawLabel: 'Model Name', group: 'core', sortKey: 'model_name' },
+      { id: 'pesq', label: 'PESQ ↑', rawLabel: 'PESQ', group: 'objective', sortKey: 'pesq', tip: 'Perceptual Evaluation of Speech Quality (ITU-T P.862)' },
+      { id: 'stoi', label: 'STOI ↑', rawLabel: 'STOI', group: 'objective', sortKey: 'stoi', tip: 'Short-Time Objective Intelligibility' },
+      { id: 'mcd_db', label: 'MCD (dB) ↓', rawLabel: 'MCD (dB)', group: 'objective', sortKey: 'mcd_db', tip: 'Mel-Cepstral Distortion' },
+      { id: 'lsd_db', label: 'LSD (dB) ↓', rawLabel: 'LSD (dB)', group: 'objective', sortKey: 'lsd_db', tip: 'Log-Spectral Distance' },
+      { id: 'utmos', label: 'UTMOS ↑', rawLabel: 'UTMOS', group: 'subjective', sortKey: 'utmos', tip: 'Universal Text-to-speech MOS Predictor' },
+      { id: 'nisqa', label: 'NISQA ↑', rawLabel: 'NISQA', group: 'subjective', sortKey: 'nisqa', tip: 'Deep Naturalness & Distortion Predictor' },
+      { id: 'delta_wer_pct', label: 'ΔWER % ↓', rawLabel: 'ΔWER %', group: 'subjective', sortKey: 'delta_wer_pct', tip: 'Word Error Rate Degradation via Conformer ASR' },
+      { id: 'rtf', label: 'RTF ↓', rawLabel: 'RTF', group: 'performance', sortKey: 'rtf', tip: 'Real-Time Factor (Latency / Duration)' },
+      { id: 'speedup_x', label: 'xRT ↑', rawLabel: 'xRT Throughput', group: 'performance', sortKey: 'speedup_x', tip: 'Throughput Speedup Factor (1/RTF)' },
+      { id: 'peak_vram_mb', label: 'VRAM (MB) ↓', rawLabel: 'Peak VRAM (MB)', group: 'performance', sortKey: 'peak_vram_mb', tip: 'Peak GPU Memory Allocated during Inference' },
+      { id: 'params_m', label: 'Params (M)', rawLabel: 'Params (M)', group: 'performance', sortKey: 'params_m', tip: 'Generator Parameter Count in Millions' },
+      { id: 'edge_feasible', label: 'Edge ⚡', rawLabel: 'Edge Feasible', group: 'performance', sortKey: 'edge_feasible', tip: 'Edge-Hardware Feasibility Status' },
+      { id: 'LJSpeech', label: 'LJSpeech', rawLabel: 'LJSpeech PESQ', group: 'robustness', sortKey: 'LJSpeech', tip: 'Single-speaker Clean Studio Reading PESQ' },
+      { id: 'LibriTTS', label: 'LibriTTS', rawLabel: 'LibriTTS PESQ', group: 'robustness', sortKey: 'LibriTTS', tip: 'Multi-speaker Narrative Audio-book PESQ' },
+      { id: 'VCTK', label: 'VCTK', rawLabel: 'VCTK PESQ', group: 'robustness', sortKey: 'VCTK', tip: 'Regional Accented Speech PESQ' },
+      { id: 'Free_ST', label: 'Free_ST', rawLabel: 'Free_ST PESQ', group: 'robustness', sortKey: 'Free_ST', tip: 'Real-world Mobile Noisy PESQ' },
+      { id: 'code', label: 'Code', rawLabel: 'Code URL', group: 'info', tip: 'Public Code Availability' },
+      { id: 'checkpoint', label: 'Checkpoint', rawLabel: 'Checkpoint URL', group: 'info', tip: 'Pretrained Checkpoint Availability' },
+      { id: 'is_pareto', label: 'Pareto ⭐', rawLabel: 'Pareto Optimal', group: 'info', sortKey: 'is_pareto', tip: 'Non-dominated Pareto Optimal Checkpoint' },
+      { id: 'license', label: 'License', rawLabel: 'License', group: 'info', sortKey: 'license', tip: 'Open License' },
+      { id: 'architecture_family', label: 'Architecture', rawLabel: 'Architecture Family', group: 'info', sortKey: 'architecture_family', tip: 'Architecture Family' },
+      { id: 'track', label: 'Track', rawLabel: 'Track', group: 'info', sortKey: 'track', tip: 'Benchmark Track' },
+      { id: 'year', label: 'Year', rawLabel: 'Year', group: 'info', sortKey: 'year', tip: 'Release Year' }
+    ];
+  }
+
   function updateLeaderboardTable() {
     const tbody = document.getElementById('lb-table-body');
     const thead = document.getElementById('lb-table-head');
@@ -678,36 +733,15 @@
     if (countEl) countEl.textContent = `${list.length} / ${state.data.leaderboard.length} models`;
 
     // Define columns
-    const columns = [
-      { id: 'system_id', label: 'ID', group: 'prism', sortKey: 'system_id', always: true, tip: 'System Identifier (Baseline / M1–M14)' },
-      { id: 'rank', label: 'Rank & <span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Score', group: 'prism', sortKey: 'overall_score', always: true },
-      { id: 'model_name', label: 'Model', group: 'prism', sortKey: 'model_name', always: true },
-      { id: 'pesq', label: 'PESQ ↑', group: 'objective', sortKey: 'pesq', tip: 'Perceptual Evaluation of Speech Quality (ITU-T P.862)' },
-      { id: 'stoi', label: 'STOI ↑', group: 'objective', sortKey: 'stoi', tip: 'Short-Time Objective Intelligibility' },
-      { id: 'mcd_db', label: 'MCD (dB) ↓', group: 'objective', sortKey: 'mcd_db', tip: 'Mel-Cepstral Distortion' },
-      { id: 'lsd_db', label: 'LSD (dB) ↓', group: 'objective', sortKey: 'lsd_db', tip: 'Log-Spectral Distance' },
-      { id: 'utmos', label: 'UTMOS ↑', group: 'subjective', sortKey: 'utmos', tip: 'Universal Text-to-speech MOS Predictor' },
-      { id: 'nisqa', label: 'NISQA ↑', group: 'subjective', sortKey: 'nisqa', tip: 'Deep Naturalness & Distortion Predictor' },
-      { id: 'delta_wer_pct', label: 'ΔWER % ↓', group: 'subjective', sortKey: 'delta_wer_pct', tip: 'Word Error Rate Degradation via Conformer ASR' },
-      { id: 'rtf', label: 'RTF ↓', group: 'performance', sortKey: 'rtf', tip: 'Real-Time Factor (Latency / Duration)' },
-      { id: 'speedup_x', label: 'xRT ↑', group: 'performance', sortKey: 'speedup_x', tip: 'Throughput Speedup Factor (1/RTF)' },
-      { id: 'peak_vram_mb', label: 'VRAM (MB) ↓', group: 'performance', sortKey: 'peak_vram_mb', tip: 'Peak GPU Memory Allocated during Inference' },
-      { id: 'params_m', label: 'Params (M)', group: 'performance', sortKey: 'params_m', tip: 'Generator Parameter Count in Millions' },
-      { id: 'edge_feasible', label: 'Edge ⚡', group: 'performance', sortKey: 'edge_feasible', tip: 'Edge-Hardware Feasibility Status' },
-      { id: 'LJSpeech', label: 'LJSpeech', group: 'robustness', sortKey: 'LJSpeech', tip: 'Single-speaker Clean Studio Reading PESQ' },
-      { id: 'LibriTTS', label: 'LibriTTS', group: 'robustness', sortKey: 'LibriTTS', tip: 'Multi-speaker Narrative Audio-book PESQ' },
-      { id: 'VCTK', label: 'VCTK', group: 'robustness', sortKey: 'VCTK', tip: 'Regional Accented Speech PESQ' },
-      { id: 'Free_ST', label: 'Free_ST', group: 'robustness', sortKey: 'Free_ST', tip: 'Real-world Mobile Noisy PESQ' },
-      { id: 'code', label: 'Code', group: 'info', tip: 'Public Code Availability' },
-      { id: 'checkpoint', label: 'Checkpoint', group: 'info', tip: 'Pretrained Checkpoint Availability' },
-      { id: 'is_pareto', label: 'Pareto ⭐', group: 'info', sortKey: 'is_pareto', tip: 'Non-dominated Pareto Optimal Checkpoint' },
-      { id: 'license', label: 'License', group: 'info', sortKey: 'license', tip: 'Open License' },
-      { id: 'architecture_family', label: 'Architecture', group: 'info', sortKey: 'architecture_family', tip: 'Architecture Family' },
-      { id: 'track', label: 'Track', group: 'info', sortKey: 'track', tip: 'Benchmark Track' },
-      { id: 'year', label: 'Year', group: 'info', sortKey: 'year', tip: 'Release Year' }
-    ];
+    const columns = getLeaderboardColumnDefinitions();
+    const activeCols = columns.filter(c => state.lb.visibleCols[c.id]);
 
-    const activeCols = columns.filter(c => c.always || state.lb.visibleCols[c.id]);
+    // Handle empty columns
+    if (activeCols.length === 0) {
+      thead.innerHTML = '<tr><th class="py-3 px-4 text-slate-400">No Columns Selected</th></tr>';
+      tbody.innerHTML = '<tr><td class="text-center py-10 text-slate-400 text-sm">No columns currently selected. Open <b>Customize Visible Columns &amp; Metrics</b> above to select columns to display.</td></tr>';
+      return;
+    }
 
     // Render Table Header
     thead.innerHTML = `
@@ -768,10 +802,6 @@
                       ${m.model_name}
                     </button>
                     <div class="text-[11px] text-slate-400 font-normal">${m.architecture_family}</div>
-                    <div class="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                      ${m.github_url ? `<a href="${m.github_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-gh text-[10px] py-0.5 px-1.5 inline-flex items-center gap-1 hover:brightness-110" title="Source Code Repository">💻 Code</a>` : ''}
-                      ${m.checkpoint_url && !m.checkpoint_url.startsWith('N/A') ? `<a href="${m.checkpoint_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-ckpt text-[10px] py-0.5 px-1.5 inline-flex items-center gap-1 hover:brightness-110" title="Pretrained Checkpoint">📦 Checkpoint</a>` : (isBaseline ? '<span class="text-[10px] text-slate-400 italic">Algorithmic</span>' : '')}
-                    </div>
                   </td>
                 `;
               case 'pesq':
@@ -861,60 +891,133 @@
 
   function exportLeaderboardCSV() {
     const list = getFilteredLeaderboard();
-    if (!list || list.length === 0) return;
-    const headers = ['system_id', 'rank', 'model_name', 'architecture_family', 'track', 'score', 'pesq', 'stoi', 'utmos', 'rtf', 'speedup_x', 'vram_mb', 'params_m', 'edge', 'pareto', 'github_url', 'checkpoint_url', 'license'];
+    if (!list || list.length === 0) {
+      alert('No models match the current filter criteria to export.');
+      return;
+    }
+
+    const columns = getLeaderboardColumnDefinitions();
+    const activeCols = columns.filter(c => state.lb.visibleCols[c.id]);
+    if (activeCols.length === 0) {
+      alert('Please select at least one visible column in "Customize Visible Columns & Metrics" before exporting.');
+      return;
+    }
+
+    const headers = activeCols.map(c => `"${c.rawLabel || c.label.replace(/<[^>]*>?/gm, '').trim()}"`);
+
     let neuralRank = 0;
     const rows = list.map((m) => {
-      const isBaseline = m.is_baseline || m.system_id === 'Baseline';
+      const isBaseline = m.is_baseline || m.system_id === 'Baseline' || m.model_id === 'griffin_lim';
       let rankStr = 'Baseline';
       if (!isBaseline) {
         neuralRank++;
-        rankStr = neuralRank;
+        rankStr = String(neuralRank);
       }
-      return [
-        m.system_id || '',
-        rankStr,
-        `"${m.model_name}"`,
-        `"${m.architecture_family}"`,
-        `"${m.track}"`,
-        m.display_score.toFixed(1),
-        m.computed_pesq.toFixed(3),
-        m.stoi.toFixed(3),
-        m.utmos.toFixed(2),
-        m.rtf.toFixed(4),
-        m.speedup_x.toFixed(0),
-        m.peak_vram_mb.toFixed(0),
-        m.params_m.toFixed(1),
-        m.edge_feasible,
-        m.is_pareto,
-        `"${m.github_url || ''}"`,
-        `"${m.checkpoint_url || ''}"`,
-        m.license
-      ];
+
+      const rowValues = activeCols.map(c => {
+        let val = '';
+        switch (c.id) {
+          case 'system_id':
+            val = m.system_id || '';
+            break;
+          case 'rank':
+            val = isBaseline ? 'Baseline (79.0)' : `${rankStr} (${m.display_score !== undefined ? m.display_score.toFixed(1) : (m.overall_score || 0).toFixed(1)})`;
+            break;
+          case 'model_name':
+            val = m.model_name || '';
+            break;
+          case 'pesq':
+            val = m.computed_pesq !== undefined ? m.computed_pesq.toFixed(3) : (m.pesq || 0).toFixed(3);
+            break;
+          case 'stoi':
+            val = m.stoi !== undefined ? m.stoi.toFixed(3) : '';
+            break;
+          case 'mcd_db':
+            val = m.mcd_db !== undefined ? m.mcd_db.toFixed(2) : '';
+            break;
+          case 'lsd_db':
+            val = m.lsd_db !== undefined ? m.lsd_db.toFixed(2) : '';
+            break;
+          case 'utmos':
+            val = m.utmos !== undefined ? m.utmos.toFixed(2) : '';
+            break;
+          case 'nisqa':
+            val = m.nisqa !== undefined ? m.nisqa.toFixed(2) : '';
+            break;
+          case 'delta_wer_pct':
+            val = m.delta_wer_pct !== undefined ? `${m.delta_wer_pct.toFixed(2)}%` : '';
+            break;
+          case 'rtf':
+            val = m.rtf !== undefined ? m.rtf.toFixed(4) : '';
+            break;
+          case 'speedup_x':
+            val = m.speedup_x !== undefined ? `${m.speedup_x.toFixed(0)}×` : '';
+            break;
+          case 'peak_vram_mb':
+            val = m.peak_vram_mb !== undefined ? m.peak_vram_mb.toFixed(0) : '';
+            break;
+          case 'params_m':
+            val = m.params_m !== undefined ? m.params_m.toFixed(1) : '';
+            break;
+          case 'edge_feasible':
+            val = m.edge_feasible || '';
+            break;
+          case 'LJSpeech':
+            val = m.dataset_pesqs && m.dataset_pesqs.LJSpeech ? m.dataset_pesqs.LJSpeech.toFixed(3) : '';
+            break;
+          case 'LibriTTS':
+            val = m.dataset_pesqs && m.dataset_pesqs.LibriTTS ? m.dataset_pesqs.LibriTTS.toFixed(3) : '';
+            break;
+          case 'VCTK':
+            val = m.dataset_pesqs && m.dataset_pesqs.VCTK ? m.dataset_pesqs.VCTK.toFixed(3) : '';
+            break;
+          case 'Free_ST':
+            val = m.dataset_pesqs && m.dataset_pesqs.Free_ST ? m.dataset_pesqs.Free_ST.toFixed(3) : '';
+            break;
+          case 'code':
+            val = m.github_url || '';
+            break;
+          case 'checkpoint':
+            val = m.checkpoint_url || '';
+            break;
+          case 'is_pareto':
+            val = m.is_pareto ? 'Yes' : 'No';
+            break;
+          case 'license':
+            val = m.license || '';
+            break;
+          case 'architecture_family':
+            val = m.architecture_family || '';
+            break;
+          case 'track':
+            val = m.track || '';
+            break;
+          case 'year':
+            val = m.year || '';
+            break;
+          default:
+            val = m[c.id] !== undefined ? String(m[c.id]) : '';
+            break;
+        }
+        if (typeof val === 'string' && (val.includes(',') || val.includes('"') || val.includes('\n'))) {
+          val = `"${val.replace(/"/g, '""')}"`;
+        }
+        return val;
+      });
+
+      return rowValues.join(',');
     });
 
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'prism_v_leaderboard_data.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  function exportLeaderboardJSON() {
-    const list = getFilteredLeaderboard();
-    if (!list || list.length === 0) return;
-    const jsonStr = JSON.stringify(list, null, 2);
-    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', 'prism_v_leaderboard_data.json');
+    link.setAttribute('download', 'prism_v_leaderboard_custom_view.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1197,35 +1300,7 @@
       if (cardB) cardB.innerHTML = renderModelCardSnippet(mB);
     }
 
-    // Head-to-Head Banner
-    const banner = document.getElementById('audio-head-to-head-banner');
-    if (banner && mA && mB) {
-      const pesqDiff = mB.pesq - mA.pesq;
-      const pesqLead = pesqDiff > 0 ? mB.model_name : mA.model_name;
-      const speedFactor = mA.speedup_x >= mB.speedup_x
-        ? (mA.speedup_x / Math.max(1, mB.speedup_x))
-        : (mB.speedup_x / Math.max(1, mA.speedup_x));
-      const speedLead = mA.speedup_x >= mB.speedup_x ? mA.model_name : mB.model_name;
 
-      banner.innerHTML = `
-        <div class="compare-diff-banner">
-          <div class="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2">
-            📊 Head-to-Head Comparative Diagnostics
-          </div>
-          <div class="flex flex-wrap items-center gap-6 text-xs">
-            <div>
-              🏆 <b>Acoustic Quality:</b> <span class="font-bold text-indigo-600 dark:text-indigo-400">${pesqLead}</span> leads Wideband PESQ by <code class="font-bold">${Math.abs(pesqDiff).toFixed(3)}</code>
-            </div>
-            <div>
-              ⚡ <b>Throughput:</b> <span class="font-bold text-amber-600 dark:text-amber-400">${speedLead}</span> is <code class="font-bold">${speedFactor.toFixed(1)}×</code> faster
-            </div>
-            <div>
-              💾 <b>VRAM Usage:</b> <b>${mA.model_name}</b> uses <code>${mA.peak_vram_mb.toFixed(0)} MB</code> vs <b>${mB.model_name}</b> <code>${mB.peak_vram_mb.toFixed(0)} MB</code>
-            </div>
-          </div>
-        </div>
-      `;
-    }
 
     // Synchronize play events if syncPlayback is enabled
     setupSyncAudio(playerA, playerB);
