@@ -737,6 +737,8 @@
       chk.checked = state.lb.visibleCols[col] !== false;
       chk.onchange = () => {
         state.lb.visibleCols[col] = chk.checked;
+        const group = chk.dataset.group;
+        if (group) syncGroupCheckbox(group);
         updateLeaderboardTable();
       };
     });
@@ -761,9 +763,38 @@
           chk.checked = false;
           state.lb.visibleCols[chk.value] = false;
         });
+        document.querySelectorAll('.lb-group-chk').forEach(g => { g.checked = false; g.indeterminate = false; });
         updateLeaderboardTable();
       };
     }
+
+    // Helper: sync group checkbox state from its children
+    function syncGroupCheckbox(group) {
+      const groupChk = document.getElementById(`lb-group-chk-${group}`);
+      if (!groupChk) return;
+      const children = document.querySelectorAll(`.lb-col-vis-chk[data-group="${group}"]`);
+      const total = children.length;
+      const checked = Array.from(children).filter(c => c.checked).length;
+      if (checked === 0) { groupChk.checked = false; groupChk.indeterminate = false; }
+      else if (checked === total) { groupChk.checked = true; groupChk.indeterminate = false; }
+      else { groupChk.checked = false; groupChk.indeterminate = true; }
+    }
+
+    // Group-toggle checkboxes (select/deselect all in a group)
+    document.querySelectorAll('.lb-group-chk').forEach(groupChk => {
+      const group = groupChk.dataset.group;
+      // Sync initial state
+      syncGroupCheckbox(group);
+      groupChk.onchange = () => {
+        const shouldCheck = groupChk.checked;
+        document.querySelectorAll(`.lb-col-vis-chk[data-group="${group}"]`).forEach(chk => {
+          chk.checked = shouldCheck;
+          state.lb.visibleCols[chk.value] = shouldCheck;
+        });
+        groupChk.indeterminate = false;
+        updateLeaderboardTable();
+      };
+    });
 
     // Custom Weights Sliders (P, R, I, S, M)
     const updateSliderUI = () => {
