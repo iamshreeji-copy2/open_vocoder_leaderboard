@@ -1,0 +1,98 @@
+[
+  {
+    "system_A": "rndvoc",
+    "system_B": "flow2gan",
+    "label_A": "RNDVoC",
+    "label_B": "Flow2GAN",
+    "score_A": 76.17175799457105,
+    "score_B": 75.36141053337919,
+    "effect_A_minus_B": 0.8103474611918671,
+    "effect_ci95": [
+      0.6721645355224609,
+      1.020730972290039
+    ],
+    "p_raw": 0.0001999800019998,
+    "p_holm": 0.020997900209979,
+    "holm_significant_0_05": true
+  },
+  {
+    "system_A": "flow2gan",
+    "system_B": "bridgevoc",
+    "label_A": "Flow2GAN",
+    "label_B": "BridgeVoC",
+    "score_A": 75.36141053337919,
+    "score_B": 74.68141060502936,
+    "effect_A_minus_B": 0.6799999283498295,
+    "effect_ci95": [
+      0.5457935333251954,
+      0.7697563171386719
+    ],
+    "p_raw": 0.0001999800019998,
+    "p_holm": 0.020997900209979,
+    "holm_significant_0_05": true
+  },
+  {
+    "system_A": "bridgevoc",
+    "system_B": "vocos_mel_24khz",
+    "label_A": "BridgeVoC",
+    "label_B": "Vocos",
+    "score_A": 74.68141060502936,
+    "score_B": 74.63595971469584,
+    "effect_A_minus_B": 0.0454508903335124,
+    "effect_ci95": [
+      -0.1221096038818359,
+      0.4051252365112304
+    ],
+    "p_raw": 0.5589441055894411,
+    "p_holm": 1.0,
+    "holm_significant_0_05": false
+  },
+  {
+    "system_A": "periodwave_turbo",
+    "system_B": "comvo_base",
+    "label_A": "PeriodWave-Turbo",
+    "label_B": "ComVo-Base",
+    "score_A": 72.54710234955027,
+    "score_B": 72.47607378515873,
+    "effect_A_minus_B": 0.0710285643915398,
+    "effect_ci95": [
+      -0.134813117980957,
+      0.2400379180908203
+    ],
+    "p_raw": 0.5371462853714628,
+    "p_holm": 1.0,
+    "holm_significant_0_05": false
+  },
+  {
+    "system_A": "comvo_base",
+    "system_B": "bigvgan_v2_24khz_100band_256x",
+    "label_A": "ComVo-Base",
+    "label_B": "BigVGAN-v2",
+    "score_A": 72.47607378515873,
+    "score_B": 72.44317125815819,
+    "effect_A_minus_B": 0.0329025270005445,
+    "effect_ci95": [
+      -0.0974702835083007,
+      0.2105487823486328
+    ],
+    "p_raw": 0.486951304869513,
+    "p_holm": 1.0,
+    "holm_significant_0_05": false
+  },
+  {
+    "system_A": "hifigan_universal_v1",
+    "system_B": "periodwave_24k",
+    "label_A": "HiFi-GAN",
+    "label_B": "PeriodWave",
+    "score_A": 65.52971911822279,
+    "score_B": 65.12529255281243,
+    "effect_A_minus_B": 0.4044265654103611,
+    "effect_ci95": [
+      0.0601583480834961,
+      0.6149303436279296
+    ],
+    "p_raw": 0.025997400259974,
+    "p_holm": 0.137986201379862,
+    "holm_significant_0_05": false
+  }
+]

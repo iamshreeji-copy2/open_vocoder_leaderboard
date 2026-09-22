@@ -1,0 +1,16 @@
+,bigvgan_base_24khz_100band,bigvgan_v2_24khz_100band_256x,bridgevoc,comvo_base,comvo_large,flow2gan,freev,griffin_lim,hifigan_universal_v1,periodwave_24k,periodwave_turbo,rfwave_libritts_24k,rndvoc,vocos_mel_24khz,wavefm
+bigvgan_base_24khz_100band,--,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES
+bigvgan_v2_24khz_100band_256x,YES,--,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES
+bridgevoc,YES,YES,--,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,NO,YES
+comvo_base,YES,NO,YES,--,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES
+comvo_large,YES,YES,YES,YES,--,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES
+flow2gan,YES,YES,YES,YES,YES,--,YES,YES,YES,YES,YES,YES,YES,YES,YES
+freev,YES,YES,YES,YES,YES,YES,--,YES,NO,NO,YES,NO,YES,YES,YES
+griffin_lim,YES,YES,YES,YES,YES,YES,YES,--,YES,YES,YES,YES,YES,YES,YES
+hifigan_universal_v1,YES,YES,YES,YES,YES,YES,NO,YES,--,NO,YES,YES,YES,YES,YES
+periodwave_24k,YES,YES,YES,YES,YES,YES,NO,YES,NO,--,YES,YES,YES,YES,YES
+periodwave_turbo,YES,YES,YES,NO,YES,YES,YES,YES,YES,YES,--,YES,YES,YES,YES
+rfwave_libritts_24k,YES,YES,YES,YES,YES,YES,NO,YES,YES,YES,YES,--,YES,YES,YES
+rndvoc,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,--,YES,YES
+vocos_mel_24khz,YES,YES,NO,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,--,YES
+wavefm,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,YES,--

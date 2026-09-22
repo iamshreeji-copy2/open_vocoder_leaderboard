@@ -105,8 +105,8 @@
         <button class="nav-tab-btn" data-tab="robustness" onclick="switchTab('robustness')">📊 Quality &amp; Robustness</button>
         <button class="nav-tab-btn" data-tab="efficiency" onclick="switchTab('efficiency')">⚡ Efficiency</button>
         <button class="nav-tab-btn" data-tab="architectures" onclick="switchTab('architectures')">🧠 Architectures</button>
-        <button class="nav-tab-btn" data-tab="diagnostics" onclick="switchTab('diagnostics')">🔬 Diagnostics</button>
         <button class="nav-tab-btn" data-tab="pareto" onclick="switchTab('pareto')">📈 Pareto Frontier</button>
+        <button class="nav-tab-btn" data-tab="statistics" onclick="switchTab('statistics')">📐 Statistical Evidence</button>
         <button class="nav-tab-btn" data-tab="submit" onclick="switchTab('submit')">➕ Submit Model</button>
         <button class="nav-tab-btn" data-tab="changelog" onclick="switchTab('changelog')">📜 Changelog</button>
       </div>
@@ -1169,6 +1169,295 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 10: STATISTICAL EVIDENCE & INFERENTIAL ANALYSIS                     -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section id="tab-panel-statistics" class="tab-panel hidden space-y-6">
+      <!-- VIEW 2: PRISM-V Score + 95% CI Forest Leaderboard -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+              <span>🌲 PRISM-V Score &amp; 95% Bootstrap Confidence Intervals</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Marginal uncertainty estimates per system. Click any model to select it across the views below.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Display Mode Toggle: Observed + 95% CI vs Mean ± SD -->
+            <div class="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+              <button type="button" id="stats-forest-mode-ci" class="px-3 py-1 rounded-lg font-semibold transition bg-indigo-600 text-white shadow-sm" title="Show observed scores with 95% bootstrap confidence intervals">
+                Observed + 95% CI
+              </button>
+              <button type="button" id="stats-forest-mode-sd" class="px-3 py-1 rounded-lg font-semibold transition text-slate-400 hover:text-slate-200" title="Show bootstrap mean with standard deviation (ddof=1, N=10,000)">
+                Mean ± SD
+              </button>
+            </div>
+            <button type="button" id="stats-reset-forest" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Reset leaderboard filter and zoom">
+              ↺ Reset Leaderboard
+            </button>
+            <div class="flex items-center gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+              <button type="button" id="stats-filter-all" class="px-3 py-1 rounded-lg font-semibold transition bg-indigo-600 text-white shadow-sm">
+                All systems (15)
+              </button>
+              <button type="button" id="stats-filter-neural" class="px-3 py-1 rounded-lg font-semibold transition text-slate-400 hover:text-slate-200">
+                Neural vocoders only (14)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="stats-forest-chart" class="w-full min-h-[480px]"></div>
+
+        <div class="mt-3 text-[11px] text-slate-400 space-y-1">
+          <div>
+            Observed PRISM-V scores are shown with 95% bootstrap confidence intervals; bootstrap mean ± SD summarizes the center and dispersion of the resampled score distribution.
+          </div>
+          <div class="text-slate-500 italic">
+            * Note: Marginal/model-wise confidence intervals depict individual score uncertainty and are not equivalent to paired pairwise significance tests (evaluated via paired bootstrap in the 15×15 matrix below).
+          </div>
+        </div>
+
+        <!-- Collapsible Model Bootstrap Validation Table -->
+        <div class="mt-4 pt-3 border-t border-slate-800">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <button type="button" id="stats-toggle-val-table" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 transition">
+              <span>📊 Show Model Bootstrap Summary Table (μ ± σ, Bias, 95% CI)</span>
+              <span id="stats-val-table-arrow" class="text-[10px]">▼</span>
+            </button>
+            <a href="data/stats/bootstrap_mean_sd_validation.csv" download="prismv_bootstrap_mean_sd_validation.csv" class="text-xs font-medium text-slate-400 hover:text-slate-200 flex items-center gap-1 transition">
+              <span>⬇ Download Summary (CSV)</span>
+            </a>
+          </div>
+          <div id="stats-val-table-container" class="hidden mt-3 overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 font-semibold bg-slate-950/60">
+                  <th class="p-2">Rank</th>
+                  <th class="p-2">Model</th>
+                  <th class="p-2 font-mono text-right">Observed PRISM-V</th>
+                  <th class="p-2 font-mono text-right">Bootstrap μ ± σ</th>
+                  <th class="p-2 font-mono text-right">Mean − Observed (Δ)</th>
+                  <th class="p-2 font-mono text-right">95% Bootstrap CI</th>
+                  <th class="p-2 font-mono text-right">Replicates (N)</th>
+                </tr>
+              </thead>
+              <tbody id="stats-val-table-body" class="divide-y divide-slate-800/60 text-slate-300">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 3: 15×15 Pairwise Significance Heatmap -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+          <div>
+            <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+              <span>🗺️ Statistical Significance Matrix</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Signed difference in PRISM-V score (Row − Column). Diverging color scale centered at 0. Click any cell to inspect details in the Pairwise Explorer.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <div class="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+              <button type="button" id="stats-matrix-full" class="px-2.5 py-1 rounded-lg font-semibold transition bg-indigo-600 text-white shadow-sm" title="Show full 15×15 pairwise matrix">
+                Full 15×15 Matrix
+              </button>
+              <button type="button" id="stats-matrix-triangle" class="px-2.5 py-1 rounded-lg font-semibold transition text-slate-400 hover:text-slate-200" title="Show upper triangle only (105 unique pairwise hypotheses)">
+                Upper Triangle Only
+              </button>
+            </div>
+            <a href="data/stats/pairwise_105_holm.csv" download="prismv_pairwise_105_holm.csv" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shadow-sm" title="Download full 105 pairwise comparison results">
+              <span>📥</span>
+              <span>Download 105 Comparisons (CSV)</span>
+            </a>
+            <button type="button" id="stats-reset-heatmap" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Reset heatmap zoom back to full view">
+              ↺ Reset Matrix Zoom
+            </button>
+          </div>
+        </div>
+
+        <!-- Recommended Website Banner & Clean Visual Legend -->
+        <div class="p-3.5 bg-slate-950/80 border border-indigo-500/30 rounded-xl text-xs flex items-start gap-3 mb-4">
+          <span class="text-lg leading-none">💡</span>
+          <div class="text-slate-300 leading-relaxed">
+            <strong class="text-indigo-400">Proposed approach achieves statistically robust separation across 98 of 105 unique model pairs</strong>
+            <span class="text-slate-400">(excluding self-comparisons and duplicate symmetric pairs from total possible comparisons).</span>
+            <div class="mt-2.5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
+              <span class="flex items-center gap-1.5 font-medium"><span class="w-3 h-3 rounded-full bg-blue-600 inline-block shadow-sm"></span> <b>Blue</b> = Row model higher (A &gt; B)</span>
+              <span class="flex items-center gap-1.5 font-medium"><span class="w-3 h-3 rounded-full bg-red-600 inline-block shadow-sm"></span> <b>Red</b> = Row model lower (A &lt; B)</span>
+              <span class="flex items-center gap-1.5 font-medium"><span class="w-3.5 h-3.5 rounded bg-slate-700 border border-amber-500/60 inline-flex items-center justify-center text-[9px] font-bold text-amber-300">ns</span> <b>Grey (ns)</b> = Not statistically significant (p &gt; 0.05)</span>
+              <span class="flex items-center gap-1.5 font-medium"><span class="w-3.5 h-3.5 rounded bg-slate-800 border border-slate-700 inline-flex items-center justify-center font-mono font-bold text-slate-300 text-xs">-</span> <b>"-" (Diagonal)</b> = Self-comparison</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-center w-full overflow-x-auto">
+          <div id="stats-heatmap-chart" class="w-full max-w-[840px] min-h-[640px]"></div>
+        </div>
+      </div>
+
+      <!-- VIEW 4: Pairwise Comparison Explorer -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6" id="stats-pair-explorer-container">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+              <span>🔍 Model-vs-Model Pairwise Comparison Explorer</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Select any two models or choose a featured contrast to inspect paired effect size, 95% CI, and Holm-corrected p-value.
+            </p>
+          </div>
+          <div>
+            <button type="button" id="stats-reset-pair" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Reset pair selection to default (RNDVoC vs Flow2GAN)">
+              ↺ Reset to Default Pair
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Featured Comparison Chips -->
+        <div class="mb-5">
+          <div class="text-xs font-semibold text-slate-400 mb-2">Featured Contrasts (Curated Key Pairs):</div>
+          <div class="flex flex-wrap gap-2" id="stats-featured-chips"></div>
+        </div>
+
+        <!-- Pair Selectors -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-950 border border-slate-800 rounded-xl mb-6 text-xs">
+          <div>
+            <label class="block text-slate-400 font-bold mb-1.5">System A (Reference Model):</label>
+            <select id="stats-select-sysA" class="w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 font-medium"></select>
+          </div>
+          <div>
+            <label class="block text-slate-400 font-bold mb-1.5">System B (Comparison Model):</label>
+            <select id="stats-select-sysB" class="w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 font-medium"></select>
+          </div>
+        </div>
+
+        <!-- Pair Summary Scorecard -->
+        <div id="stats-pair-scorecard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6"></div>
+
+        <!-- 1D Forest Axis Plot: B higher <-- 0 --> A higher -->
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-400 mb-2">
+            <span class="text-amber-400">← System B Higher</span>
+            <span class="text-slate-500">Zero Difference (Δ = 0)</span>
+            <span class="text-indigo-400">System A Higher →</span>
+          </div>
+          <div id="stats-pair-forest-chart" class="w-full h-36"></div>
+        </div>
+      </div>
+
+      <!-- TWO-COLUMN GRID: VIEW 5 & VIEW 6 -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- VIEW 5: Cross-Corpus Consistency Profile -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                <span>📊 Cross-Corpus Consistency Profile</span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">
+                Utility score $B$ across 4 evaluation corpora. Shows consistency and reveals worst-corpus bottleneck.
+              </p>
+            </div>
+            <div>
+              <button type="button" id="stats-reset-corpus" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Reset compared models to default">
+                ↺ Reset Models
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 mb-4 text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400 font-bold">Model 1:</span>
+              <select id="stats-corpus-m1" class="p-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-200"></select>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400 font-bold">Model 2:</span>
+              <select id="stats-corpus-m2" class="p-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-200"></select>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400 font-bold">Model 3:</span>
+              <select id="stats-corpus-m3" class="p-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-200"></select>
+            </div>
+          </div>
+
+          <div id="stats-corpus-chart" class="w-full min-h-[340px]"></div>
+        </div>
+
+        <!-- VIEW 6: Bootstrap Uncertainty Explorer -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                <span>🎲 Bootstrap Uncertainty Distribution</span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">
+                Empirical bootstrap draw distribution across models.
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" id="stats-reset-boot" class="px-2 py-1 rounded text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Reset distribution view to default">
+                ↺ Reset Distribution
+              </button>
+              <div class="flex items-center gap-1.5 text-xs">
+                <button type="button" id="stats-dist-kde" class="px-2.5 py-1 rounded bg-indigo-600 text-white font-semibold transition">Density</button>
+                <button type="button" id="stats-dist-hist" class="px-2.5 py-1 rounded bg-slate-800 text-slate-400 hover:text-white transition">Histogram</button>
+                <button type="button" id="stats-dist-violin" class="px-2.5 py-1 rounded bg-slate-800 text-slate-400 hover:text-white transition">Violin</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 mb-4 text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400 font-bold">Primary:</span>
+              <select id="stats-boot-m1" class="p-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-200"></select>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400 font-bold">Comparison:</span>
+              <select id="stats-boot-m2" class="p-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-200"></select>
+            </div>
+          </div>
+
+          <div id="stats-bootstrap-chart" class="w-full min-h-[340px]"></div>
+
+          <div class="mt-2 text-[11px] text-slate-500 font-medium">
+            * Distribution visualization uses 1,000 stored bootstrap draws; reported CIs and p-values use the complete 10,000-replicate analysis.
+          </div>
+        </div>
+      </div>
+
+      <!-- METHODOLOGY PANEL (Section 10) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <details class="group cursor-pointer">
+          <summary class="font-bold text-slate-200 flex items-center justify-between select-none">
+            <div class="flex items-center gap-2">
+              <span>📖 Statistical protocol</span>
+            </div>
+            <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <div class="pt-4 mt-3 border-t border-slate-800/80 text-xs text-slate-300 space-y-3 leading-relaxed">
+            <p>
+              PRISM-V uncertainty was estimated with 10,000 paired bootstrap replicates. LJSpeech was resampled at the utterance level, while Free_ST, LibriTTS, and VCTK used speaker-cluster resampling. Identical sampled units were applied across systems within each replicate. All C(15,2)=105 system pairs formed one multiple-comparison family, with Holm-Bonferroni correction at α=0.05. Pairwise results report PRISM-V score differences with paired 95% bootstrap confidence intervals.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800/80">
+                <span class="font-bold text-sky-400 block mb-1">Speaker-Cluster Resampling:</span>
+                <span>Applied to Free_ST (10 speakers), LibriTTS (682 speakers), and VCTK (109 speakers). Preserves inter-speaker acoustic correlation structure.</span>
+              </div>
+              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800/80">
+                <span class="font-bold text-indigo-400 block mb-1">Holm-Bonferroni Family-Wise Control:</span>
+                <span>Step-down adjustment over sorted p-values $p_{(1)} \le \dots \le p_{(m)}$ testing $H_{(k)}$ at $\alpha / (m - k + 1)$, with $m = 105$. Controls FWER at 0.05 without conservatism of standard Bonferroni.</span>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- TAB 12: SUBMIT MODEL                                                    -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <section id="tab-panel-submit" class="tab-panel hidden space-y-6">
@@ -1438,8 +1727,12 @@
   </div>
 
   <!-- Pre-bundled Data and Application Logic -->
-  <script src="data/waveform_data.js?v=20260922_v3"></script>
-  <script src="data/prism_data.js?v=20260922_v3"></script>
-  <script src="assets/app.js?v=20260922_v3"></script>
+  <script src="data/waveform_data.js?v=20260922_v4"></script>
+  <script src="data/prism_data.js?v=20260922_v4"></script>
+  <script src="data/stats/stats_data.js?v=20260922_v4"></script>
+  <script src="data/stats/bootstrap_1000.js?v=20260922_v4"></script>
+  <script src="data/stats/matrices.js?v=20260922_v4"></script>
+  <script src="assets/stats.js?v=20260922_v4"></script>
+  <script src="assets/app.js?v=20260922_v4"></script>
 </body>
 </html>

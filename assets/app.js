@@ -204,7 +204,7 @@
   const TAB_IDS = [
     'overview', 'leaderboard', 'compare', 'audio-explorer',
     'robustness', 'efficiency', 'architectures', 'diagnostics',
-    'pareto', 'models', 'methodology', 'submit', 'changelog'
+    'pareto', 'statistics', 'models', 'methodology', 'submit', 'changelog'
   ];
 
   function switchTab(tabId, pushState = true) {
@@ -308,7 +308,8 @@
       'overview-arch-bar', 'compare-radar', 'robustness-plot',
       'efficiency-bar-chart', 'arch-pesq-bar', 'diag-radar-chart',
       'diag-bar-chart', 'pareto-scatter-chart', 'diag-plotly-table',
-      'diag-plotly-heatmap'
+      'diag-plotly-heatmap', 'stats-forest-chart', 'stats-heatmap-chart',
+      'stats-pair-forest-chart', 'stats-corpus-chart', 'stats-bootstrap-chart'
     ];
     chartIds.forEach(id => {
       const el = document.getElementById(id);
@@ -339,6 +340,9 @@
       else if (diagTableState && diagTableState.view === 'table') renderDiagPlotlyTable();
     }
     else if (tabId === 'pareto') renderParetoPlot();
+    else if (tabId === 'statistics') {
+      if (window.renderStatisticsSection) window.renderStatisticsSection();
+    }
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
@@ -348,7 +352,7 @@
         <div class="rank-score-pill rank-baseline" style="background-color: rgba(100, 116, 139, 0.35); border: 1px solid rgba(148, 163, 184, 0.4); color: #e2e8f0;" title="Algorithmic DSP Reference Baseline (Not ranked among neural vocoders)">
           <span class="font-bold text-[11px] uppercase tracking-wider text-slate-200">Baseline</span>
           <span class="text-xs opacity-50">·</span>
-          <span class="rank-score font-bold">${score.toFixed(1)}</span>
+          <span class="rank-score font-bold">${score.toFixed(2)}</span>
         </div>
       `;
     }
@@ -360,7 +364,7 @@
     else if (rank === 3) { medal = '🥉'; cls = 'rank-bronze'; }
 
     const isGated = !isFeasible || score <= 1.0;
-    const scoreText = isGated ? `${score.toFixed(1)}†` : score.toFixed(1);
+    const scoreText = isGated ? `${score.toFixed(2)}†` : score.toFixed(2);
     const titleAttr = isGated ? ' title="Hardware feasibility constraint violated (RTF > 1.0 on GTX 1650 FP32 profile); composite score floored to 1.00"' : '';
 
     return `
@@ -1085,13 +1089,8 @@
   function formatParams(p) {
     if (p === undefined || p === null || isNaN(p)) return '—';
     const num = Number(p);
-    if (num === 0) return '0.0';
-    const str = String(p);
-    if (str.includes('.')) {
-      const dec = str.split('.')[1].length;
-      return num.toFixed(Math.min(2, Math.max(1, dec)));
-    }
-    return num.toFixed(1);
+    if (num === 0) return '—';
+    return num.toFixed(2);
   }
 
   function computeColumnMedals(list) {
@@ -1228,7 +1227,7 @@
       let rankNum = 0;
       if (!isBaseline) {
         neuralRank++;
-        rankNum = neuralRank;
+        rankNum = state.lb.useCustomWeights ? neuralRank : (m.rank !== undefined && m.rank !== null ? m.rank : neuralRank);
       }
       const rankBadge = formatRankBadge(rankNum, m.display_score, m.edge_feasible === 'Yes', isBaseline);
       const rowStyle = isBaseline ? 'style="border-left: 4px solid #94a3b8;"' : '';
@@ -1261,11 +1260,11 @@
                 `;
               case 'pesq': {
                 const medal = (colMedals.pesq && colMedals.pesq[mKey]) || 0;
-                return `<td class="num-cell font-mono ${checkClass}">${formatMedalValue(m.computed_pesq.toFixed(3), medal, 'font-bold text-indigo-600 dark:text-indigo-400')}</td>`;
+                return `<td class="num-cell font-mono ${checkClass}">${formatMedalValue(m.computed_pesq.toFixed(2), medal, 'font-bold text-indigo-600 dark:text-indigo-400')}</td>`;
               }
               case 'stoi': {
                 const medal = (colMedals.stoi && colMedals.stoi[mKey]) || 0;
-                return `<td class="num-cell font-mono ${checkClass}">${formatMedalValue(m.stoi.toFixed(3), medal)}</td>`;
+                return `<td class="num-cell font-mono ${checkClass}">${formatMedalValue(m.stoi.toFixed(2), medal)}</td>`;
               }
               case 'mcd_db': {
                 const medal = (colMedals.mcd_db && colMedals.mcd_db[mKey]) || 0;
@@ -1299,22 +1298,22 @@
                 return `<td class="text-center ${checkClass}">${m.edge_feasible === 'Yes' ? '✅' : '❌'}</td>`;
               case 'LJSpeech': {
                 const medal = (colMedals.LJSpeech && colMedals.LJSpeech[mKey]) || 0;
-                const val = m.dataset_pesqs && m.dataset_pesqs.LJSpeech ? m.dataset_pesqs.LJSpeech.toFixed(3) : '—';
+                const val = m.dataset_pesqs && m.dataset_pesqs.LJSpeech ? m.dataset_pesqs.LJSpeech.toFixed(2) : '—';
                 return `<td class="num-cell font-mono ${checkClass}">${val !== '—' ? formatMedalValue(val, medal) : '—'}</td>`;
               }
               case 'LibriTTS': {
                 const medal = (colMedals.LibriTTS && colMedals.LibriTTS[mKey]) || 0;
-                const val = m.dataset_pesqs && m.dataset_pesqs.LibriTTS ? m.dataset_pesqs.LibriTTS.toFixed(3) : '—';
+                const val = m.dataset_pesqs && m.dataset_pesqs.LibriTTS ? m.dataset_pesqs.LibriTTS.toFixed(2) : '—';
                 return `<td class="num-cell font-mono ${checkClass}">${val !== '—' ? formatMedalValue(val, medal) : '—'}</td>`;
               }
               case 'VCTK': {
                 const medal = (colMedals.VCTK && colMedals.VCTK[mKey]) || 0;
-                const val = m.dataset_pesqs && m.dataset_pesqs.VCTK ? m.dataset_pesqs.VCTK.toFixed(3) : '—';
+                const val = m.dataset_pesqs && m.dataset_pesqs.VCTK ? m.dataset_pesqs.VCTK.toFixed(2) : '—';
                 return `<td class="num-cell font-mono ${checkClass}">${val !== '—' ? formatMedalValue(val, medal) : '—'}</td>`;
               }
               case 'Free_ST': {
                 const medal = (colMedals.Free_ST && colMedals.Free_ST[mKey]) || 0;
-                const val = m.dataset_pesqs && m.dataset_pesqs.Free_ST ? m.dataset_pesqs.Free_ST.toFixed(3) : '—';
+                const val = m.dataset_pesqs && m.dataset_pesqs.Free_ST ? m.dataset_pesqs.Free_ST.toFixed(2) : '—';
                 return `<td class="num-cell font-mono ${checkClass}">${val !== '—' ? formatMedalValue(val, medal) : '—'}</td>`;
               }
               case 'code':
@@ -1398,16 +1397,16 @@
             val = m.system_id || '';
             break;
           case 'rank':
-            val = isBaseline ? `Baseline (${(m.display_score !== undefined ? m.display_score : (m.overall_score || 0)).toFixed(1)})` : `${rankStr} (${m.display_score !== undefined ? m.display_score.toFixed(1) : (m.overall_score || 0).toFixed(1)})`;
+            val = isBaseline ? `Baseline (${(m.display_score !== undefined ? m.display_score : (m.overall_score || 0)).toFixed(2)})` : `${rankStr} (${m.display_score !== undefined ? m.display_score.toFixed(2) : (m.overall_score || 0).toFixed(2)})`;
             break;
           case 'model_name':
             val = m.model_name || '';
             break;
           case 'pesq':
-            val = m.computed_pesq !== undefined ? m.computed_pesq.toFixed(3) : (m.pesq || 0).toFixed(3);
+            val = m.computed_pesq !== undefined ? m.computed_pesq.toFixed(2) : (m.pesq || 0).toFixed(2);
             break;
           case 'stoi':
-            val = m.stoi !== undefined ? m.stoi.toFixed(3) : '';
+            val = m.stoi !== undefined ? m.stoi.toFixed(2) : '';
             break;
           case 'mcd_db':
             val = m.mcd_db !== undefined ? m.mcd_db.toFixed(2) : '';
@@ -1440,16 +1439,16 @@
             val = m.edge_feasible || '';
             break;
           case 'LJSpeech':
-            val = m.dataset_pesqs && m.dataset_pesqs.LJSpeech ? m.dataset_pesqs.LJSpeech.toFixed(3) : '';
+            val = m.dataset_pesqs && m.dataset_pesqs.LJSpeech ? m.dataset_pesqs.LJSpeech.toFixed(2) : '';
             break;
           case 'LibriTTS':
-            val = m.dataset_pesqs && m.dataset_pesqs.LibriTTS ? m.dataset_pesqs.LibriTTS.toFixed(3) : '';
+            val = m.dataset_pesqs && m.dataset_pesqs.LibriTTS ? m.dataset_pesqs.LibriTTS.toFixed(2) : '';
             break;
           case 'VCTK':
-            val = m.dataset_pesqs && m.dataset_pesqs.VCTK ? m.dataset_pesqs.VCTK.toFixed(3) : '';
+            val = m.dataset_pesqs && m.dataset_pesqs.VCTK ? m.dataset_pesqs.VCTK.toFixed(2) : '';
             break;
           case 'Free_ST':
-            val = m.dataset_pesqs && m.dataset_pesqs.Free_ST ? m.dataset_pesqs.Free_ST.toFixed(3) : '';
+            val = m.dataset_pesqs && m.dataset_pesqs.Free_ST ? m.dataset_pesqs.Free_ST.toFixed(2) : '';
             break;
           case 'code':
             val = m.github_url || '';
@@ -1564,9 +1563,9 @@
           return `<span class="px-2 py-0.5 rounded text-xs font-mono font-bold ${isBase ? 'bg-slate-700 text-slate-200 border border-slate-600' : 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50'}">${m.system_id || '—'}</span>`;
         } 
       },
-      { label: '🏆 <span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Score (1–100) ↑', get: m => m.overall_score.toFixed(1) },
-      { label: 'Wideband PESQ ↑', get: m => m.pesq.toFixed(3) },
-      { label: 'STOI Intelligibility ↑', get: m => m.stoi.toFixed(3) },
+      { label: '🏆 <span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Score (1–100) ↑', get: m => m.overall_score.toFixed(2) },
+      { label: 'Wideband PESQ ↑', get: m => m.pesq.toFixed(2) },
+      { label: 'STOI Intelligibility ↑', get: m => m.stoi.toFixed(2) },
       { label: 'UTMOS Neural MOS ↑', get: m => m.utmos.toFixed(2) },
       { label: 'NISQA Naturalness ↑', get: m => m.nisqa.toFixed(2) },
       { label: 'ASR Degradation (ΔWER) ↓', get: m => `${m.delta_wer_pct.toFixed(2)}%` },
@@ -1885,7 +1884,7 @@
         <div class="vocoder-metrics-grid">
           <div class="vocoder-metric-box">
             <div class="vocoder-metric-lbl">Wideband PESQ</div>
-            <div class="vocoder-metric-val text-indigo-500">${m.pesq.toFixed(3)}</div>
+            <div class="vocoder-metric-val text-indigo-500">${m.pesq.toFixed(2)}</div>
           </div>
           <div class="vocoder-metric-box">
             <div class="vocoder-metric-lbl">UTMOS MOS</div>
@@ -2238,8 +2237,8 @@
           <td class="p-3 font-mono font-bold text-xs"><span class="px-1.5 py-0.5 rounded text-[11px] ${isBase ? 'bg-slate-700 text-slate-200 border border-slate-600' : 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50'}">${r.system_id || '—'}</span></td>
           <td class="p-3 font-semibold text-xs">${r.model_name}</td>
           <td class="p-3 text-xs text-indigo-500 font-semibold">${r.dataset}</td>
-          <td class="p-3 font-mono text-xs font-bold">${r.pesq.toFixed(3)}</td>
-          <td class="p-3 font-mono text-xs">${r.stoi.toFixed(3)}</td>
+          <td class="p-3 font-mono text-xs font-bold">${r.pesq.toFixed(2)}</td>
+          <td class="p-3 font-mono text-xs">${r.stoi.toFixed(2)}</td>
           <td class="p-3 font-mono text-xs">${r.lsd_db.toFixed(2)}</td>
           <td class="p-3 font-mono text-xs">${r.mcd_db.toFixed(2)}</td>
         </tr>
@@ -2395,12 +2394,12 @@
           <td class="p-3 text-xs text-slate-400">${m.track}</td>
           <td class="p-3 font-mono text-xs">${m.year}</td>
           <td class="p-3 font-mono text-xs">${m.license}</td>
-          <td class="p-3 font-mono text-xs font-bold">${m.pesq.toFixed(3)}</td>
+          <td class="p-3 font-mono text-xs font-bold">${m.pesq.toFixed(2)}</td>
           <td class="p-3 font-mono text-xs">${m.utmos.toFixed(2)}</td>
           <td class="p-3 font-mono text-xs">${m.rtf.toFixed(4)}</td>
           <td class="p-3 font-mono text-xs">${m.speedup_x.toFixed(0)}×</td>
           <td class="p-3 font-mono text-xs">${m.peak_vram_mb.toFixed(0)}</td>
-          <td class="p-3 font-mono text-xs font-bold text-indigo-500">${m.overall_score.toFixed(1)}</td>
+          <td class="p-3 font-mono text-xs font-bold text-indigo-500">${m.overall_score.toFixed(2)}</td>
           <td class="p-3 text-xs">
             <div class="flex items-center gap-1">
               ${formatCodeButton(m.github_url, true)}
@@ -2431,7 +2430,7 @@
       const xCats = Object.keys(catMap).sort();
       const yPesqs = xCats.map(c => {
         const arr = catMap[c];
-        return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(3);
+        return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2);
       });
       const colors = xCats.map(c => state.data.arch_cat_colors[c] || '#4F46E5');
 
@@ -2461,7 +2460,7 @@
         .sort((a, b) => b.pesq - a.pesq);
 
       const xNames = catModels.map(m => `[${m.system_id || '—'}] ${m.model_name}`);
-      const yPesqs = catModels.map(m => m.pesq.toFixed(3));
+      const yPesqs = catModels.map(m => m.pesq.toFixed(2));
       const barColor = state.data.arch_cat_colors[selectedCat] || '#4F46E5';
 
       const trace = {
@@ -2758,8 +2757,8 @@
     const colSystemId = data.map(r => r.system_id || '—');
     const colModelName = data.map(r => r.model_name);
     const colClass = data.map(r => r.phonetic_class);
-    const colLsd = data.map(r => r.lsd_db.toFixed(3));
-    const colF0 = data.map(r => r.f0_error_cents.toFixed(1) + ' ¢');
+    const colLsd = data.map(r => r.lsd_db.toFixed(2));
+    const colF0 = data.map(r => r.f0_error_cents.toFixed(2) + ' ¢');
     const colBoundary = data.map(r => r.boundary_error_db.toFixed(2) + ' dB');
 
     const defaultCellBg = data.map((r, i) => {
@@ -2880,8 +2879,8 @@
           <td class="p-3 font-mono font-bold text-xs"><span class="px-1.5 py-0.5 rounded text-[11px] ${isBase ? 'bg-slate-700 text-slate-200 border border-slate-600' : 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50'}">${r.system_id || '—'}</span></td>
           <td class="p-3 font-semibold text-xs">${r.model_name}</td>
           <td class="p-3 text-xs text-indigo-400 font-semibold">${r.phonetic_class}</td>
-          <td class="p-3 font-mono text-xs font-bold">${r.lsd_db.toFixed(3)}</td>
-          <td class="p-3 font-mono text-xs">${r.f0_error_cents.toFixed(1)}</td>
+          <td class="p-3 font-mono text-xs font-bold">${r.lsd_db.toFixed(2)}</td>
+          <td class="p-3 font-mono text-xs">${r.f0_error_cents.toFixed(2)}</td>
           <td class="p-3 font-mono text-xs">${r.boundary_error_db.toFixed(2)}</td>
         </tr>
       `;
@@ -3054,9 +3053,9 @@
           <div class="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4">
             <h3 class="font-bold text-xs uppercase text-slate-400 tracking-wider mb-3">Quality & Fidelity</h3>
             <div class="space-y-2 text-xs">
-              <div class="flex justify-between"><span><span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Score:</span><span class="font-mono font-bold text-indigo-500">${m.overall_score.toFixed(1)} / 100</span></div>
-              <div class="flex justify-between"><span>Wideband PESQ:</span><span class="font-mono font-bold">${m.pesq.toFixed(3)}</span></div>
-              <div class="flex justify-between"><span>STOI Intelligibility:</span><span class="font-mono">${m.stoi.toFixed(3)}</span></div>
+              <div class="flex justify-between"><span><span class="prism-rainbow-text font-bold"><span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V</span> Score:</span><span class="font-mono font-bold text-indigo-500">${m.overall_score.toFixed(2)} / 100</span></div>
+              <div class="flex justify-between"><span>Wideband PESQ:</span><span class="font-mono font-bold">${m.pesq.toFixed(2)}</span></div>
+              <div class="flex justify-between"><span>STOI Intelligibility:</span><span class="font-mono">${m.stoi.toFixed(2)}</span></div>
               <div class="flex justify-between"><span>UTMOS Neural MOS:</span><span class="font-mono text-purple-500 font-bold">${m.utmos.toFixed(2)}</span></div>
               <div class="flex justify-between"><span>ASR Degradation (ΔWER):</span><span class="font-mono">${m.delta_wer_pct.toFixed(2)}%</span></div>
             </div>
@@ -3094,8 +3093,8 @@
                   <tr>
                     <td class="p-3 font-bold text-indigo-500">${d}</td>
                     <td class="p-3 text-slate-400">${state.data.datasets[d] || '—'}</td>
-                    <td class="p-3 font-mono font-bold">${met ? met.pesq.toFixed(3) : '—'}</td>
-                    <td class="p-3 font-mono">${met ? met.stoi.toFixed(3) : '—'}</td>
+                    <td class="p-3 font-mono font-bold">${met ? met.pesq.toFixed(2) : '—'}</td>
+                    <td class="p-3 font-mono">${met ? met.stoi.toFixed(2) : '—'}</td>
                     <td class="p-3 font-mono">${met ? met.lsd_db.toFixed(2) : '—'}</td>
                     <td class="p-3 font-mono">${met ? met.mcd_db.toFixed(2) : '—'}</td>
                   </tr>

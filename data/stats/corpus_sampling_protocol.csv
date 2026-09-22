@@ -1,0 +1,5 @@
+corpus,utterances_per_model,speakers_per_model,resampling_unit,cluster_count,paired_across_models
+Free_ST,2000,10,speaker_cluster,10,True
+LJSpeech,2000,1,utterance,2000,True
+LibriTTS,2000,682,speaker_cluster,682,True
+VCTK,2000,109,speaker_cluster,109,True

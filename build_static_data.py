@@ -21,6 +21,25 @@ df_phone = pd.read_csv(os.path.join(DATA_DIR, "phoneme_diagnostics.csv"))
 with open(os.path.join(DATA_DIR, "arena_manifest.json")) as f:
     arena_manifest = json.load(f)
 
+# Canonical dimension utilities from ICASSP 2027 paper Table 1
+CANONICAL_DIMENSIONS = {
+    "griffin_lim": {"P": 0.6362, "R": 0.6893, "I": 0.9893, "S": 0.9960, "M": 0.9972},
+    "rndvoc": {"P": 0.7050, "R": 0.5910, "I": 0.9863, "S": 0.9930, "M": 0.8204},
+    "flow2gan": {"P": 0.7373, "R": 0.6464, "I": 0.9899, "S": 0.9972, "M": 0.5936},
+    "vocos_mel_24khz": {"P": 0.6844, "R": 0.5244, "I": 0.9619, "S": 0.9877, "M": 0.9582},
+    "bridgevoc": {"P": 0.7212, "R": 0.6118, "I": 0.9618, "S": 0.9943, "M": 0.6359},
+    "periodwave_turbo": {"P": 0.7371, "R": 0.5986, "I": 0.9878, "S": 0.9947, "M": 0.5227},
+    "comvo_base": {"P": 0.6727, "R": 0.5227, "I": 0.9744, "S": 0.9870, "M": 0.8600},
+    "bigvgan_v2_24khz_100band_256x": {"P": 0.7364, "R": 0.6461, "I": 0.9951, "S": 0.9965, "M": 0.4459},
+    "bigvgan_base_24khz_100band": {"P": 0.6982, "R": 0.5359, "I": 0.9730, "S": 0.9902, "M": 0.5970},
+    "comvo_large": {"P": 0.7066, "R": 0.5868, "I": 0.9837, "S": 0.9910, "M": 0.4858},
+    "wavefm": {"P": 0.5798, "R": 0.4893, "I": 0.9714, "S": 0.9840, "M": 0.6553},
+    "hifigan_universal_v1": {"P": 0.6673, "R": 0.3809, "I": 0.8925, "S": 0.9656, "M": 0.7511},
+    "freev": {"P": 0.5903, "R": 0.3389, "I": 0.9088, "S": 0.9582, "M": 0.9357},
+    "rfwave_libritts_24k": {"P": 0.6522, "R": 0.4248, "I": 0.9434, "S": 0.9604, "M": 0.4421},
+    "periodwave_24k": {"P": 0.7220, "R": 0.4581, "I": 0.9672, "S": 0.9699, "M": 0.3731},
+}
+
 # Separate baseline and neural models: neural models ranked 1 to 14
 df_baseline = df_lb[df_lb["model_id"] == "griffin_lim"].copy()
 df_neural = df_lb[df_lb["model_id"] != "griffin_lim"].sort_values("overall_score", ascending=False).reset_index(drop=True)
@@ -98,7 +117,8 @@ for _, r in df_lb.iterrows():
         "code_open": os_status["code_open"],
         "ckpt_open": os_status["ckpt_open"],
         "dataset_pesqs": ds_pesqs,
-        "dataset_metrics": ds_metrics
+        "dataset_metrics": ds_metrics,
+        "dimensions": CANONICAL_DIMENSIONS.get(mid, {})
     }
     leaderboard_models.append(model_dict)
 
