@@ -46,32 +46,36 @@
       sortCol: 'overall_score',
       sortAsc: false,
       visibleCols: {
-        // Core columns
+        // Core — always visible by default
         'system_id': true,
         'rank': true,
         'model_name': true,
-        // Default visible column names
-        'pesq': true,
-        'stoi': true,
-        'utmos': true,
-        'delta_wer_pct': true,
-        'rtf': true,
-        'speedup_x': true,
-        'peak_vram_mb': true,
+        // Objective — hidden by default
+        'pesq': false,
+        'stoi': false,
+        'mcd_db': false,
+        'lsd_db': false,
+        // Perceptual — hidden by default
+        'utmos': false,
+        'nisqa': false,
+        'delta_wer_pct': false,
+        // Performance — hidden by default
+        'rtf': false,
+        'speedup_x': false,
+        'peak_vram_mb': false,
+        'params_m': false,
+        'edge_feasible': false,
+        // Robustness datasets — visible by default
         'LJSpeech': true,
         'LibriTTS': true,
         'VCTK': true,
         'Free_ST': true,
+        // Metadata — visible (except architecture, track, year, paper)
         'code': true,
         'checkpoint': true,
+        'paper': false,
         'is_pareto': true,
-        // Hidden by default
-        'mcd_db': false,
-        'lsd_db': false,
-        'nisqa': false,
-        'params_m': false,
-        'edge_feasible': false,
-        'license': false,
+        'license': true,
         'architecture_family': false,
         'track': false,
         'year': false
@@ -1040,11 +1044,11 @@
       { id: 'code', label: 'Code', rawLabel: 'Code URL', group: 'info', tip: 'Public Code Availability' },
       { id: 'checkpoint', label: 'Checkpoint', rawLabel: 'Checkpoint URL', group: 'info', tip: 'Pretrained Checkpoint Availability' },
       { id: 'paper', label: 'Paper', rawLabel: 'Paper URL', group: 'info', tip: 'Scientific Research Paper' },
-      { id: 'is_pareto', label: 'Pareto ⭐', rawLabel: 'Pareto Optimal', group: 'info', sortKey: 'is_pareto', tip: 'Non-dominated Pareto Optimal Checkpoint' },
-      { id: 'license', label: 'License', rawLabel: 'License', group: 'info', sortKey: 'license', tip: 'Open License' },
       { id: 'architecture_family', label: 'Architecture', rawLabel: 'Architecture Family', group: 'info', sortKey: 'architecture_family', tip: 'Architecture Family' },
       { id: 'track', label: 'Track', rawLabel: 'Track', group: 'info', sortKey: 'track', tip: 'Benchmark Track' },
-      { id: 'year', label: 'Year', rawLabel: 'Year', group: 'info', sortKey: 'year', tip: 'Release Year' }
+      { id: 'year', label: 'Year', rawLabel: 'Year', group: 'info', sortKey: 'year', tip: 'Release Year' },
+      { id: 'is_pareto', label: 'Pareto ⭐', rawLabel: 'Pareto Optimal', group: 'info', sortKey: 'is_pareto', tip: 'Non-dominated Pareto Optimal Checkpoint' },
+      { id: 'license', label: 'License', rawLabel: 'License', group: 'info', sortKey: 'license', tip: 'Open License' }
     ];
   }
 

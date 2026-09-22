@@ -46,7 +46,7 @@
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
   <!-- Custom PRISM-V Styles -->
-  <link rel="stylesheet" href="assets/custom.css?v=20260922_v1" />
+  <link rel="stylesheet" href="assets/custom.css?v=20260922_v3" />
 </head>
 <body class="antialiased selection:bg-indigo-500 selection:text-white">
 
@@ -617,6 +617,7 @@
             </div>
           </summary>
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 pt-4 mt-3 border-t border-slate-800/80">
+            <!-- Core: all checked -->
             <div>
               <label class="flex items-center gap-1.5 font-bold text-sky-400 mb-2 cursor-pointer select-none">
                 <input type="checkbox" id="lb-group-chk-core" class="lb-group-chk accent-sky-400" data-group="core" checked title="Toggle all Core columns" />
@@ -628,42 +629,46 @@
                 <label class="flex items-center gap-1.5"><input type="checkbox" value="model_name" class="lb-col-vis-chk" data-group="core" checked /> Model</label>
               </div>
             </div>
+            <!-- Objective: all unchecked by default -->
             <div>
               <label class="flex items-center gap-1.5 font-bold text-indigo-400 mb-2 cursor-pointer select-none">
-                <input type="checkbox" id="lb-group-chk-objective" class="lb-group-chk accent-indigo-400" data-group="objective" checked title="Toggle all Objective columns" />
+                <input type="checkbox" id="lb-group-chk-objective" class="lb-group-chk accent-indigo-400" data-group="objective" title="Toggle all Objective columns" />
                 📐 Objective
               </label>
               <div class="space-y-1.5">
-                <label class="flex items-center gap-1.5"><input type="checkbox" value="pesq" class="lb-col-vis-chk" data-group="objective" checked /> PESQ ↑</label>
-                <label class="flex items-center gap-1.5"><input type="checkbox" value="stoi" class="lb-col-vis-chk" data-group="objective" checked /> STOI ↑</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="pesq" class="lb-col-vis-chk" data-group="objective" /> PESQ ↑</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="stoi" class="lb-col-vis-chk" data-group="objective" /> STOI ↑</label>
                 <label class="flex items-center gap-1.5"><input type="checkbox" value="mcd_db" class="lb-col-vis-chk" data-group="objective" /> MCD ↓</label>
                 <label class="flex items-center gap-1.5"><input type="checkbox" value="lsd_db" class="lb-col-vis-chk" data-group="objective" /> LSD ↓</label>
               </div>
             </div>
+            <!-- Perceptual: all unchecked by default -->
             <div>
               <label class="flex items-center gap-1.5 font-bold text-purple-400 mb-2 cursor-pointer select-none">
-                <input type="checkbox" id="lb-group-chk-perceptual" class="lb-group-chk accent-purple-400" data-group="perceptual" checked title="Toggle all Perceptual columns" />
+                <input type="checkbox" id="lb-group-chk-perceptual" class="lb-group-chk accent-purple-400" data-group="perceptual" title="Toggle all Perceptual columns" />
                 👂 Perceptual
               </label>
               <div class="space-y-1.5">
-                <label class="flex items-center gap-1.5"><input type="checkbox" value="utmos" class="lb-col-vis-chk" data-group="perceptual" checked /> UTMOS ↑</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="utmos" class="lb-col-vis-chk" data-group="perceptual" /> UTMOS ↑</label>
                 <label class="flex items-center gap-1.5"><input type="checkbox" value="nisqa" class="lb-col-vis-chk" data-group="perceptual" /> NISQA ↑</label>
-                <label class="flex items-center gap-1.5"><input type="checkbox" value="delta_wer_pct" class="lb-col-vis-chk" data-group="perceptual" checked /> ΔWER ↓</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="delta_wer_pct" class="lb-col-vis-chk" data-group="perceptual" /> ΔWER ↓</label>
               </div>
             </div>
+            <!-- Performance: all unchecked by default -->
             <div>
               <label class="flex items-center gap-1.5 font-bold text-amber-400 mb-2 cursor-pointer select-none">
-                <input type="checkbox" id="lb-group-chk-performance" class="lb-group-chk accent-amber-400" data-group="performance" checked title="Toggle all Performance columns" />
+                <input type="checkbox" id="lb-group-chk-performance" class="lb-group-chk accent-amber-400" data-group="performance" title="Toggle all Performance columns" />
                 ⚡ Performance
               </label>
               <div class="space-y-1.5">
-                <label class="flex items-center gap-1.5"><input type="checkbox" value="rtf" class="lb-col-vis-chk" data-group="performance" checked /> RTF ↓</label>
-                <label class="flex items-center gap-1.5"><input type="checkbox" value="speedup_x" class="lb-col-vis-chk" data-group="performance" checked /> xRT ↑</label>
-                <label class="flex items-center gap-1.5"><input type="checkbox" value="peak_vram_mb" class="lb-col-vis-chk" data-group="performance" checked /> Peak VRAM ↓</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="rtf" class="lb-col-vis-chk" data-group="performance" /> RTF ↓</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="speedup_x" class="lb-col-vis-chk" data-group="performance" /> xRT ↑</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="peak_vram_mb" class="lb-col-vis-chk" data-group="performance" /> Peak VRAM ↓</label>
                 <label class="flex items-center gap-1.5"><input type="checkbox" value="params_m" class="lb-col-vis-chk" data-group="performance" /> Params</label>
                 <label class="flex items-center gap-1.5"><input type="checkbox" value="edge_feasible" class="lb-col-vis-chk" data-group="performance" /> Edge ⚡</label>
               </div>
             </div>
+            <!-- Robustness datasets: all checked -->
             <div>
               <label class="flex items-center gap-1.5 font-bold text-emerald-400 mb-2 cursor-pointer select-none">
                 <input type="checkbox" id="lb-group-chk-robustness" class="lb-group-chk accent-emerald-400" data-group="robustness" checked title="Toggle all Robustness columns" />
@@ -676,16 +681,17 @@
                 <label class="flex items-center gap-1.5"><input type="checkbox" value="Free_ST" class="lb-col-vis-chk" data-group="robustness" checked /> Free_ST</label>
               </div>
             </div>
+            <!-- Metadata: code/checkpoint/pareto/license checked; architecture hidden -->
             <div>
               <label class="flex items-center gap-1.5 font-bold text-slate-400 mb-2 cursor-pointer select-none">
-                <input type="checkbox" id="lb-group-chk-metadata" class="lb-group-chk accent-slate-400" data-group="metadata" checked title="Toggle all Metadata columns" />
+                <input type="checkbox" id="lb-group-chk-metadata" class="lb-group-chk accent-slate-400" data-group="metadata" title="Toggle all Metadata columns" />
                 ℹ️ Metadata
               </label>
               <div class="space-y-1.5">
                 <label class="flex items-center gap-1.5"><input type="checkbox" value="code" class="lb-col-vis-chk" data-group="metadata" checked /> Code OS</label>
                 <label class="flex items-center gap-1.5"><input type="checkbox" value="checkpoint" class="lb-col-vis-chk" data-group="metadata" checked /> Checkpoint</label>
                 <label class="flex items-center gap-1.5"><input type="checkbox" value="is_pareto" class="lb-col-vis-chk" data-group="metadata" checked /> Pareto ⭐</label>
-                <label class="flex items-center gap-1.5"><input type="checkbox" value="license" class="lb-col-vis-chk" data-group="metadata" /> License</label>
+                <label class="flex items-center gap-1.5"><input type="checkbox" value="license" class="lb-col-vis-chk" data-group="metadata" checked /> License</label>
                 <label class="flex items-center gap-1.5"><input type="checkbox" value="architecture_family" class="lb-col-vis-chk" data-group="metadata" /> Architecture</label>
               </div>
             </div>
@@ -1432,8 +1438,8 @@
   </div>
 
   <!-- Pre-bundled Data and Application Logic -->
-  <script src="data/waveform_data.js?v=20260922_v1"></script>
-  <script src="data/prism_data.js?v=20260922_v1"></script>
-  <script src="assets/app.js?v=20260922_v1"></script>
+  <script src="data/waveform_data.js?v=20260922_v3"></script>
+  <script src="data/prism_data.js?v=20260922_v3"></script>
+  <script src="assets/app.js?v=20260922_v3"></script>
 </body>
 </html>
