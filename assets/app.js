@@ -77,10 +77,11 @@
         'year': false
       },
       customWeights: {
-        pesq: 35,
-        stoi: 20,
-        utmos: 25,
-        speed: 20
+        P: 30,
+        R: 25,
+        I: 25,
+        S: 5,
+        M: 15
       },
       useCustomWeights: false
     },
@@ -513,6 +514,7 @@
   function renderOverview() {
     initOverviewControls();
     renderOverviewCharts();
+    applyOverviewTableChecks();
   }
 
   function renderOverviewCharts() {
@@ -763,8 +765,27 @@
       };
     }
 
-    // Custom Weights Sliders
-    ['pesq', 'stoi', 'utmos', 'speed'].forEach(dim => {
+    // Custom Weights Sliders (P, R, I, S, M)
+    const updateSliderUI = () => {
+      ['P', 'R', 'I', 'S', 'M'].forEach(dim => {
+        const slider = document.getElementById(`weight-${dim}`);
+        const valDisp = document.getElementById(`weight-${dim}-val`);
+        if (slider && valDisp) {
+          slider.value = state.lb.customWeights[dim];
+          valDisp.textContent = `${slider.value}%`;
+        }
+      });
+      const badge = document.getElementById('custom-profile-badge');
+      if (badge) {
+        if (state.lb.useCustomWeights) {
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+    };
+
+    ['P', 'R', 'I', 'S', 'M'].forEach(dim => {
       const slider = document.getElementById(`weight-${dim}`);
       const valDisp = document.getElementById(`weight-${dim}-val`);
       if (slider && valDisp) {
@@ -778,6 +799,44 @@
       }
     });
 
+    // Preset profile buttons
+    const setWeights = (p, r, i, s, m) => {
+      state.lb.customWeights = { P: p, R: r, I: i, S: s, M: m };
+      state.lb.useCustomWeights = true;
+      const toggleWeightsBtn = document.getElementById('toggle-custom-weights-btn');
+      if (toggleWeightsBtn) {
+        toggleWeightsBtn.textContent = '✅ Custom Weights Active';
+        toggleWeightsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-sm';
+      }
+      updateSliderUI();
+      updateLeaderboardTable();
+    };
+
+    const btnBal = document.getElementById('preset-bal-btn');
+    if (btnBal) btnBal.onclick = () => setWeights(30, 25, 25, 5, 15);
+
+    const btnEq = document.getElementById('preset-eq-btn');
+    if (btnEq) btnEq.onclick = () => setWeights(20, 20, 20, 20, 20);
+
+    const btnPerc = document.getElementById('preset-perc-btn');
+    if (btnPerc) btnPerc.onclick = () => setWeights(50, 20, 15, 5, 10);
+
+    const btnEdge = document.getElementById('preset-edge-btn');
+    if (btnEdge) btnEdge.onclick = () => setWeights(20, 15, 15, 5, 45);
+
+    const btnReset = document.getElementById('reset-weights-btn');
+    if (btnReset) btnReset.onclick = () => {
+      state.lb.customWeights = { P: 30, R: 25, I: 25, S: 5, M: 15 };
+      state.lb.useCustomWeights = false;
+      const toggleWeightsBtn = document.getElementById('toggle-custom-weights-btn');
+      if (toggleWeightsBtn) {
+        toggleWeightsBtn.textContent = '⚖️ Enable Custom Weighting';
+        toggleWeightsBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200';
+      }
+      updateSliderUI();
+      updateLeaderboardTable();
+    };
+
     const toggleWeightsBtn = document.getElementById('toggle-custom-weights-btn');
     if (toggleWeightsBtn) {
       toggleWeightsBtn.onclick = () => {
@@ -786,6 +845,7 @@
         toggleWeightsBtn.className = state.lb.useCustomWeights
           ? 'px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-sm'
           : 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200';
+        updateSliderUI();
         updateLeaderboardTable();
       };
     }
@@ -798,18 +858,37 @@
   }
 
   function computeCustomScore(m, w) {
-    const totalW = (w.pesq + w.stoi + w.utmos + w.speed) || 1;
-    const pScore = ((m.pesq - 1) / 3.5) * 100;
-    const sScore = ((m.stoi - 0.5) / 0.5) * 100;
-    const uScore = ((m.utmos - 1) / 4.0) * 100;
-    const spScore = Math.max(0, Math.min(100, (Math.log10(m.speedup_x + 1e-3) / Math.log10(500)) * 100));
+    const wP = Math.max(0, Number(w.P) || 0);
+    const wR = Math.max(0, Number(w.R) || 0);
+    const wI = Math.max(0, Number(w.I) || 0);
+    const wS = Math.max(0, Number(w.S) || 0);
+    const wM = Math.max(0, Number(w.M) || 0);
+    const totalW = (wP + wR + wI + wS + wM) || 1.0;
 
-    return (
-      (w.pesq / totalW) * pScore +
-      (w.stoi / totalW) * sScore +
-      (w.utmos / totalW) * uScore +
-      (w.speed / totalW) * spScore
-    );
+    // Use canonical dimension utilities (P, R, I, S, M)
+    const dims = m.dimensions || {
+      P: ((m.pesq - 1) / 3.5) * 0.3 + ((m.utmos - 1) / 4) * 0.35 + ((m.nisqa - 1) / 4) * 0.35,
+      R: (m.stoi || 0.9) * 0.3 + Math.pow(2, -(m.mcd_db || 30) / 5) * 0.35 + Math.pow(2, -(m.lsd_db || 6) / 2) * 0.35,
+      I: Math.pow(2, -Math.max(0, m.delta_wer_pct || 0) / 2) * 0.6 + Math.pow(2, -Math.max(0, (m.delta_wer_pct || 0) * 0.35) / 1) * 0.4,
+      S: 0.98,
+      M: Math.max(0, Math.min(1, 1.0 - Math.log10(Math.max(m.rtf || 0.01, 0.001) / 0.001) / 3.0))
+    };
+
+    const logB =
+      (wP / totalW) * Math.log(Math.max(1e-12, dims.P)) +
+      (wR / totalW) * Math.log(Math.max(1e-12, dims.R)) +
+      (wI / totalW) * Math.log(Math.max(1e-12, dims.I)) +
+      (wS / totalW) * Math.log(Math.max(1e-12, dims.S)) +
+      (wM / totalW) * Math.log(Math.max(1e-12, dims.M));
+
+    let score = 1.0 + 99.0 * Math.exp(logB);
+
+    // If edge constraint is enabled or edge weight dominates, apply feasibility gate
+    if ((state.lb.edgeOnly || (wM / totalW >= 0.4)) && (m.f_edge === 0 || m.edge_feasible === 'No')) {
+      score = 1.0;
+    }
+
+    return Math.max(1.0, Math.min(100.0, score));
   }
 
   function getFilteredLeaderboard() {
@@ -968,6 +1047,94 @@
     return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-code ${compactClass}">💻 Code</a>`;
   }
 
+  function formatParams(p) {
+    if (p === undefined || p === null || isNaN(p)) return '—';
+    const num = Number(p);
+    if (num === 0) return '0.0';
+    const str = String(p);
+    if (str.includes('.')) {
+      const dec = str.split('.')[1].length;
+      return num.toFixed(Math.min(2, Math.max(1, dec)));
+    }
+    return num.toFixed(1);
+  }
+
+  function computeColumnMedals(list) {
+    const candidateModels = list.filter(m => !m.is_baseline && m.system_id !== 'Baseline' && m.model_id !== 'griffin_lim');
+    const pool = candidateModels.length >= 3 ? candidateModels : list;
+    const medals = {};
+
+    const metricsConfig = {
+      pesq: { higherBetter: true, getVal: m => m.computed_pesq !== undefined ? m.computed_pesq : m.pesq },
+      stoi: { higherBetter: true, getVal: m => m.stoi },
+      mcd_db: { higherBetter: false, getVal: m => m.mcd_db },
+      lsd_db: { higherBetter: false, getVal: m => m.lsd_db },
+      utmos: { higherBetter: true, getVal: m => m.utmos },
+      nisqa: { higherBetter: true, getVal: m => m.nisqa },
+      delta_wer_pct: { higherBetter: false, getVal: m => m.delta_wer_pct },
+      LJSpeech: { higherBetter: true, getVal: m => m.dataset_pesqs && m.dataset_pesqs.LJSpeech },
+      LibriTTS: { higherBetter: true, getVal: m => m.dataset_pesqs && m.dataset_pesqs.LibriTTS },
+      VCTK: { higherBetter: true, getVal: m => m.dataset_pesqs && m.dataset_pesqs.VCTK },
+      Free_ST: { higherBetter: true, getVal: m => m.dataset_pesqs && m.dataset_pesqs.Free_ST }
+    };
+
+    Object.keys(metricsConfig).forEach(colId => {
+      medals[colId] = {};
+      const cfg = metricsConfig[colId];
+      const validItems = pool
+        .map(m => ({ key: m.model_id || m.system_id || m.model_name, val: cfg.getVal(m) }))
+        .filter(item => item.val !== undefined && item.val !== null && !isNaN(item.val));
+
+      if (validItems.length === 0) return;
+
+      const uniqueSorted = [...new Set(validItems.map(x => x.val))].sort((a, b) => cfg.higherBetter ? b - a : a - b);
+      const gold = uniqueSorted[0];
+      const silver = uniqueSorted.length > 1 ? uniqueSorted[1] : null;
+      const bronze = uniqueSorted.length > 2 ? uniqueSorted[2] : null;
+
+      validItems.forEach(item => {
+        if (item.val === gold) medals[colId][item.key] = 1;
+        else if (silver !== null && item.val === silver) medals[colId][item.key] = 2;
+        else if (bronze !== null && item.val === bronze) medals[colId][item.key] = 3;
+      });
+    });
+
+    return medals;
+  }
+
+  function formatMedalValue(valStr, medalRank, defaultColorClass = '') {
+    if (medalRank === 1) {
+      return `<span class="inline-flex items-center justify-end gap-1 w-full font-bold text-amber-300 drop-shadow-sm"><span title="Gold Medal (1st Place)" class="text-sm select-none">🥇</span><span>${valStr}</span></span>`;
+    }
+    if (medalRank === 2) {
+      return `<span class="inline-flex items-center justify-end gap-1 w-full font-bold text-slate-100 dark:text-slate-200 drop-shadow-sm"><span title="Silver Medal (2nd Place)" class="text-sm select-none">🥈</span><span>${valStr}</span></span>`;
+    }
+    if (medalRank === 3) {
+      return `<span class="inline-flex items-center justify-end gap-1 w-full font-bold text-amber-600 dark:text-amber-500 drop-shadow-sm"><span title="Bronze Medal (3rd Place)" class="text-sm select-none">🥉</span><span>${valStr}</span></span>`;
+    }
+    const colorClass = defaultColorClass ? defaultColorClass : '';
+    return `<span class="inline-flex items-center justify-end w-full ${colorClass}"><span>${valStr}</span></span>`;
+  }
+
+  function applyOverviewTableChecks() {
+    const tbody = document.getElementById('overview-models-tbody');
+    if (tbody) {
+      Array.from(tbody.rows).forEach((tr, rowIdx) => {
+        const isRowColored = (rowIdx % 2 === 1);
+        Array.from(tr.cells).forEach((td, colIdx) => {
+          const isColColored = (colIdx % 2 === 1);
+          td.classList.add('lb-check-cell', `lb-check-${isRowColored ? 1 : 0}-${isColColored ? 1 : 0}`);
+        });
+      });
+    }
+    const theadTr = document.querySelector('#overview-checkpoints-card thead tr');
+    if (theadTr) {
+      Array.from(theadTr.cells).forEach((th, colIdx) => {
+        th.classList.add(colIdx % 2 === 1 ? 'lb-col-tint' : 'lb-col-normal');
+      });
+    }
+  }
+
   function updateLeaderboardTable() {
     const tbody = document.getElementById('lb-table-body');
     const thead = document.getElementById('lb-table-head');
@@ -988,15 +1155,20 @@
       return;
     }
 
-    // Render Table Header
+    // Compute column medal winners
+    const colMedals = computeColumnMedals(list);
+
+    // Render Table Header with alternating column check pattern
     thead.innerHTML = `
       <tr>
-        ${activeCols.map(c => {
+        ${activeCols.map((c, colIdx) => {
           let sortClass = '';
           if (c.sortKey && state.lb.sortCol === c.sortKey) {
             sortClass = state.lb.sortAsc ? 'sorted-asc' : 'sorted-desc';
           }
-          const tipAttr = c.tip ? `class="has-tooltip ${sortClass}" data-tooltip="${c.tip}"` : `class="${sortClass}"`;
+          const isColColored = (colIdx % 2 === 1);
+          const colCheckClass = isColColored ? 'lb-col-tint' : 'lb-col-normal';
+          const tipAttr = c.tip ? `class="has-tooltip ${sortClass} ${colCheckClass}" data-tooltip="${c.tip}"` : `class="${sortClass} ${colCheckClass}"`;
           const clickHandler = c.sortKey ? `onclick="window.handleLbSort('${c.sortKey}')"` : '';
           return `<th ${tipAttr} ${clickHandler}>${c.label}</th>`;
         }).join('')}
@@ -1016,7 +1188,7 @@
     }
 
     let neuralRank = 0;
-    tbody.innerHTML = list.map((m) => {
+    tbody.innerHTML = list.map((m, rowIdx) => {
       const isBaseline = m.is_baseline || m.system_id === 'Baseline' || m.model_id === 'griffin_lim';
       let rankNum = 0;
       if (!isBaseline) {
@@ -1024,87 +1196,116 @@
         rankNum = neuralRank;
       }
       const rankBadge = formatRankBadge(rankNum, m.display_score, m.edge_feasible === 'Yes', isBaseline);
-      const rowStyle = isBaseline ? 'style="background-color: rgba(148, 163, 184, 0.25); border-left: 3px solid #94a3b8;"' : '';
+      const rowStyle = isBaseline ? 'style="border-left: 4px solid #94a3b8;"' : '';
+      const isRowColored = (rowIdx % 2 === 1);
+      const mKey = m.model_id || m.system_id || m.model_name;
 
       return `
         <tr ${rowStyle}>
-          ${activeCols.map(c => {
+          ${activeCols.map((c, colIdx) => {
+            const isColColored = (colIdx % 2 === 1);
+            const checkClass = `lb-check-cell lb-check-${isRowColored ? 1 : 0}-${isColColored ? 1 : 0}`;
             switch (c.id) {
               case 'system_id':
                 return `
-                  <td class="text-center font-mono font-bold">
+                  <td class="text-center font-mono font-bold ${checkClass}">
                     <span class="inline-block px-2 py-0.5 rounded text-xs border ${isBaseline ? 'bg-slate-700/80 text-slate-200 border-slate-600' : 'bg-indigo-950/80 text-indigo-300 border-indigo-700/60'}">
                       ${m.system_id || '—'}
                     </span>
                   </td>
                 `;
               case 'rank':
-                return `<td>${rankBadge}</td>`;
+                return `<td class="${checkClass}">${rankBadge}</td>`;
               case 'model_name':
                 return `
-                  <td class="font-semibold">
+                  <td class="font-semibold ${checkClass}">
                     <button onclick="window.viewSpecificModel('${m.model_name}')" class="text-indigo-600 dark:text-indigo-400 hover:underline text-left">
                       ${m.model_name}
                     </button>
-                    <div class="text-[11px] text-slate-400 font-normal">${m.architecture_family}</div>
                   </td>
                 `;
-              case 'pesq':
-                return `<td class="num-cell font-mono font-bold text-indigo-600 dark:text-indigo-400">${m.computed_pesq.toFixed(3)}</td>`;
-              case 'stoi':
-                return `<td class="num-cell font-mono">${m.stoi.toFixed(3)}</td>`;
-              case 'mcd_db':
-                return `<td class="num-cell font-mono">${m.mcd_db.toFixed(2)}</td>`;
-              case 'lsd_db':
-                return `<td class="num-cell font-mono">${m.lsd_db.toFixed(2)}</td>`;
-              case 'utmos':
-                return `<td class="num-cell font-mono text-purple-600 dark:text-purple-400 font-semibold">${m.utmos.toFixed(2)}</td>`;
-              case 'nisqa':
-                return `<td class="num-cell font-mono">${m.nisqa.toFixed(2)}</td>`;
-              case 'delta_wer_pct':
-                return `<td class="num-cell font-mono">${m.delta_wer_pct.toFixed(2)}%</td>`;
+              case 'pesq': {
+                const medal = (colMedals.pesq && colMedals.pesq[mKey]) || 0;
+                return `<td class="num-cell font-mono ${checkClass}">${formatMedalValue(m.computed_pesq.toFixed(3), medal, 'font-bold text-indigo-600 dark:text-indigo-400')}</td>`;
+              }
+              case 'stoi': {
+                const medal = (colMedals.stoi && colMedals.stoi[mKey]) || 0;
+                return `<td class="num-cell font-mono ${checkClass}">${formatMedalValue(m.stoi.toFixed(3), medal)}</td>`;
+              }
+              case 'mcd_db': {
+                const medal = (colMedals.mcd_db && colMedals.mcd_db[mKey]) || 0;
+                return `<td class="num-cell font-mono ${checkClass}">${formatMedalValue(m.mcd_db.toFixed(2), medal)}</td>`;
+              }
+              case 'lsd_db': {
+                const medal = (colMedals.lsd_db && colMedals.lsd_db[mKey]) || 0;
+                return `<td class="num-cell font-mono ${checkClass}">${formatMedalValue(m.lsd_db.toFixed(2), medal)}</td>`;
+              }
+              case 'utmos': {
+                const medal = (colMedals.utmos && colMedals.utmos[mKey]) || 0;
+                return `<td class="num-cell font-mono ${checkClass}">${formatMedalValue(m.utmos.toFixed(2), medal, 'font-semibold text-purple-600 dark:text-purple-400')}</td>`;
+              }
+              case 'nisqa': {
+                const medal = (colMedals.nisqa && colMedals.nisqa[mKey]) || 0;
+                return `<td class="num-cell font-mono ${checkClass}">${formatMedalValue(m.nisqa.toFixed(2), medal)}</td>`;
+              }
+              case 'delta_wer_pct': {
+                const medal = (colMedals.delta_wer_pct && colMedals.delta_wer_pct[mKey]) || 0;
+                return `<td class="num-cell font-mono ${checkClass}">${formatMedalValue(m.delta_wer_pct.toFixed(2) + '%', medal)}</td>`;
+              }
               case 'rtf':
-                return `<td class="num-cell font-mono text-amber-600 dark:text-amber-400 font-semibold">${m.rtf.toFixed(4)}</td>`;
+                return `<td class="num-cell font-mono text-amber-600 dark:text-amber-400 font-semibold ${checkClass}">${m.rtf.toFixed(4)}</td>`;
               case 'speedup_x':
-                return `<td class="num-cell font-mono font-bold text-amber-600 dark:text-amber-400">${m.speedup_x.toFixed(0)}×</td>`;
+                return `<td class="num-cell font-mono font-bold text-amber-600 dark:text-amber-400 ${checkClass}">${m.speedup_x.toFixed(0)}×</td>`;
               case 'peak_vram_mb':
-                return `<td class="num-cell font-mono">${m.peak_vram_mb.toFixed(0)}</td>`;
+                return `<td class="num-cell font-mono ${checkClass}">${m.peak_vram_mb.toFixed(0)}</td>`;
               case 'params_m':
-                return `<td class="num-cell font-mono">${m.params_m.toFixed(1)}</td>`;
+                return `<td class="num-cell font-mono ${checkClass}">${formatParams(m.params_m)}</td>`;
               case 'edge_feasible':
-                return `<td>${m.edge_feasible === 'Yes' ? '✅' : '❌'}</td>`;
-              case 'LJSpeech':
-                return `<td class="num-cell font-mono">${m.dataset_pesqs && m.dataset_pesqs.LJSpeech ? m.dataset_pesqs.LJSpeech.toFixed(3) : '—'}</td>`;
-              case 'LibriTTS':
-                return `<td class="num-cell font-mono">${m.dataset_pesqs && m.dataset_pesqs.LibriTTS ? m.dataset_pesqs.LibriTTS.toFixed(3) : '—'}</td>`;
-              case 'VCTK':
-                return `<td class="num-cell font-mono">${m.dataset_pesqs && m.dataset_pesqs.VCTK ? m.dataset_pesqs.VCTK.toFixed(3) : '—'}</td>`;
-              case 'Free_ST':
-                return `<td class="num-cell font-mono">${m.dataset_pesqs && m.dataset_pesqs.Free_ST ? m.dataset_pesqs.Free_ST.toFixed(3) : '—'}</td>`;
+                return `<td class="text-center ${checkClass}">${m.edge_feasible === 'Yes' ? '✅' : '❌'}</td>`;
+              case 'LJSpeech': {
+                const medal = (colMedals.LJSpeech && colMedals.LJSpeech[mKey]) || 0;
+                const val = m.dataset_pesqs && m.dataset_pesqs.LJSpeech ? m.dataset_pesqs.LJSpeech.toFixed(3) : '—';
+                return `<td class="num-cell font-mono ${checkClass}">${val !== '—' ? formatMedalValue(val, medal) : '—'}</td>`;
+              }
+              case 'LibriTTS': {
+                const medal = (colMedals.LibriTTS && colMedals.LibriTTS[mKey]) || 0;
+                const val = m.dataset_pesqs && m.dataset_pesqs.LibriTTS ? m.dataset_pesqs.LibriTTS.toFixed(3) : '—';
+                return `<td class="num-cell font-mono ${checkClass}">${val !== '—' ? formatMedalValue(val, medal) : '—'}</td>`;
+              }
+              case 'VCTK': {
+                const medal = (colMedals.VCTK && colMedals.VCTK[mKey]) || 0;
+                const val = m.dataset_pesqs && m.dataset_pesqs.VCTK ? m.dataset_pesqs.VCTK.toFixed(3) : '—';
+                return `<td class="num-cell font-mono ${checkClass}">${val !== '—' ? formatMedalValue(val, medal) : '—'}</td>`;
+              }
+              case 'Free_ST': {
+                const medal = (colMedals.Free_ST && colMedals.Free_ST[mKey]) || 0;
+                const val = m.dataset_pesqs && m.dataset_pesqs.Free_ST ? m.dataset_pesqs.Free_ST.toFixed(3) : '—';
+                return `<td class="num-cell font-mono ${checkClass}">${val !== '—' ? formatMedalValue(val, medal) : '—'}</td>`;
+              }
               case 'code':
-                return `<td>${formatCodeButton(m.github_url)}</td>`;
+                return `<td class="${checkClass}">${formatCodeButton(m.github_url)}</td>`;
               case 'checkpoint':
-                return `<td>${formatCheckpointButton(m.checkpoint_url, isBaseline)}</td>`;
+                return `<td class="${checkClass}">${formatCheckpointButton(m.checkpoint_url, isBaseline)}</td>`;
               case 'paper':
                 return `
-                  <td>
+                  <td class="${checkClass}">
                     ${m.paper_url
                       ? `<a href="${m.paper_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-paper text-[11px] inline-flex items-center gap-1">📄 Paper</a>`
                       : '<span class="text-xs text-slate-400">—</span>'}
                   </td>
                 `;
               case 'is_pareto':
-                return `<td class="text-center">${m.is_pareto ? '⭐' : '—'}</td>`;
+                return `<td class="text-center ${checkClass}">${m.is_pareto ? '⭐' : '—'}</td>`;
               case 'license':
-                return `<td><span class="text-xs font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-300 dark:border-slate-700">${m.license}</span></td>`;
+                return `<td class="${checkClass}"><span class="text-xs font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-300 dark:border-slate-700">${m.license}</span></td>`;
               case 'architecture_family':
-                return `<td class="text-xs">${m.architecture_family}</td>`;
+                return `<td class="text-xs ${checkClass}">${m.architecture_family}</td>`;
               case 'track':
-                return `<td class="text-xs text-slate-500 dark:text-slate-400">${m.track}</td>`;
+                return `<td class="text-xs text-slate-500 dark:text-slate-400 ${checkClass}">${m.track}</td>`;
               case 'year':
-                return `<td class="num-cell font-mono text-xs">${m.year}</td>`;
+                return `<td class="num-cell font-mono text-xs ${checkClass}">${m.year}</td>`;
               default:
-                return `<td>${m[c.id] !== undefined ? m[c.id] : '—'}</td>`;
+                return `<td class="${checkClass}">${m[c.id] !== undefined ? m[c.id] : '—'}</td>`;
             }
           }).join('')}
         </tr>
@@ -1162,7 +1363,7 @@
             val = m.system_id || '';
             break;
           case 'rank':
-            val = isBaseline ? 'Baseline (79.0)' : `${rankStr} (${m.display_score !== undefined ? m.display_score.toFixed(1) : (m.overall_score || 0).toFixed(1)})`;
+            val = isBaseline ? `Baseline (${(m.display_score !== undefined ? m.display_score : (m.overall_score || 0)).toFixed(1)})` : `${rankStr} (${m.display_score !== undefined ? m.display_score.toFixed(1) : (m.overall_score || 0).toFixed(1)})`;
             break;
           case 'model_name':
             val = m.model_name || '';
@@ -1198,7 +1399,7 @@
             val = m.peak_vram_mb !== undefined ? m.peak_vram_mb.toFixed(0) : '';
             break;
           case 'params_m':
-            val = m.params_m !== undefined ? m.params_m.toFixed(1) : '';
+            val = m.params_m !== undefined ? formatParams(m.params_m) : '';
             break;
           case 'edge_feasible':
             val = m.edge_feasible || '';
@@ -1252,7 +1453,11 @@
       return rowValues.join(',');
     });
 
-    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+    const activeProfileStr = state.lb.useCustomWeights
+      ? `# Active Profile: Custom (P=${state.lb.customWeights.P}%, R=${state.lb.customWeights.R}%, I=${state.lb.customWeights.I}%, S=${state.lb.customWeights.S}%, M=${state.lb.customWeights.M}%) - Not official PRISM-V ranking`
+      : '# Active Profile: Balanced (Official PRISM-V Benchmark)';
+    const metaHeader = `# PRISM-V Benchmark Leaderboard Export (Scoring Version: 2026.09-canonical-12)\r\n${activeProfileStr}\r\n`;
+    const csvContent = '\uFEFF' + metaHeader + [headers.join(','), ...rows].join('\r\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -1335,7 +1540,7 @@
       { label: 'Real-Time Factor (RTF) ↓', get: m => m.rtf.toFixed(4) },
       { label: 'Throughput (xRT) ↑', get: m => `${m.speedup_x.toFixed(0)}×` },
       { label: 'Peak GPU VRAM ↓', get: m => `${m.peak_vram_mb.toFixed(0)} MB` },
-      { label: 'Generator Parameters', get: m => `${m.params_m.toFixed(1)} M` },
+      { label: 'Generator Parameters', get: m => `${formatParams(m.params_m)} M` },
       { label: 'Architecture Family', get: m => m.architecture_family },
       { label: 'Edge Feasible Profile', get: m => m.edge_feasible === 'Yes' ? '✅ Feasible' : '❌ Infeasible' },
       { label: 'Pareto Optimal ⭐', get: m => m.is_pareto ? '⭐ Yes' : '—' },
@@ -1657,7 +1862,7 @@
           </div>
           <div class="vocoder-metric-box">
             <div class="vocoder-metric-lbl">VRAM / Params</div>
-            <div class="vocoder-metric-val text-emerald-500">${m.peak_vram_mb.toFixed(0)} MB <span class="text-xs text-slate-400 font-normal">(${m.params_m.toFixed(1)}M)</span></div>
+            <div class="vocoder-metric-val text-emerald-500">${m.peak_vram_mb.toFixed(0)} MB <span class="text-xs text-slate-400 font-normal">(${formatParams(m.params_m)}M)</span></div>
           </div>
         </div>
         <div class="vocoder-card-actions">
@@ -2076,7 +2281,7 @@
           <td class="p-3 font-mono text-xs font-bold text-amber-500">${m.rtf.toFixed(4)}</td>
           <td class="p-3 font-mono text-xs font-bold text-amber-500">${m.speedup_x.toFixed(0)}×</td>
           <td class="p-3 font-mono text-xs">${m.peak_vram_mb.toFixed(0)} MB</td>
-          <td class="p-3 font-mono text-xs">${m.params_m.toFixed(1)} M</td>
+          <td class="p-3 font-mono text-xs">${formatParams(m.params_m)} M</td>
           <td class="p-3 text-xs">${formatCodeButton(m.github_url, true)}</td>
           <td class="p-3 text-xs">${formatCheckpointButton(m.checkpoint_url, isBase, true)}</td>
           <td class="p-3 text-xs">${m.paper_url ? `<a href="${m.paper_url}" target="_blank" rel="noopener noreferrer" class="tbl-btn tbl-btn-paper text-[10px] inline-flex items-center gap-1">📄 Paper</a>` : '—'}</td>
@@ -2151,7 +2356,7 @@
           <td class="p-3 font-semibold text-xs">${m.model_name}</td>
           <td class="p-3 text-xs text-indigo-400 font-semibold">${m.arch_category}</td>
           <td class="p-3 text-xs text-slate-400">${m.architecture_family}</td>
-          <td class="p-3 font-mono text-xs">${m.params_m.toFixed(1)} M</td>
+          <td class="p-3 font-mono text-xs">${formatParams(m.params_m)} M</td>
           <td class="p-3 text-xs text-slate-400">${m.track}</td>
           <td class="p-3 font-mono text-xs">${m.year}</td>
           <td class="p-3 font-mono text-xs">${m.license}</td>
@@ -2805,7 +3010,7 @@
               <div class="flex justify-between"><span>System ID:</span><span class="font-mono font-bold text-indigo-400">${m.system_id || '—'}</span></div>
               <div class="flex justify-between"><span>Code License:</span><span class="font-mono font-bold">${m.license}</span></div>
               <div class="flex justify-between"><span>Sampling Rate:</span><span class="font-mono">${m.sampling_rate_hz} Hz</span></div>
-              <div class="flex justify-between"><span>Parameters:</span><span class="font-mono font-bold">${m.params_m.toFixed(1)} M</span></div>
+              <div class="flex justify-between"><span>Parameters:</span><span class="font-mono font-bold">${formatParams(m.params_m)} M</span></div>
               <div class="flex justify-between"><span>Edge Feasible:</span><span>${m.edge_feasible === 'Yes' ? '✅ Yes' : '❌ No'}</span></div>
               <div class="flex justify-between"><span>Pareto Optimal:</span><span>${m.is_pareto ? '⭐ Yes' : 'No'}</span></div>
             </div>
@@ -2942,6 +3147,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     applyTheme(state.theme);
     applyFontLevel(state.fontLevel);
+    applyOverviewTableChecks();
 
     // Read URL hash
     const initialTab = window.location.hash.replace('#', '') || 'overview';

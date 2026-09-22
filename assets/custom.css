@@ -628,6 +628,81 @@ table.prism-table tbody tr:last-child td {
   border-bottom: none;
 }
 
+/* ── 2D Checkerboard Checks Pattern for Benchmarked Checkpoints ────────── */
+:root {
+  --check-row-color: rgba(99, 102, 241, 0.25);  /* Indigo 25% opacity */
+  --check-col-color: rgba(6, 182, 212, 0.25);   /* Cyan 25% opacity */
+  --check-both-color: rgba(56, 115, 235, 0.38); /* Checks intersection composite */
+  --check-border-color: rgba(148, 163, 184, 0.20);
+}
+
+.dark {
+  --check-row-color: rgba(99, 102, 241, 0.25);
+  --check-col-color: rgba(6, 182, 212, 0.25);
+  --check-both-color: rgba(56, 115, 235, 0.38);
+  --check-border-color: rgba(148, 163, 184, 0.20);
+}
+
+.light {
+  --check-row-color: rgba(99, 102, 241, 0.15);
+  --check-col-color: rgba(6, 182, 212, 0.15);
+  --check-both-color: rgba(56, 115, 235, 0.25);
+  --check-border-color: rgba(148, 163, 184, 0.25);
+}
+
+.lb-check-cell,
+table.prism-table tbody td.lb-check-cell {
+  border-right: 1px solid var(--check-border-color) !important;
+  border-bottom: 1px solid var(--check-border-color) !important;
+  transition: background-color 150ms ease, filter 150ms ease;
+}
+
+/* State 0-0: normal row, normal column -> default surface (keep as it is) */
+.lb-check-0-0,
+table.prism-table tbody td.lb-check-0-0,
+table.prism-table tbody tr td.lb-check-0-0 {
+  background-color: transparent !important;
+}
+
+/* State 1-0: row with 25% color opacity, normal column */
+.lb-check-1-0,
+table.prism-table tbody td.lb-check-1-0,
+table.prism-table tbody tr td.lb-check-1-0 {
+  background-color: var(--check-row-color) !important;
+}
+
+/* State 0-1: normal row, column with 25% another color opacity */
+.lb-check-0-1,
+table.prism-table tbody td.lb-check-0-1,
+table.prism-table tbody tr td.lb-check-0-1 {
+  background-color: var(--check-col-color) !important;
+}
+
+/* State 1-1: row with 25% color opacity AND column with 25% another color opacity (Intersection check) */
+.lb-check-1-1,
+table.prism-table tbody td.lb-check-1-1,
+table.prism-table tbody tr td.lb-check-1-1 {
+  background-color: var(--check-both-color) !important;
+}
+
+#prism-lb-table thead th.lb-col-tint,
+#overview-checkpoints-card thead th.lb-col-tint,
+table.prism-table thead th.lb-col-tint {
+  background-color: var(--check-col-color) !important;
+  border-right: 1px solid var(--check-border-color) !important;
+}
+
+#prism-lb-table thead th.lb-col-normal,
+#overview-checkpoints-card thead th.lb-col-normal,
+table.prism-table thead th.lb-col-normal {
+  border-right: 1px solid var(--check-border-color) !important;
+}
+
+table.prism-table tbody tr:hover td.lb-check-cell {
+  filter: brightness(1.22);
+}
+
+
 /* ── Table Link Buttons ──────────────────────────────────────────────────── */
 .tbl-btn {
   display: inline-flex;

@@ -6,7 +6,6 @@
 ### An Open Benchmark for Neural Vocoder Evaluation
 
 [![Live Website](https://img.shields.io/badge/🌐%20Live%20Leaderboard-GitHub%20Pages-4ade80?style=for-the-badge&logo=githubpages&logoColor=white)](https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/)
-[![Paper](https://img.shields.io/badge/📄%20Paper-ICASSP%202027-6366f1?style=for-the-badge&logo=arxiv&logoColor=white)](#-citation)
 
 <hr/>
 
@@ -14,19 +13,19 @@
 [![Data License: CC BY 4.0](https://img.shields.io/badge/Data%20License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![GitHub Pages](https://github.com/iamshreeji-copy2/open_vocoder_leaderboard/actions/workflows/pages/pages-build-deployment/badge.svg)](https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/)
-[![Models Evaluated](https://img.shields.io/badge/Models%20Evaluated-15%20Neural%20Vocoders-8b5cf6.svg)](https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/#models)
+[![Models Evaluated](https://img.shields.io/badge/Models%20Evaluated-14%20Neural%20Vocoders-8b5cf6.svg)](https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/#models)
 [![Evaluation Corpora](https://img.shields.io/badge/Evaluation%20Corpora-4%20Benchmarks-06b6d4.svg)](https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/#methodology)
 [![Audio Samples](https://img.shields.io/badge/Audio%20Inspection-64%20Real%20Waveforms-f59e0b.svg)](https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/#audio-explorer)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/iamshreeji-copy2/open_vocoder_leaderboard/pulls)
 
 <p align="center">
   <a href="#-news-and-updates">News</a> •
-  <a href="#-what-is-prism-v">What is PRISM-V?</a> •
+  <!-- <a href="#-what-is-prism-v">What is PRISM-V?</a> • -->
   <a href="#-key-features">Key Features</a> •
   <a href="#-evaluated-neural-vocoders">Models</a> •
   <a href="#-evaluation-corpora">Corpora</a> •
   <a href="#-quick-start--local-preview">Quick Start</a> •
-  <a href="#-submitting-a-new-vocoder">Submit Model</a> •
+  <!-- <a href="#-submitting-a-new-vocoder">Submit Model</a> • -->
   <a href="#-citation">Citation</a>
 </p>
 
@@ -37,11 +36,12 @@
 ## 📢 News and Updates
 
 - **[Sept 2026]** **<span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V Static Web Platform Launched!** Interactive client-side leaderboard and Audio Explorer with genuine Time vs Amplitude waveform rendering live at **[iamshreeji-copy2.github.io/open_vocoder_leaderboard](https://iamshreeji-copy2.github.io/open_vocoder_leaderboard/)**.
-- **[Aug 2026]** Benchmarking completed across 15 open-source neural vocoder checkpoints spanning GAN, Flow, Transformer, and Diffusion paradigms across 4 diverse speech corpora.
+- **[Aug 2026]** Benchmarking completed across 14 open-source neural vocoder checkpoints spanning GAN, Flow, Transformer, and Diffusion paradigms across 4 diverse speech corpora.
 - **[July 2026]** Montreal Forced Aligner (MFA) phoneme diagnostic pipeline integrated to track fine-grained phonemic class fidelity (vowels, fricatives, stops, nasals, approximants).
 
 ---
 
+<!--
 ## 🔬 What is <span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V?
 
 **<span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V** (**P**erceptual, **R**econstruction, **I**ntelligibility, **S**peaker, and **M**odel Efficiency for **V**ocoders) is an open, standardized scientific benchmark and interactive leaderboard for evaluating pretrained neural vocoders in modern text-to-speech (TTS) and speech-to-speech synthesis pipelines.
@@ -68,6 +68,7 @@ Rather than relying on isolated single-corpus PESQ figures or inconsistent commu
 ```
 
 ---
+-->
 
 ## ✨ Key Features
 
@@ -81,8 +82,16 @@ Rather than relying on isolated single-corpus PESQ figures or inconsistent commu
 
 ## 📦 Evaluated Neural Vocoders
 
-**<span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V** benchmarks **15 representative neural vocoders** covering all major generative speech synthesis paradigms:
+**<span style="color:#6366f1">P</span><span style="color:#06b6d4">R</span><span style="color:#10b981">I</span><span style="color:#f59e0b">S</span><span style="color:#f43f5e">M</span>-V** benchmarks **14 representative neural vocoders** covering all major generative speech synthesis paradigms:
 
+| Paradigm | Models Evaluated |
+|---|---|
+| ⚡ **Generative Adversarial (GAN)** | BigVGAN-v2, BigVGAN-Base, HiFi-GAN Universal V1, FreeV, RNDVoC, ComVo-Base, ComVo-Large |
+| 🪟 **Fourier / iSTFT** | Vocos |
+| 🌊 **Flow Matching / Rectified Flow** | Flow2GAN, WaveFM, RFWave, PeriodWave |
+| 🌫️ **Diffusion SDE / Schrödinger Bridge** | BridgeVoC, PeriodWave-Turbo |
+
+<!--
 | Paradigm | Models Evaluated | Sampling Rate | Description |
 |---|---|---|---|
 | ⚡ **Generative Adversarial (GAN)** | BigVGAN-v2, BigVGAN-v1, HiFi-GAN (V1, V2, V3), UnivNet, MelGAN | 24 kHz / 22.05 kHz | Multi-period / multi-scale discriminators with fast parallel synthesis. |
@@ -90,17 +99,27 @@ Rather than relying on isolated single-corpus PESQ figures or inconsistent commu
 | 🪟 **Fourier / Transformer** | Vocos, APNet2 | 24 kHz | Magnitude and phase prediction in the frequency domain with ultralow latency. |
 | 🌫️ **Diffusion SDE** | FreGrad, PriorGrad, Diff-Wave, WaveGrad | 24 kHz / 22.05 kHz | Score-based iterative reverse diffusion with structured priors. |
 | 🔁 **Autoregressive** | WaveNet | 24 kHz | Sample-by-sample causal dilated convolutions (gold-standard benchmark baseline). |
+-->
 
 ---
 
 ## 🧪 Evaluation Corpora
 
+| Corpus | Acoustic Environment |
+|---|---|
+| **LJSpeech** | Clean Studio Recording |
+| **LibriTTS** | Expressive Audiobook Narrative |
+| **VCTK** | Regional Accented Speech |
+| **Free_ST** | Real-World Mobile Microphone |
+
+<!--
 | Corpus | Acoustic Environment | Characteristics |
 |---|---|---|
 | **LJSpeech** | Clean Studio Recording | Single female speaker, professional recording booth, near-zero reverberation. |
 | **LibriTTS** | Expressive Audiobook Narrative | Multi-speaker (test-clean + test-other), diverse dynamic range and prosody. |
 | **VCTK** | Regional Accented Speech | 109 native speakers with British, Scottish, Irish, and Commonwealth accents. |
 | **Free_ST** | Real-World Mobile Microphone | Mobile device microphones, environmental acoustic noise, and natural reverberation. |
+-->
 
 ---
 
@@ -124,6 +143,7 @@ http://localhost:8000
 
 ---
 
+<!--
 ## 🚢 GitHub Pages Deployment
 
 This repository is designed to be hosted directly on GitHub Pages without any compute servers or quota limitations:
@@ -193,6 +213,7 @@ git push -u origin add-my-vocoder-model
 ```
 
 Navigate to [**Compare Across Forks**](https://github.com/iamshreeji-copy2/open_vocoder_leaderboard/compare) to open a Pull Request into `iamshreeji-copy2/open_vocoder_leaderboard:main`. Our automated benchmark pipeline evaluates your submission across all 4 corpora and publishes the results to the public leaderboard.
+-->
 
 ---
 

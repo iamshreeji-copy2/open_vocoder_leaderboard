@@ -137,6 +137,12 @@ full_data = {
     "arena_manifest": arena_manifest
 }
 
+# Write leaderboard_data.json
+lb_json_path = os.path.join(DATA_DIR, "leaderboard_data.json")
+with open(lb_json_path, "w", encoding="utf-8") as f:
+    json.dump(leaderboard_models, f, indent=2, ensure_ascii=False)
+print(f"[✓] Wrote {lb_json_path}")
+
 # Write JSON
 json_path = os.path.join(DATA_DIR, "prism_full_data.json")
 with open(json_path, "w", encoding="utf-8") as f:

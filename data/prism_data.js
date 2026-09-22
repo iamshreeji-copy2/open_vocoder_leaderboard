@@ -51,17 +51,17 @@ window.PRISM_DATA = {
       "Non-Autoregressive"
     ],
     "rfwave_libritts_24k": [
-      "Flow-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Flow-based"
     ],
     "wavefm": [
-      "Flow-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Flow-based"
     ],
     "flow2gan": [
-      "Flow-based",
       "GAN-based",
-      "Non-Autoregressive"
+      "Non-Autoregressive",
+      "Flow-based"
     ],
     "bridgevoc": [
       "Diffusion-based",
@@ -106,6 +106,7 @@ window.PRISM_DATA = {
     "Diffusion / Turbo SDE": "Diffusion-based",
     "Diffusion / Full SDE": "Diffusion-based",
     "Brownian Bridge SDE": "Diffusion-based",
+    "Schrödinger Bridge SDE": "Diffusion-based",
     "Time-domain MRF-GAN": "GAN-based",
     "Pseudo-Inverse Mel GAN": "GAN-based",
     "Random Distortion GAN": "GAN-based",
@@ -407,6 +408,7 @@ window.PRISM_DATA = {
     "Diffusion / Turbo SDE": "#f59e0b",
     "Diffusion / Full SDE": "#d97706",
     "Brownian Bridge SDE": "#ea580c",
+    "Schrödinger Bridge SDE": "#ea580c",
     "Time-domain MRF-GAN": "#10b981",
     "Pseudo-Inverse Mel GAN": "#14b8a6",
     "Random Distortion GAN": "#84cc16",
@@ -490,7 +492,7 @@ window.PRISM_DATA = {
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
       "params_m": 0.0,
-      "overall_score": 79.01,
+      "overall_score": 79.12,
       "pesq": 3.909,
       "stoi": 0.994,
       "mcd_db": 4.17,
@@ -558,8 +560,8 @@ window.PRISM_DATA = {
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
-      "params_m": 3.94,
-      "overall_score": 76.29,
+      "params_m": 3.14,
+      "overall_score": 76.01,
       "pesq": 4.223,
       "stoi": 0.988,
       "mcd_db": 8.86,
@@ -622,14 +624,14 @@ window.PRISM_DATA = {
       "architecture_family": "Flow Matching + GAN",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "Flow-based",
         "GAN-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Flow-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
-      "params_m": 79.08,
-      "overall_score": 75.58,
+      "params_m": 79.9,
+      "overall_score": 75.22,
       "pesq": 4.489,
       "stoi": 0.995,
       "mcd_db": 6.64,
@@ -697,8 +699,8 @@ window.PRISM_DATA = {
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
-      "params_m": 13.58,
-      "overall_score": 74.6,
+      "params_m": 13.5,
+      "overall_score": 73.89,
       "pesq": 3.646,
       "stoi": 0.973,
       "mcd_db": 8.57,
@@ -758,7 +760,7 @@ window.PRISM_DATA = {
       "is_baseline": false,
       "model_id": "bridgevoc",
       "model_name": "BridgeVoC",
-      "architecture_family": "Brownian Bridge SDE",
+      "architecture_family": "Schrödinger Bridge SDE",
       "arch_category": "Diffusion-based",
       "arch_tags": [
         "Diffusion-based",
@@ -766,8 +768,8 @@ window.PRISM_DATA = {
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
-      "params_m": 7.89,
-      "overall_score": 74.16,
+      "params_m": 7.65,
+      "overall_score": 73.54,
       "pesq": 4.397,
       "stoi": 0.992,
       "mcd_db": 8.45,
@@ -823,75 +825,6 @@ window.PRISM_DATA = {
       }
     },
     {
-      "system_id": "M5",
-      "is_baseline": false,
-      "model_id": "periodwave_turbo",
-      "model_name": "PeriodWave-Turbo (4-step)",
-      "architecture_family": "Diffusion / Turbo SDE",
-      "arch_category": "Diffusion-based",
-      "arch_tags": [
-        "Diffusion-based",
-        "Non-Autoregressive"
-      ],
-      "track": "24kHz Primary Benchmark",
-      "sampling_rate_hz": 24000,
-      "params_m": 29.81,
-      "overall_score": 72.65,
-      "pesq": 4.395,
-      "stoi": 0.992,
-      "mcd_db": 9.8,
-      "lsd_db": 6.97,
-      "utmos": 4.11,
-      "nisqa": 3.89,
-      "delta_wer_pct": -0.03,
-      "rtf": 0.13,
-      "speedup_x": 7.7,
-      "peak_vram_mb": 1038.0,
-      "edge_feasible": "Yes",
-      "is_pareto": false,
-      "checkpoint_url": "https://drive.google.com/drive/folders/1uUlfiSHFL9xNAZKp6-a584cW9nG7wDK7",
-      "paper_url": "https://arxiv.org/abs/2408.06945",
-      "github_url": "https://github.com/sh-lee-prml/PeriodWave",
-      "license": "MIT",
-      "author": "KAIST",
-      "year": 2024,
-      "rank": 5,
-      "code_open": true,
-      "ckpt_open": true,
-      "dataset_pesqs": {
-        "LJSpeech": 4.419,
-        "LibriTTS": 4.398,
-        "VCTK": 4.354,
-        "Free_ST": 4.407
-      },
-      "dataset_metrics": {
-        "LJSpeech": {
-          "pesq": 4.419,
-          "stoi": 0.996,
-          "lsd_db": 7.08,
-          "mcd_db": 11.26
-        },
-        "LibriTTS": {
-          "pesq": 4.398,
-          "stoi": 0.994,
-          "lsd_db": 6.92,
-          "mcd_db": 9.02
-        },
-        "VCTK": {
-          "pesq": 4.354,
-          "stoi": 0.982,
-          "lsd_db": 6.89,
-          "mcd_db": 9.39
-        },
-        "Free_ST": {
-          "pesq": 4.407,
-          "stoi": 0.996,
-          "lsd_db": 7.0,
-          "mcd_db": 9.54
-        }
-      }
-    },
-    {
       "system_id": "M6",
       "is_baseline": false,
       "model_id": "comvo_base",
@@ -905,7 +838,7 @@ window.PRISM_DATA = {
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
       "params_m": 13.28,
-      "overall_score": 72.64,
+      "overall_score": 72.77,
       "pesq": 3.755,
       "stoi": 0.976,
       "mcd_db": 8.95,
@@ -924,7 +857,7 @@ window.PRISM_DATA = {
       "license": "Apache-2.0",
       "author": "Seoul National Univ.",
       "year": 2024,
-      "rank": 6,
+      "rank": 5,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -961,6 +894,75 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M5",
+      "is_baseline": false,
+      "model_id": "periodwave_turbo",
+      "model_name": "PeriodWave-Turbo (4-step)",
+      "architecture_family": "Diffusion / Turbo SDE",
+      "arch_category": "Diffusion-based",
+      "arch_tags": [
+        "Diffusion-based",
+        "Non-Autoregressive"
+      ],
+      "track": "24kHz Primary Benchmark",
+      "sampling_rate_hz": 24000,
+      "params_m": 29.8,
+      "overall_score": 72.35,
+      "pesq": 4.395,
+      "stoi": 0.992,
+      "mcd_db": 9.8,
+      "lsd_db": 6.97,
+      "utmos": 4.11,
+      "nisqa": 3.89,
+      "delta_wer_pct": -0.03,
+      "rtf": 0.13,
+      "speedup_x": 7.7,
+      "peak_vram_mb": 1038.0,
+      "edge_feasible": "Yes",
+      "is_pareto": false,
+      "checkpoint_url": "https://drive.google.com/drive/folders/1uUlfiSHFL9xNAZKp6-a584cW9nG7wDK7",
+      "paper_url": "https://arxiv.org/abs/2408.06945",
+      "github_url": "https://github.com/sh-lee-prml/PeriodWave",
+      "license": "MIT",
+      "author": "KAIST",
+      "year": 2024,
+      "rank": 6,
+      "code_open": true,
+      "ckpt_open": true,
+      "dataset_pesqs": {
+        "LJSpeech": 4.419,
+        "LibriTTS": 4.398,
+        "VCTK": 4.354,
+        "Free_ST": 4.407
+      },
+      "dataset_metrics": {
+        "LJSpeech": {
+          "pesq": 4.419,
+          "stoi": 0.996,
+          "lsd_db": 7.08,
+          "mcd_db": 11.26
+        },
+        "LibriTTS": {
+          "pesq": 4.398,
+          "stoi": 0.994,
+          "lsd_db": 6.92,
+          "mcd_db": 9.02
+        },
+        "VCTK": {
+          "pesq": 4.354,
+          "stoi": 0.982,
+          "lsd_db": 6.89,
+          "mcd_db": 9.39
+        },
+        "Free_ST": {
+          "pesq": 4.407,
+          "stoi": 0.996,
+          "lsd_db": 7.0,
+          "mcd_db": 9.54
+        }
+      }
+    },
+    {
       "system_id": "M7",
       "is_baseline": false,
       "model_id": "bigvgan_v2_24khz_100band_256x",
@@ -973,8 +975,8 @@ window.PRISM_DATA = {
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
-      "params_m": 112.45,
-      "overall_score": 72.44,
+      "params_m": 112.4,
+      "overall_score": 72.18,
       "pesq": 4.382,
       "stoi": 0.994,
       "mcd_db": 5.82,
@@ -1042,8 +1044,8 @@ window.PRISM_DATA = {
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
-      "params_m": 14.03,
-      "overall_score": 70.57,
+      "params_m": 14.01,
+      "overall_score": 70.35,
       "pesq": 3.867,
       "stoi": 0.98,
       "mcd_db": 9.08,
@@ -1111,8 +1113,8 @@ window.PRISM_DATA = {
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
-      "params_m": 115.35,
-      "overall_score": 70.22,
+      "params_m": 114.56,
+      "overall_score": 69.89,
       "pesq": 3.961,
       "stoi": 0.984,
       "mcd_db": 6.58,
@@ -1175,13 +1177,13 @@ window.PRISM_DATA = {
       "architecture_family": "Distilled Flow Matching",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "Flow-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Flow-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
       "params_m": 19.53,
-      "overall_score": 66.07,
+      "overall_score": 65.77,
       "pesq": 3.626,
       "stoi": 0.97,
       "mcd_db": 12.21,
@@ -1237,71 +1239,71 @@ window.PRISM_DATA = {
       }
     },
     {
-      "system_id": "M11",
+      "system_id": "M14",
       "is_baseline": false,
-      "model_id": "hifigan_universal_v1",
-      "model_name": "HiFi-GAN (Universal V1)",
-      "architecture_family": "Time-domain MRF-GAN",
-      "arch_category": "GAN-based",
+      "model_id": "periodwave_24k",
+      "model_name": "PeriodWave (16-step)",
+      "architecture_family": "Diffusion / Full SDE",
+      "arch_category": "Diffusion-based",
       "arch_tags": [
-        "GAN-based",
+        "Diffusion-based",
         "Non-Autoregressive"
       ],
-      "track": "22.05kHz Legacy Track",
-      "sampling_rate_hz": 22050,
-      "params_m": 13.94,
-      "overall_score": 64.69,
-      "pesq": 3.013,
-      "stoi": 0.95,
-      "mcd_db": 17.03,
-      "lsd_db": 7.75,
-      "utmos": 3.74,
-      "nisqa": 3.69,
-      "delta_wer_pct": 0.5,
-      "rtf": 0.029,
-      "speedup_x": 34.4,
-      "peak_vram_mb": 500.0,
-      "edge_feasible": "Yes",
+      "track": "24kHz Primary Benchmark",
+      "sampling_rate_hz": 24000,
+      "params_m": 29.73,
+      "overall_score": 64.53,
+      "pesq": 4.159,
+      "stoi": 0.974,
+      "mcd_db": 43.83,
+      "lsd_db": 11.08,
+      "utmos": 3.94,
+      "nisqa": 4.0,
+      "delta_wer_pct": 0.05,
+      "rtf": 1.0131,
+      "speedup_x": 1.0,
+      "peak_vram_mb": 1052.0,
+      "edge_feasible": "No",
       "is_pareto": false,
-      "checkpoint_url": "https://drive.google.com/drive/folders/1-eEYTB5Av9jNql0WGBlRoi-WH2J7bp5Y",
-      "paper_url": "https://arxiv.org/abs/2010.05646",
-      "github_url": "https://github.com/jik876/hifi-gan",
+      "checkpoint_url": "https://drive.google.com/drive/folders/1uUlfiSHFL9xNAZKp6-a584cW9nG7wDK7",
+      "paper_url": "https://arxiv.org/abs/2408.06945",
+      "github_url": "https://github.com/sh-lee-prml/PeriodWave",
       "license": "MIT",
-      "author": "Kakao Enterprise",
-      "year": 2020,
+      "author": "KAIST",
+      "year": 2024,
       "rank": 11,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
-        "LJSpeech": 3.147,
-        "LibriTTS": 2.917,
-        "VCTK": 2.94,
-        "Free_ST": 3.048
+        "LJSpeech": 4.219,
+        "LibriTTS": 4.179,
+        "VCTK": 4.187,
+        "Free_ST": 4.052
       },
       "dataset_metrics": {
         "LJSpeech": {
-          "pesq": 3.147,
-          "stoi": 0.968,
-          "lsd_db": 7.8,
-          "mcd_db": 18.81
+          "pesq": 4.219,
+          "stoi": 0.989,
+          "lsd_db": 10.05,
+          "mcd_db": 40.58
         },
         "LibriTTS": {
-          "pesq": 2.917,
-          "stoi": 0.96,
-          "lsd_db": 7.71,
-          "mcd_db": 16.77
+          "pesq": 4.179,
+          "stoi": 0.987,
+          "lsd_db": 9.73,
+          "mcd_db": 37.22
         },
         "VCTK": {
-          "pesq": 2.94,
-          "stoi": 0.919,
-          "lsd_db": 7.55,
-          "mcd_db": 16.38
+          "pesq": 4.187,
+          "stoi": 0.936,
+          "lsd_db": 11.49,
+          "mcd_db": 45.06
         },
         "Free_ST": {
-          "pesq": 3.048,
-          "stoi": 0.954,
-          "lsd_db": 7.96,
-          "mcd_db": 16.14
+          "pesq": 4.052,
+          "stoi": 0.985,
+          "lsd_db": 13.02,
+          "mcd_db": 52.44
         }
       }
     },
@@ -1319,7 +1321,7 @@ window.PRISM_DATA = {
       "track": "22.05kHz Legacy Track",
       "sampling_rate_hz": 22050,
       "params_m": 18.22,
-      "overall_score": 61.85,
+      "overall_score": 63.13,
       "pesq": 2.977,
       "stoi": 0.944,
       "mcd_db": 16.07,
@@ -1375,6 +1377,75 @@ window.PRISM_DATA = {
       }
     },
     {
+      "system_id": "M11",
+      "is_baseline": false,
+      "model_id": "hifigan_universal_v1",
+      "model_name": "HiFi-GAN (Universal V1)",
+      "architecture_family": "Time-domain MRF-GAN",
+      "arch_category": "GAN-based",
+      "arch_tags": [
+        "GAN-based",
+        "Non-Autoregressive"
+      ],
+      "track": "22.05kHz Legacy Track",
+      "sampling_rate_hz": 22050,
+      "params_m": 13.94,
+      "overall_score": 63.05,
+      "pesq": 3.013,
+      "stoi": 0.95,
+      "mcd_db": 17.03,
+      "lsd_db": 7.75,
+      "utmos": 3.74,
+      "nisqa": 3.69,
+      "delta_wer_pct": 0.5,
+      "rtf": 0.029,
+      "speedup_x": 34.4,
+      "peak_vram_mb": 500.0,
+      "edge_feasible": "Yes",
+      "is_pareto": false,
+      "checkpoint_url": "https://drive.google.com/drive/folders/1-eEYTB5Av9jNql0WGBlRoi-WH2J7bp5Y",
+      "paper_url": "https://arxiv.org/abs/2010.05646",
+      "github_url": "https://github.com/jik876/hifi-gan",
+      "license": "MIT",
+      "author": "Kakao Enterprise",
+      "year": 2020,
+      "rank": 13,
+      "code_open": true,
+      "ckpt_open": true,
+      "dataset_pesqs": {
+        "LJSpeech": 3.147,
+        "LibriTTS": 2.917,
+        "VCTK": 2.94,
+        "Free_ST": 3.048
+      },
+      "dataset_metrics": {
+        "LJSpeech": {
+          "pesq": 3.147,
+          "stoi": 0.968,
+          "lsd_db": 7.8,
+          "mcd_db": 18.81
+        },
+        "LibriTTS": {
+          "pesq": 2.917,
+          "stoi": 0.96,
+          "lsd_db": 7.71,
+          "mcd_db": 16.77
+        },
+        "VCTK": {
+          "pesq": 2.94,
+          "stoi": 0.919,
+          "lsd_db": 7.55,
+          "mcd_db": 16.38
+        },
+        "Free_ST": {
+          "pesq": 3.048,
+          "stoi": 0.954,
+          "lsd_db": 7.96,
+          "mcd_db": 16.14
+        }
+      }
+    },
+    {
       "system_id": "M13",
       "is_baseline": false,
       "model_id": "rfwave_libritts_24k",
@@ -1382,13 +1453,13 @@ window.PRISM_DATA = {
       "architecture_family": "Rectified Flow Matching",
       "arch_category": "Flow-based",
       "arch_tags": [
-        "Flow-based",
-        "Non-Autoregressive"
+        "Non-Autoregressive",
+        "Flow-based"
       ],
       "track": "24kHz Primary Benchmark",
       "sampling_rate_hz": 24000,
-      "params_m": 18.27,
-      "overall_score": 61.37,
+      "params_m": 18.1,
+      "overall_score": 62.29,
       "pesq": 3.797,
       "stoi": 0.957,
       "mcd_db": 42.73,
@@ -1407,7 +1478,7 @@ window.PRISM_DATA = {
       "license": "MIT",
       "author": "ByteDance / SJTU",
       "year": 2024,
-      "rank": 13,
+      "rank": 14,
       "code_open": true,
       "ckpt_open": true,
       "dataset_pesqs": {
@@ -1440,75 +1511,6 @@ window.PRISM_DATA = {
           "stoi": 0.979,
           "lsd_db": 9.87,
           "mcd_db": 52.28
-        }
-      }
-    },
-    {
-      "system_id": "M14",
-      "is_baseline": false,
-      "model_id": "periodwave_24k",
-      "model_name": "PeriodWave (16-step)",
-      "architecture_family": "Diffusion / Full SDE",
-      "arch_category": "Diffusion-based",
-      "arch_tags": [
-        "Diffusion-based",
-        "Non-Autoregressive"
-      ],
-      "track": "24kHz Primary Benchmark",
-      "sampling_rate_hz": 24000,
-      "params_m": 29.81,
-      "overall_score": 1.0,
-      "pesq": 4.159,
-      "stoi": 0.974,
-      "mcd_db": 43.83,
-      "lsd_db": 11.08,
-      "utmos": 3.94,
-      "nisqa": 4.0,
-      "delta_wer_pct": 0.05,
-      "rtf": 1.0131,
-      "speedup_x": 1.0,
-      "peak_vram_mb": 1052.0,
-      "edge_feasible": "No",
-      "is_pareto": false,
-      "checkpoint_url": "https://drive.google.com/drive/folders/1uUlfiSHFL9xNAZKp6-a584cW9nG7wDK7",
-      "paper_url": "https://arxiv.org/abs/2408.06945",
-      "github_url": "https://github.com/sh-lee-prml/PeriodWave",
-      "license": "MIT",
-      "author": "KAIST",
-      "year": 2024,
-      "rank": 14,
-      "code_open": true,
-      "ckpt_open": true,
-      "dataset_pesqs": {
-        "LJSpeech": 4.219,
-        "LibriTTS": 4.179,
-        "VCTK": 4.187,
-        "Free_ST": 4.052
-      },
-      "dataset_metrics": {
-        "LJSpeech": {
-          "pesq": 4.219,
-          "stoi": 0.989,
-          "lsd_db": 10.05,
-          "mcd_db": 40.58
-        },
-        "LibriTTS": {
-          "pesq": 4.179,
-          "stoi": 0.987,
-          "lsd_db": 9.73,
-          "mcd_db": 37.22
-        },
-        "VCTK": {
-          "pesq": 4.187,
-          "stoi": 0.936,
-          "lsd_db": 11.49,
-          "mcd_db": 45.06
-        },
-        "Free_ST": {
-          "pesq": 4.052,
-          "stoi": 0.985,
-          "lsd_db": 13.02,
-          "mcd_db": 52.44
         }
       }
     }
