@@ -688,7 +688,7 @@ table.prism-table tbody tr td.lb-check-1-1 {
 #prism-lb-table thead th.lb-col-tint,
 #overview-checkpoints-card thead th.lb-col-tint,
 table.prism-table thead th.lb-col-tint {
-  background-color: var(--check-col-color) !important;
+  /* no background tint on header row */
   border-right: 1px solid var(--check-border-color) !important;
 }
 
